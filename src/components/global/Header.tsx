@@ -85,6 +85,7 @@ export default function Header() {
               alt="Holding Reynaga"
               width={240}
               height={60}
+              priority
               style={{ width: "auto", height: "auto", maxHeight: "60px" }}
               className={`transition-all duration-300 ${
                 !isScrolled ? "brightness-0 invert opacity-90" : "opacity-100"

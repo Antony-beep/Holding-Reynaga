@@ -1,13 +1,15 @@
 "use client";
 
+import Image from "next/image";
+
 const GALLERY_ITEMS = [
   { img: "Woman_exercising.webp", title: "Fitness Center", span: "md:col-span-2 md:row-span-2" },
   { img: "Sala_tertulias_condominio.webp", title: "Lobby Principal", span: "md:col-span-1 md:row-span-2" },
-  { img: "Pérgolas_de_sol.webp", title: "Rooftop & Pérgolas", span: "md:col-span-1 md:row-span-2" },
+  { img: "pergolas-de-sol.webp", title: "Rooftop & Pérgolas", span: "md:col-span-1 md:row-span-2" },
   { img: "Create_campfire_area.webp", title: "Campfire & Relax", span: "md:col-span-2 md:row-span-1" },
   { img: "area_de_juegos.webp", title: "Sala de Juegos", span: "md:col-span-1 md:row-span-1" },
   { img: "ascensores.webp", title: "Hall de Ascensores", span: "md:col-span-1 md:row-span-1" },
-  { img: "sótano_de_Estacionamiento.webp", title: "Estacionamiento Premium", span: "md:col-span-1 md:row-span-1" },
+  { img: "sotano-de-estacionamiento.webp", title: "Estacionamiento Premium", span: "md:col-span-1 md:row-span-1" },
   { img: "Gabinetes_Contra_Incendios.webp", title: "Seguridad Integral", span: "md:col-span-1 md:row-span-1" },
   { img: "area_parrillas_barra.webp", title: "Bar & Parrillas", span: "md:col-span-2 md:row-span-1" },
 ];
@@ -40,10 +42,12 @@ export default function Gallery() {
               className={`rounded-2xl overflow-hidden relative group cursor-pointer shadow-sm hover:shadow-lg transition-all duration-500 border border-surface-container-low ${item.span}`}
             >
               {/* Image */}
-              <img 
+              <Image 
                 src={`/images/galeria/${item.img}`} 
                 alt={item.title} 
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
+                className="object-cover transition-transform duration-1000 group-hover:scale-110" 
               />
               
               {/* Overlay Gradient */}

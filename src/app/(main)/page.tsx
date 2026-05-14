@@ -18,8 +18,8 @@ export default function Home() {
       <VirtualTour />
       <Catalog />
       <ProjectOverview />
-      <FAQ />
       <DossierForm />
+      <FAQ />
     </div>
   );
 }

@@ -96,6 +96,7 @@ export default function ProjectOverview() {
               src="/images/DEPAS WEBP/maqueta dossier.webp"
               alt="Maqueta del dossier informativo del proyecto inmobiliario Torres Titanium en San Carlos, Huancayo"
               fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-contain p-2 md:p-4 transition-transform duration-1000 hover:scale-[1.03] z-10 drop-shadow-2xl"
             />
           </div>

@@ -59,6 +59,7 @@ export default function VirtualTour() {
             src="/images/360/Departamento_visto_360.webp"
             alt="Maqueta virtual 3D del proyecto residencial Torres Titanium en San Carlos, Huancayo"
             fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
             className="object-cover transition-transform duration-1000 group-hover:scale-105"
           />
           {/* Soft Gradient to blend image with dark bg on mobile */}
