@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
 const InstagramIcon = ({ size = 24, className = "" }) => (
@@ -28,6 +29,7 @@ const TikTokIcon = ({ size = 24, className = "" }) => (
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,12 +39,33 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const scrollToSection = (e: React.MouseEvent, id: string) => {
+    // Si no estamos en la home, dejamos que el Link nativo haga la redirección
+    if (pathname !== "/") return;
+
+    e.preventDefault();
+    // Extraemos el hash si el id viene como "/#algo" o "#algo"
+    const sectionId = id.includes("#") ? id.split("#")[1] : id;
+    const element = document.getElementById(sectionId);
+    
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+      // Limpiar el hash de la URL para que el botón sea funcional múltiples veces
+      setTimeout(() => {
+        window.history.replaceState(null, "", window.location.pathname);
+      }, 1000);
+    }
+    
+    if (isMobileMenuOpen) setIsMobileMenuOpen(false);
+  };
+
   const navLinks = [
-    { name: "Nosotros", href: "#nosotros" },
-    { name: "Titanium", href: "#titanium" },
-    { name: "Departamentos", href: "#departamentos" },
-    { name: "Ubicación", href: "#ubicacion" },
-    { name: "Contacto", href: "#contacto" },
+    { name: "Nosotros", href: "/#nosotros" },
+    { name: "Ubicación", href: "/#ubicacion" },
+    { name: "Áreas Comunes", href: "/#galeria" },
+    { name: "Tour 360°", href: "/#recorrido" },
+    { name: "Departamentos", href: "/#departamentos" },
+    { name: "Dossier", href: "/#titanium" },
   ];
 
   return (
@@ -70,27 +93,30 @@ export default function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-4 xl:gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-base font-medium tracking-wide transition-colors text-white/90 hover:text-white"
+                onClick={(e) => scrollToSection(e, link.href)}
+                className="text-base font-medium tracking-wide transition-colors text-white/90 hover:text-primary cursor-pointer"
               >
                 {link.name}
               </Link>
             ))}
-            <Link
-              href="#reserva"
-              className="bg-gold-metallic text-[#1a1a1a] text-sm tracking-wider uppercase font-bold px-7 py-3 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-transform hover:scale-105 hover:brightness-110 border border-[#FFE896]/50"
+            <a
+              href="https://wa.me/51981407634?text=Hola,%20quiero%20reservar%20mi%20departamento%20con%20S/1,000"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-gold-metallic text-[#1a1a1a] text-sm tracking-wider uppercase font-bold px-7 py-3 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-transform hover:scale-105 hover:brightness-110 border border-[#FFE896]/50 cursor-pointer"
             >
               Reservar con S/ 1,000
-            </Link>
+            </a>
           </nav>
 
           {/* Mobile Toggle */}
           <button
-            className="md:hidden relative z-50 text-white mix-blend-difference"
+            className="lg:hidden relative z-50 text-white mix-blend-difference"
             onClick={() => setIsMobileMenuOpen(true)}
           >
             <Menu size={28} color="#fff" />
@@ -100,7 +126,7 @@ export default function Header() {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`fixed inset-0 bg-surface z-[100] flex flex-col transition-transform duration-500 ease-in-out md:hidden ${
+        className={`fixed inset-0 bg-surface z-[100] flex flex-col transition-transform duration-500 ease-in-out lg:hidden ${
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -127,19 +153,21 @@ export default function Header() {
             <Link
               key={link.name}
               href={link.href}
-              className="text-display font-display text-4xl text-on-surface transition-colors hover:text-primary"
-              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-display font-display text-4xl text-on-surface transition-colors hover:text-primary cursor-pointer"
+              onClick={(e) => scrollToSection(e, link.href)}
             >
               {link.name}
             </Link>
           ))}
-          <Link
-            href="#reserva"
-            className="bg-gold-metallic text-[#1a1a1a] mt-8 text-sm tracking-wider uppercase font-bold px-8 py-4 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.4)] border border-[#FFE896]/50"
+          <a
+            href="https://wa.me/51981407634?text=Hola,%20quiero%20reservar%20mi%20departamento%20con%20S/1,000"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-gold-metallic text-[#1a1a1a] mt-8 text-sm tracking-wider uppercase font-bold px-8 py-4 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.4)] border border-[#FFE896]/50 cursor-pointer"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             Reservar con S/ 1,000
-          </Link>
+          </a>
           
           {/* Mobile Social Links */}
           <div className="flex items-center gap-6 mt-12">

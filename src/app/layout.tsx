@@ -3,9 +3,8 @@ import { Plus_Jakarta_Sans, Inter } from "next/font/google";
 import "./globals.css";
 
 import Preloader from "@/components/global/Preloader";
-import Header from "@/components/global/Header";
-import WhatsAppFAB from "@/components/global/WhatsAppFAB";
-import Footer from "@/components/global/Footer";
+import StructuredData from "@/components/global/StructuredData";
+import ClientOnlyComponents from "@/components/global/ClientOnlyComponents";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
@@ -20,6 +19,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Torres Titanium | Holding Reynaga",
   description: "Una obra maestra arquitectónica en Huancayo. Lujo, exclusividad y ubicación privilegiada.",
+  icons: {
+    icon: "/images/logo_cortado.webp",
+  },
 };
 
 export default function RootLayout({
@@ -32,12 +34,13 @@ export default function RootLayout({
       lang="es"
       className={`${jakarta.variable} ${inter.variable} h-full antialiased scroll-smooth`}
     >
+      <head>
+        <StructuredData />
+      </head>
       <body className="min-h-full flex flex-col font-body bg-background text-foreground overflow-x-hidden text-lg">
         <Preloader />
-        <Header />
-        <main className="flex-grow">{children}</main>
-        <WhatsAppFAB />
-        <Footer />
+        {children}
+        <ClientOnlyComponents />
       </body>
     </html>
   );

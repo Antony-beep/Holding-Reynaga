@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { preload } from "react-dom";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 declare global {
   interface Window {
@@ -43,9 +45,21 @@ export default function Hero() {
   const [isMounted, setIsMounted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  const scrollToSection = (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+      // Limpiar el hash de la URL para que el botón sea funcional múltiples veces
+      setTimeout(() => {
+        window.history.replaceState(null, "", window.location.pathname);
+      }, 1000);
+    }
+  };
+
   useEffect(() => {
     setIsMounted(true);
-    
+
     if (typeof window !== "undefined") {
       if (window.__HERO_VIDEO_PLAYED__) {
         // Already played once in this session, play immediately
@@ -53,14 +67,30 @@ export default function Hero() {
           videoRef.current.play().catch((e) => console.log(e));
         }
       } else {
-        // First time, wait for preloader (2000ms delay + 500ms fadeout)
-        const timer = setTimeout(() => {
-          if (videoRef.current) {
-            videoRef.current.play().catch((e) => console.log(e));
-          }
-          window.__HERO_VIDEO_PLAYED__ = true;
-        }, 2500);
-        return () => clearTimeout(timer);
+        const playVideo = () => {
+          // Dar tiempo a la transición de salida del preloader (fadeout)
+          const playTimer = setTimeout(() => {
+            if (videoRef.current) {
+              videoRef.current.play().catch((e) => console.log(e));
+            }
+            window.__HERO_VIDEO_PLAYED__ = true;
+          }, 600);
+          return playTimer;
+        };
+
+        const handlePreloaderFinished = () => playVideo();
+        window.addEventListener("preloaderFinished", handlePreloaderFinished);
+
+        // Failsafe por si el preloader ya había terminado antes del mount
+        const failsafeTimer = setTimeout(playVideo, 1200);
+
+        return () => {
+          window.removeEventListener(
+            "preloaderFinished",
+            handlePreloaderFinished,
+          );
+          clearTimeout(failsafeTimer);
+        };
       }
     }
   }, []);
@@ -71,16 +101,15 @@ export default function Hero() {
         {/* Video Background */}
         <video
           ref={videoRef}
-          loop
           muted
           playsInline
-          className="w-full h-full object-cover object-[60%_center] md:object-center opacity-80"
+          className="w-full h-full object-cover object-[75%_center] md:object-[75%_center] lg:object-center opacity-90"
         >
-          <source src="/videos/HeroOficial.mp4" type="video/mp4" />
+          <source src="/videos/Sequence 02.mp4" type="video/mp4" />
         </video>
 
         {/* Slightly darker gradient on the left to ensure text readability (Moved behind the vectors) */}
-        <div className="absolute inset-0 bg-gradient-to-r from-deep-navy/85 via-deep-navy/40 to-transparent z-0" />
+        <div className="absolute inset-0 bg-gradient-to-r from-deep-navy/70 via-deep-navy/25 to-transparent z-0" />
 
         {/* Vector Architectural Overlay */}
         <div className="absolute inset-0 w-full h-full z-0 opacity-45 pointer-events-none mix-blend-screen overflow-hidden">
@@ -94,7 +123,7 @@ export default function Hero() {
             <g
               className="svg-architectural-line"
               stroke="#D4AF37"
-              strokeWidth="1.5"
+              strokeWidth="2.5"
               fill="none"
             >
               {/* Vertical Grid Lines */}
@@ -117,7 +146,7 @@ export default function Hero() {
                 y1="1080"
                 x2="1920"
                 y2="0"
-                strokeWidth="2"
+                strokeWidth="3.2"
                 opacity="0.35"
               />
               <line
@@ -125,7 +154,7 @@ export default function Hero() {
                 y1="0"
                 x2="1920"
                 y2="1080"
-                strokeWidth="2"
+                strokeWidth="3.2"
                 opacity="0.35"
               />
               <line
@@ -133,7 +162,7 @@ export default function Hero() {
                 y1="540"
                 x2="1920"
                 y2="1080"
-                strokeWidth="1.5"
+                strokeWidth="2.5"
                 opacity="0.3"
               />
               <line
@@ -141,26 +170,26 @@ export default function Hero() {
                 y1="1080"
                 x2="960"
                 y2="0"
-                strokeWidth="1.5"
+                strokeWidth="2.5"
                 opacity="0.3"
               />
 
               {/* Left Side Specific Architectural Elements */}
               <path
                 d="M 0 200 L 400 200 M 0 250 L 350 250 M 0 300 L 450 300"
-                strokeWidth="1.5"
+                strokeWidth="2.5"
                 opacity="0.4"
               />
               <circle
                 cx="200"
                 cy="800"
                 r="150"
-                strokeWidth="1.5"
+                strokeWidth="2.5"
                 opacity="0.25"
               />
               <path
                 d="M 100 600 L 300 1000 M 50 700 L 400 1080"
-                strokeWidth="2"
+                strokeWidth="3.2"
                 opacity="0.3"
               />
               <rect
@@ -168,19 +197,19 @@ export default function Hero() {
                 y="400"
                 width="200"
                 height="150"
-                strokeWidth="1"
+                strokeWidth="1.8"
                 opacity="0.2"
               />
 
               {/* Right Building Silhouette */}
               <path
                 d="M 1300 100 L 1700 100 L 1700 1080 L 1300 1080 Z"
-                strokeWidth="2"
+                strokeWidth="3.2"
                 opacity="0.6"
               />
               <path
                 d="M 1400 50 L 1400 1080 M 1500 50 L 1500 1080 M 1600 50 L 1600 1080"
-                strokeWidth="1.5"
+                strokeWidth="2.5"
                 opacity="0.45"
               />
               <path
@@ -192,18 +221,18 @@ export default function Hero() {
               {/* Center / Left Complex Structures */}
               <path
                 d="M 150 300 L 450 300 L 450 1080 L 150 1080 Z"
-                strokeWidth="1.8"
+                strokeWidth="3"
                 opacity="0.3"
               />
               <path
                 d="M 250 350 L 450 350 M 250 450 L 450 450 M 250 550 L 450 550"
-                strokeWidth="1.2"
+                strokeWidth="2"
                 opacity="0.2"
               />
 
               <path
                 d="M 640 400 L 960 400 L 960 1080 L 640 1080 Z"
-                strokeWidth="1.5"
+                strokeWidth="2.5"
                 opacity="0.4"
               />
               <polygon
@@ -217,7 +246,7 @@ export default function Hero() {
                 cx="960"
                 cy="540"
                 r="300"
-                strokeWidth="1"
+                strokeWidth="1.8"
                 opacity="0.3"
                 fill="none"
               />
@@ -259,7 +288,7 @@ export default function Hero() {
       </div>
 
       {/* Sidebar Stats Strip - High Prominence */}
-      <div className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 flex-col items-center gap-5 lg:gap-6 2xl:gap-10 z-40 bg-[#0a0f1a]/40 backdrop-blur-xl border border-r-0 border-white/10 rounded-l-[1.25rem] lg:rounded-l-[1.5rem] 2xl:rounded-l-[2rem] py-6 lg:py-8 2xl:py-16 pl-3 pr-4 lg:pl-5 lg:pr-8 2xl:px-8 shadow-[-15px_0_40px_rgba(0,0,0,0.4)] transition-all duration-500 hover:bg-[#0a0f1a]/60">
+      <div className="hidden lg:flex absolute right-4 xl:right-8 top-1/2 -translate-y-1/2 flex-col items-center gap-5 lg:gap-6 2xl:gap-8 z-40 bg-surface/10 backdrop-blur-md border border-white/20 rounded-2xl py-6 lg:py-8 2xl:py-10 px-3 lg:px-4 2xl:px-5 shadow-[0_15px_40px_rgba(0,0,0,0.3)] transition-all duration-500 hover:bg-surface/20">
         <div className="flex flex-col items-center gap-2 lg:gap-3 2xl:gap-4 group">
           <span className="text-gold-metallic font-display font-black text-xl lg:text-2xl 2xl:text-4xl tracking-tighter group-hover:scale-110 transition-transform drop-shadow-lg">
             13
@@ -312,10 +341,10 @@ export default function Hero() {
             initial="hidden"
             animate="visible"
             variants={{
-              hidden: { opacity: 0 },
+              hidden: { opacity: 1 },
               visible: {
                 opacity: 1,
-                transition: { staggerChildren: 0.15, delayChildren: 2.1 },
+                transition: { staggerChildren: 0.15, delayChildren: 0.8 },
               },
             }}
           >
@@ -369,26 +398,16 @@ export default function Hero() {
                   </motion.span>
                 ))}
               </motion.div>
-              <motion.span
-                className="text-outline-to-fill block font-black"
-                variants={{
-                  hidden: {
-                    opacity: 0,
-                    x: -50,
-                    scaleX: 0.9,
-                    transformOrigin: "left",
-                  },
-                  visible: {
-                    opacity: 1,
-                    x: 0,
-                    scaleX: 1,
-                    transition: { duration: 1.2, ease: "easeOut" },
-                  },
-                }}
-              >
+              <span className="text-outline-to-fill block font-black">
                 TITANIUM
-              </motion.span>
+              </span>
             </h1>
+
+            {/* Semantic SEO Transaccional (Visually Hidden) */}
+            <div className="sr-only">
+              <h2>Preventa Exclusiva de Departamentos en Huancayo</h2>
+              <p>Adquiere tu departamento de lujo en San Carlos desde S/ 268,509.00 hasta S/ 348,004.00. Reserva con S/ 1,000 y congela el precio hoy mismo.</p>
+            </div>
 
             {/* Description */}
             <motion.p
@@ -418,7 +437,7 @@ export default function Hero() {
                 },
               }}
             >
-              <div className="bg-surface/10 backdrop-blur-md border border-surface/20 px-4 py-2.5 sm:px-5 sm:py-3 rounded-lg flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+              <div className="bg-surface/10 backdrop-blur-md border border-surface/20 px-4 sm:px-6 py-3.5 sm:py-4 rounded-lg flex items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto min-h-[48px] sm:min-h-[56px] xl:min-h-[60px]">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 shrink-0">
                   <svg
                     className="w-4 h-4 sm:w-5 sm:h-5 text-surface"
@@ -434,20 +453,51 @@ export default function Hero() {
                     />
                   </svg>
                 </div>
-                <div>
-                  <p className="text-surface text-[0.60rem] sm:text-xs opacity-70 uppercase tracking-wider font-semibold">
+                <div className="flex flex-col justify-center text-left">
+                  <p className="text-surface text-[0.55rem] sm:text-[0.65rem] opacity-70 uppercase tracking-wider font-semibold leading-tight">
                     Congela el precio
                   </p>
-                  <p className="text-surface font-bold text-xs sm:text-base lg:text-sm xl:text-base">
-                    Moneda Local
+                  <p className="text-surface font-bold text-xs sm:text-sm lg:text-xs xl:text-sm leading-tight">
+                    Desde tu reserva
                   </p>
                 </div>
               </div>
+
+              {/* Secondary Button - Styled as Info Tag */}
+              <a
+                href="#departamentos"
+                onClick={(e) => scrollToSection(e, "departamentos")}
+                className="bg-surface/10 backdrop-blur-md border border-surface/20 px-4 sm:px-6 py-3.5 sm:py-4 rounded-lg flex items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto min-h-[48px] sm:min-h-[56px] xl:min-h-[60px] text-left hover:bg-surface/20 transition-all duration-300 cursor-pointer"
+              >
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 shrink-0">
+                  <svg
+                    className="w-4 h-4 sm:w-5 sm:h-5 text-surface"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                    />
+                  </svg>
+                </div>
+                <div className="flex flex-col justify-center">
+                  <p className="text-surface text-[0.55rem] sm:text-[0.65rem] opacity-70 uppercase tracking-wider font-semibold leading-tight">
+                    Descubre más
+                  </p>
+                  <p className="text-surface font-bold text-xs sm:text-sm lg:text-xs xl:text-sm leading-tight">
+                    Conoce 7 modelos de departamentos
+                  </p>
+                </div>
+              </a>
             </motion.div>
 
             {/* CTAs Row */}
             <motion.div
-              className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 xl:gap-6 w-full sm:w-auto mt-2 lg:mt-3 xl:mt-6"
+              className="flex flex-col sm:flex-row flex-wrap items-center gap-3 sm:gap-4 xl:gap-6 w-full sm:w-auto mt-2 lg:mt-3 xl:mt-6"
               variants={{
                 hidden: { opacity: 0, y: 20 },
                 visible: {
@@ -457,8 +507,11 @@ export default function Hero() {
                 },
               }}
             >
-              {/* Main Button */}
-              <button className="bg-gold-metallic text-black px-4 sm:px-6 xl:px-8 py-3.5 sm:py-4 rounded-lg font-body font-black tracking-[0.15em] sm:tracking-widest transition-all duration-300 hover:scale-105 hover:brightness-110 uppercase text-[0.65rem] sm:text-sm lg:text-xs xl:text-sm shadow-[0_0_20px_rgba(212,175,55,0.4)] min-h-[48px] sm:min-h-[56px] xl:min-h-[60px] flex items-center justify-center gap-2 sm:gap-3 w-full sm:w-auto border border-[#FFE896]/50">
+              <a
+                href="#reserva"
+                onClick={(e) => scrollToSection(e, "reserva")}
+                className="bg-gold-metallic text-black px-4 sm:px-6 xl:px-8 py-3.5 sm:py-4 rounded-lg font-body font-black tracking-[0.15em] sm:tracking-widest transition-all duration-300 hover:scale-105 hover:brightness-110 uppercase text-[0.65rem] sm:text-sm lg:text-xs xl:text-sm shadow-[0_0_20px_rgba(212,175,55,0.4)] min-h-[48px] sm:min-h-[56px] xl:min-h-[60px] flex items-center justify-center gap-2 sm:gap-3 w-full sm:w-auto border border-[#FFE896]/50 cursor-pointer"
+              >
                 Reserva Tu Departamento
                 <svg
                   className="w-3.5 h-3.5 sm:w-5 sm:h-5"
@@ -473,12 +526,7 @@ export default function Hero() {
                     d="M14 5l7 7m0 0l-7 7m7-7H3"
                   />
                 </svg>
-              </button>
-
-              {/* Secondary Button */}
-              <button className="bg-surface/5 hover:bg-surface/10 backdrop-blur-md border border-white/40 text-surface px-4 sm:px-6 xl:px-8 py-3.5 sm:py-4 rounded-lg font-body font-bold tracking-[0.15em] sm:tracking-widest transition-all duration-300 hover:scale-[1.03] uppercase text-[0.65rem] sm:text-sm lg:text-xs xl:text-sm shadow-[0_10px_30px_rgba(0,0,0,0.3)] min-h-[48px] sm:min-h-[56px] xl:min-h-[60px] flex items-center justify-center w-full sm:w-auto">
-                Ver Catálogo
-              </button>
+              </a>
             </motion.div>
 
             {/* Mobile/Tablet Horizontal Stats Strip */}
@@ -533,15 +581,29 @@ export default function Hero() {
                 },
               }}
             >
-              <PriceTag />
+              <a
+                href="https://wa.me/51981407634?text=Hola,%20quiero%20reservar%20mi%20departamento%20con%20S/1,000"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cursor-pointer"
+              >
+                <PriceTag />
+              </a>
             </motion.div>
           </motion.div>
 
           {/* Right Column (Open for Video visibility) */}
           <div className="hidden lg:block col-span-5 xl:col-span-6 relative h-full pointer-events-none">
             {/* Animated Floating Tag positioned over the building */}
-            <div className="absolute top-[25%] xl:top-[35%] right-[22%] xl:right-[15%] pointer-events-auto z-50 mix-blend-normal transform scale-[0.75] xl:scale-100 origin-right">
-              <PriceTag />
+            <div className="absolute top-[18%] xl:top-[12%] right-[-15%] xl:right-[-8%] pointer-events-auto z-50 mix-blend-normal transform scale-[0.75] xl:scale-90 origin-right">
+              <a
+                href="https://wa.me/51981407634?text=Hola,%20quiero%20reservar%20mi%20departamento%20con%20S/1,000"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cursor-pointer"
+              >
+                <PriceTag />
+              </a>
             </div>
           </div>
         </div>

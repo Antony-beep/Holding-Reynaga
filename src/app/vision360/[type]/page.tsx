@@ -17,13 +17,13 @@ export default async function Vision360Page({ params }: { params: Promise<{ type
   let title = "";
 
   if (type === "a") {
-    imagePath = "/images/360/full(1).webp";
+    imagePath = "/images/360/360 A.webp";
     title = "Departamento Tipo A - 360°";
   } else if (type === "b") {
-    imagePath = "/images/360/full(2).webp";
+    imagePath = "/images/360/360 B.webp";
     title = "Departamento Tipo B - 360°";
   } else if (type === "g") {
-    imagePath = "/images/360/full(3).webp";
+    imagePath = "/images/360/360 G.webp";
     title = "Departamento Tipo G - 360°";
   } else {
     notFound();

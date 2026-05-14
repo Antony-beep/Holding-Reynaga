@@ -95,8 +95,8 @@ body {
 .hero-tag-animated {
   opacity: 0; /* Empieza oculto antes de la animación */
   animation: 
-    tag-appear 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
-    swing-tag 5s ease-in-out 1.2s infinite; /* El swing comienza justo cuando termina el appear */
+    tag-appear 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 0.8s forwards,
+    swing-tag 5s ease-in-out 2.0s infinite; /* El swing comienza justo cuando termina el appear */
 }
 
 @keyframes pulse-whatsapp {
@@ -120,8 +120,8 @@ body {
   -webkit-text-stroke: 1px rgba(212, 175, 55, 0.8);
   background-size: 0% 100%;
   background-repeat: no-repeat;
-  animation: fill-text 2s cubic-bezier(0.8, 0, 0.2, 1) forwards;
-  animation-delay: 3.2s;
+  animation: fill-text 1.5s cubic-bezier(0.8, 0, 0.2, 1) forwards;
+  animation-delay: 1.5s;
 }
 
 @keyframes fill-text {
@@ -327,4 +327,15 @@ body {
 
 .leaflet-container {
   background: #fdfdfd !important;
+}
+
+/* --- Golden Button Shine Animation --- */
+@keyframes gold-shine {
+  0% { transform: translateX(-200%) skewX(-30deg); }
+  15%, 100% { transform: translateX(300%) skewX(-30deg); }
+}
+
+.animate-gold-shine {
+  animation: gold-shine 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: 2.5s; /* Delays start to avoid LCP impact */
 }

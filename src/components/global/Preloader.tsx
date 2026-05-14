@@ -8,13 +8,29 @@ export default function Preloader() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Wait for the window to indicate the page is loaded
-    // Since Next.js is fast, we also add a minimum time to see the beautiful animation
-    const timer = setTimeout(() => {
+    const finishLoading = () => {
       setLoading(false);
-    }, 2000);
+      // Dispatch an event so other components (like Hero) know when to start
+      window.dispatchEvent(new Event("preloaderFinished"));
+    };
 
-    return () => clearTimeout(timer);
+    const handleLoad = () => {
+      // Pequeño buffer para asegurar que la animación de entrada se vea fluida
+      setTimeout(finishLoading, 400);
+    };
+
+    if (document.readyState === "complete") {
+      handleLoad();
+    } else {
+      window.addEventListener("load", handleLoad);
+      // Failsafe: nunca bloquear la pantalla por más de 1.5s artificialmente
+      const fallback = setTimeout(finishLoading, 1500);
+      
+      return () => {
+        window.removeEventListener("load", handleLoad);
+        clearTimeout(fallback);
+      };
+    }
   }, []);
 
   return (
@@ -25,7 +41,7 @@ export default function Preloader() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: "easeInOut" }}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#10162A]"
+          className="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-[#10162A]"
         >
           {/* Logo - Ahora es el punto focal principal */}
           <motion.div

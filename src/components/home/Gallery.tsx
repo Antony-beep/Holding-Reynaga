@@ -16,11 +16,18 @@ export default function Gallery() {
   return (
     <section id="galeria" className="py-12 md:py-20 bg-surface">
       <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
-        <div className="text-center mb-10 md:mb-14">
-          <h2 className="text-display font-display text-3xl md:text-4xl lg:text-5xl text-deep-navy font-bold tracking-tight mb-4">
-            Espacios de <span className="text-primary text-gradient">Conexión</span>
+        <div className="text-center mb-10 md:mb-14 flex flex-col items-center">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-1.5 h-6 bg-gradient-to-b from-[#BF953F] to-[#B38728] rounded-full"></div>
+            <span className="font-display font-bold text-[#B38728] tracking-[0.15em] text-xs md:text-sm uppercase bg-[#BF953F]/10 px-4 py-1.5 rounded-full border border-[#BF953F]/20">
+              Amenidades Premium
+            </span>
+            <div className="w-1.5 h-6 bg-gradient-to-b from-[#BF953F] to-[#B38728] rounded-full hidden sm:block"></div>
+          </div>
+          <h2 className="text-display font-black text-4xl md:text-5xl lg:text-6xl text-deep-navy tracking-tighter mb-6 leading-[1.1]">
+            Espacios de <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#BF953F] via-[#D4AF37] to-[#996515]">Conexión</span>
           </h2>
-          <p className="text-on-surface/70 font-body text-sm md:text-base max-w-2xl mx-auto">
+          <p className="text-deep-navy/70 font-body text-base md:text-lg max-w-2xl mx-auto leading-relaxed font-light">
             Áreas diseñadas para elevar tu estilo de vida cotidiano, desde el primer café hasta el atardecer en el rooftop.
           </p>
         </div>

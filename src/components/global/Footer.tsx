@@ -74,9 +74,12 @@ export default function Footer() {
           <div className="flex flex-col items-center md:items-start gap-4">
             <h3 className="font-display text-xl text-primary-container font-semibold uppercase tracking-widest">Enlaces Rápidos</h3>
             <div className="flex flex-col gap-3 mt-3">
-              <Link href="#nosotros" className="text-surface/80 hover:text-white transition-colors">Compañía</Link>
-              <Link href="#titanium" className="text-surface/80 hover:text-white transition-colors">Torres Titanium</Link>
-              <Link href="#departamentos" className="text-surface/80 hover:text-white transition-colors">Catálogo de Departamentos</Link>
+              <Link href="#nosotros" className="text-surface/80 hover:text-white transition-colors">Nosotros</Link>
+              <Link href="#ubicacion" className="text-surface/80 hover:text-white transition-colors">Ubicación</Link>
+              <Link href="#galeria" className="text-surface/80 hover:text-white transition-colors">Áreas Comunes</Link>
+              <Link href="#recorrido" className="text-surface/80 hover:text-white transition-colors">Tour 360°</Link>
+              <Link href="#departamentos" className="text-surface/80 hover:text-white transition-colors">Departamentos</Link>
+              <Link href="#titanium" className="text-surface/80 hover:text-white transition-colors">Dossier Informativo</Link>
               <Link href="#reserva" className="text-primary hover:text-white transition-colors font-medium mt-2">Reservar Unidad</Link>
             </div>
           </div>

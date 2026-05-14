@@ -6,6 +6,7 @@ import VirtualTour from "@/components/home/VirtualTour";
 import Catalog from "@/components/home/Catalog";
 import Gallery from "@/components/home/Gallery";
 import DossierForm from "@/components/home/DossierForm";
+import FAQ from "@/components/home/FAQ";
 
 export default function Home() {
   return (
@@ -13,10 +14,11 @@ export default function Home() {
       <Hero />
       <About />
       <Location />
-      <ProjectOverview />
       <Gallery />
       <VirtualTour />
       <Catalog />
+      <ProjectOverview />
+      <FAQ />
       <DossierForm />
     </div>
   );

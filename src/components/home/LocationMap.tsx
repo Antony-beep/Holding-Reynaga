@@ -173,6 +173,13 @@ export default function LocationMap({ activeLocationId }: LocationMapProps) {
           zIndexOffset={
             activeLocationId === loc.id ? 1000 : loc.type === "main" ? 500 : 0
           }
+          eventHandlers={{
+            click: () => {
+              if (loc.id === "titanium") {
+                window.open("https://maps.app.goo.gl/MDkQS5EhgYxrCp5b8", "_blank", "noopener,noreferrer");
+              }
+            }
+          }}
         />
       ))}
     </MapContainer>
