@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import { GraduationCap, TreePine, ShoppingBag, ShoppingCart } from "lucide-react";
+import { GraduationCap, TreePine, ShoppingBag, ShoppingCart, Activity } from "lucide-react";
 
 const LocationMap = dynamic(() => import("./LocationMap"), { 
   ssr: false, 
@@ -14,14 +14,16 @@ export default function Location() {
 
   const pointsOfInterest = [
     { id: "continental", name: "Universidad Continental", time: "1 min", Icon: GraduationCap },
-    { id: "upla", name: "UPLA", time: "3 min", Icon: GraduationCap },
+    { id: "upla", name: "UPLA", time: "7 min", Icon: GraduationCap },
     { id: "roosevelt", name: "Roosevelt", time: "4 min", Icon: GraduationCap },
-    { id: "grau", name: "Parque Grau", time: "2 min", Icon: TreePine },
-    { id: "identidad", name: "Parque Identidad Wanka", time: "4 min", Icon: TreePine },
+    { id: "grau", name: "Parque Grau", time: "4 min", Icon: TreePine },
+    { id: "identidad", name: "Parque Identidad Wanka", time: "2 min", Icon: TreePine },
     { id: "tupac", name: "Parque Túpac", time: "8 min", Icon: TreePine },
     { id: "makro", name: "Makro", time: "5 min", Icon: ShoppingCart },
     { id: "mallplaza", name: "C.C. Mallplaza Huancayo", time: "8 min", Icon: ShoppingBag },
-    { id: "realplaza", name: "C.C. Real Plaza", time: "12 min", Icon: ShoppingBag }
+    { id: "realplaza", name: "C.C. Real Plaza", time: "12 min", Icon: ShoppingBag },
+    { id: "elcarmen", name: "Hospital El Carmen", time: "5 min", Icon: Activity },
+    { id: "lalibertad", name: "Hospital La Libertad", time: "7 min", Icon: Activity }
   ];
 
   return (
@@ -90,7 +92,7 @@ export default function Location() {
           </div>
 
           {/* Map Container (Right) */}
-          <div className="w-full lg:w-1/2 relative h-[500px] sm:h-[550px] lg:h-auto overflow-hidden shrink-0">
+          <div className="w-full lg:w-1/2 relative h-[400px] sm:h-[550px] lg:h-auto overflow-hidden shrink-0">
              <div className="absolute inset-0 bg-deep-navy/10 z-10 pointer-events-none mix-blend-overlay lg:hidden" />
              <div className="absolute inset-0 z-0">
                <LocationMap activeLocationId={activeLocationId} />

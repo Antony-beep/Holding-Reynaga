@@ -1,14 +1,35 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
+import { createPortal } from "react-dom";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { APARTMENTS } from "@/data/apartments";
 
 export default function Catalog() {
   const [activeTab, setActiveTab] = useState(APARTMENTS[0].type);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Prevenir scroll del cuerpo de la página cuando el lightbox está abierto
+  useEffect(() => {
+    if (isLightboxOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isLightboxOpen]);
 
   const activeApartment = APARTMENTS.find(a => a.type === activeTab) || APARTMENTS[0];
 
@@ -107,20 +128,24 @@ export default function Catalog() {
             <>
               {/* Main Display (65%) */}
               <div className="lg:w-[65%] bg-surface-container-lowest rounded-3xl overflow-hidden shadow-architectural group relative flex flex-col">
-                <div className="relative w-full h-[450px] lg:h-[550px] xl:h-[600px] overflow-hidden bg-deep-navy">
+                <div 
+                  className="relative w-full h-[450px] lg:h-[550px] xl:h-[600px] overflow-hidden bg-deep-navy cursor-pointer"
+                  onClick={() => setIsLightboxOpen(true)}
+                >
                   
                   {/* Blurred Backdrop for Portrait Images */}
                   {activeApartment.images && activeApartment.images.map((imgName, idx) => {
                     const isActive = activeImageIndex === idx;
                     return (
-                      <img 
+                      <Image 
                         key={`blur-${idx}`}
                         src={`${activeApartment.basePath}/${imgName}`}
                         alt=""
-                        loading={idx === 0 ? "eager" : "lazy"}
-                        decoding="async"
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 65vw"
+                        priority={idx === 0}
                         style={{ transitionProperty: 'opacity, transform', willChange: 'opacity, transform' }}
-                        className={`absolute inset-0 w-full h-full object-cover blur-2xl duration-1000 ease-in-out transform-gpu pointer-events-none ${
+                        className={`object-cover blur-2xl duration-1000 ease-in-out transform-gpu pointer-events-none ${
                           isActive ? 'opacity-40 scale-110 z-0' : 'opacity-0 scale-100 -z-10'
                         }`}
                       />
@@ -131,18 +156,19 @@ export default function Catalog() {
                   {activeApartment.images && activeApartment.images.map((imgName, idx) => {
                     const isActive = activeImageIndex === idx;
                     return (
-                      <img 
+                      <Image 
                         key={`main-${idx}`}
                         src={`${activeApartment.basePath}/${imgName}`}
-                        loading={idx === 0 ? "eager" : "lazy"}
-                        decoding="async"
+                        priority={idx === 0}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 65vw"
                         style={{ transitionProperty: 'opacity, transform', willChange: 'opacity, transform' }}
                         onError={(e) => { 
-                          e.currentTarget.onerror = null; 
+                          e.currentTarget.srcset = ""; 
                           e.currentTarget.src = "/images/Otraseccion.png"; 
                         }}
                         alt={`Departamento en venta Tipo ${activeApartment.type} en San Carlos Huancayo - Imagen ${idx + 1}`}
-                        className={`absolute inset-0 w-full h-full object-contain duration-1000 ease-in-out transform-gpu pointer-events-none group-hover:scale-105 ${
+                        className={`object-contain duration-1000 ease-in-out transform-gpu pointer-events-none group-hover:scale-105 ${
                           isActive ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-[1.02]'
                         }`}
                       />
@@ -160,7 +186,7 @@ export default function Catalog() {
                   {activeApartment.images && activeApartment.images.length > 1 && (
                     <>
                       <button 
-                        onClick={handlePrevImage}
+                        onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
                         disabled={isPending}
                         className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 backdrop-blur-md p-2 md:p-3 rounded-full text-white transition-all z-30 shadow-sm hover:scale-110 border border-white/10 disabled:opacity-50"
                         aria-label="Imagen anterior"
@@ -168,7 +194,7 @@ export default function Catalog() {
                         <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
                       </button>
                       <button 
-                        onClick={handleNextImage}
+                        onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
                         disabled={isPending}
                         className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 backdrop-blur-md p-2 md:p-3 rounded-full text-white transition-all z-30 shadow-sm hover:scale-110 border border-white/10 disabled:opacity-50"
                         aria-label="Siguiente imagen"
@@ -181,7 +207,7 @@ export default function Catalog() {
                         {activeApartment.images.map((_, idx) => (
                           <button
                             key={idx}
-                            onClick={() => handleDotClick(idx)}
+                            onClick={(e) => { e.stopPropagation(); handleDotClick(idx); }}
                             disabled={isPending}
                             aria-label={`Ver imagen ${idx + 1}`}
                             className={`transition-all duration-300 rounded-full shadow-sm disabled:cursor-not-allowed ${
@@ -237,6 +263,64 @@ export default function Catalog() {
         </AnimatePresence>
 
       </div>
+
+      {/* Lightbox Overlay */}
+      {isLightboxOpen && mounted && createPortal(
+        <div 
+          className="fixed inset-0 z-[99999] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center animate-in fade-in duration-300"
+          onClick={() => setIsLightboxOpen(false)}
+        >
+          <button 
+            onClick={(e) => { e.stopPropagation(); setIsLightboxOpen(false); }}
+            className="fixed top-4 left-4 md:top-8 md:left-8 z-[100000] p-3 md:p-4 bg-black/50 hover:bg-black/80 rounded-full text-white transition-colors border border-white/20 backdrop-blur-md"
+            aria-label="Cerrar visor"
+          >
+            <X className="w-6 h-6 md:w-8 md:h-8" />
+          </button>
+
+          {activeApartment.images && activeApartment.images.length > 1 && (
+            <>
+              <button 
+                onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
+                className="absolute left-4 md:left-10 top-1/2 -translate-y-1/2 z-[100000] p-2 md:p-3 bg-white/5 hover:bg-white/20 rounded-full text-white transition-colors border border-white/10 backdrop-blur-sm"
+              >
+                <ChevronLeft className="w-8 h-8 md:w-12 md:h-12" />
+              </button>
+
+              <button 
+                onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
+                className="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 z-[100000] p-2 md:p-3 bg-white/5 hover:bg-white/20 rounded-full text-white transition-colors border border-white/10 backdrop-blur-sm"
+              >
+                <ChevronRight className="w-8 h-8 md:w-12 md:h-12" />
+              </button>
+            </>
+          )}
+
+          <div 
+            className="relative w-[95vw] h-[75vh] md:w-[90vw] md:h-[85vh] flex items-center justify-center cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={`${activeApartment.basePath}/${activeApartment.images[activeImageIndex]}`}
+              alt={`Vista ampliada ${activeApartment.type}`}
+              fill
+              sizes="(max-width: 768px) 95vw, 90vw"
+              className="object-contain"
+              onError={(e) => { 
+                e.currentTarget.srcset = ""; 
+                e.currentTarget.src = "/images/Otraseccion.png"; 
+              }}
+            />
+          </div>
+
+          <div className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-6 cursor-default" onClick={(e) => e.stopPropagation()}>
+            <span className="text-white font-bold tracking-widest uppercase text-xs md:text-sm bg-black/50 px-6 py-2 rounded-full border border-white/10 backdrop-blur-md">
+              {activeApartment.type}
+            </span>
+          </div>
+        </div>,
+        document.body
+      )}
     </section>
   );
 }

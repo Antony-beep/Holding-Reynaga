@@ -19,9 +19,6 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Torres Titanium | Holding Reynaga",
   description: "Una obra maestra arquitectónica en Huancayo. Lujo, exclusividad y ubicación privilegiada.",
-  icons: {
-    icon: "/images/logo_cortado.webp",
-  },
 };
 
 export default function RootLayout({

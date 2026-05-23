@@ -1,13 +1,14 @@
 "use client";
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useTransition } from 'react';
 
 export default function WhatsAppFAB() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [isPreloading, setIsPreloading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     // Handle scroll for visibility
@@ -54,7 +55,7 @@ export default function WhatsAppFAB() {
       <div className="relative flex flex-col items-end">
         
         {/* The Form */}
-        <div className={`absolute bottom-full right-0 mb-4 w-[340px] sm:w-[380px] bg-white/95 backdrop-blur-xl rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] border border-white p-7 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] origin-bottom-right overflow-hidden ${
+        <div className={`fixed sm:absolute bottom-[100px] sm:bottom-full left-1/2 sm:left-auto right-1/2 sm:right-0 -translate-x-1/2 sm:translate-x-0 mb-4 w-[90vw] max-w-[380px] sm:w-[380px] bg-white/95 backdrop-blur-xl rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] border border-white p-7 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] origin-bottom sm:origin-bottom-right overflow-hidden ${
           isFormOpen 
             ? "opacity-100 scale-100 translate-y-0 pointer-events-auto" 
             : "opacity-0 scale-95 translate-y-4 pointer-events-none"
@@ -151,14 +152,17 @@ export default function WhatsAppFAB() {
 
         {/* The Golden Button */}
         <button 
-          onClick={() => setIsFormOpen(!isFormOpen)}
-          className="flex items-center gap-2.5 bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37] bg-[length:200%_auto] hover:bg-[position:right_center] text-deep-navy px-6 py-3.5 rounded-lg font-display font-bold text-sm shadow-[0_10px_20px_rgba(212,175,55,0.3)] hover:shadow-[0_15px_30px_rgba(212,175,55,0.4)] hover:-translate-y-1 transition-all duration-500 relative overflow-hidden group/btn border border-white/40"
+          onClick={() => startTransition(() => setIsFormOpen(!isFormOpen))}
+          className="flex items-center gap-1.5 sm:gap-2.5 bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37] bg-[length:200%_auto] hover:bg-[position:right_center] text-deep-navy px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-lg font-display font-bold text-sm shadow-[0_10px_20px_rgba(212,175,55,0.3)] hover:shadow-[0_15px_30px_rgba(212,175,55,0.4)] hover:-translate-y-1 transition-all duration-500 relative overflow-hidden group/btn border border-white/40"
         >
           {/* Shine Effect */}
           <div className="absolute inset-0 z-0 pointer-events-none w-1/3 bg-gradient-to-r from-transparent via-white/70 to-transparent animate-gold-shine mix-blend-overlay" />
           
-          <span className="relative z-10 tracking-wide uppercase text-xs sm:text-sm font-black">Reserva tu futuro ahora</span>
-          <svg className={`w-4 h-4 transition-transform duration-300 relative z-10 ${isFormOpen ? "rotate-90" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+          <span className="relative z-10 tracking-wide uppercase text-[10px] sm:text-xs md:text-sm font-black whitespace-nowrap">
+            <span className="hidden sm:inline">Reserva tu futuro ahora</span>
+            <span className="inline sm:hidden">Reserva ahora</span>
+          </span>
+          <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-300 relative z-10 ${isFormOpen ? "rotate-90" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
         </button>
 
       </div>
@@ -168,9 +172,9 @@ export default function WhatsAppFAB() {
         href="https://wa.me/51981407634" 
         target="_blank" 
         rel="noopener noreferrer"
-        className="flex items-center justify-center p-4 bg-[#25D366] hover:bg-[#20bd5a] rounded-full shadow-lg text-white transition-all duration-300 hover:-translate-y-1 animate-pulse-wa z-50 flex-shrink-0"
+        className="flex items-center justify-center p-3 sm:p-4 bg-[#25D366] hover:bg-[#20bd5a] rounded-full shadow-lg text-white transition-all duration-300 hover:-translate-y-1 animate-pulse-wa z-50 flex-shrink-0"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 sm:w-7 sm:h-7" fill="currentColor" viewBox="0 0 16 16">
           <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c-.003 1.396.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.005-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
         </svg>
       </Link>

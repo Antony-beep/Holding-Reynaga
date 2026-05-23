@@ -45,7 +45,7 @@ export default function About() {
               transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }} 
               className="font-body text-on-surface/80 text-xl mb-12 leading-relaxed max-w-lg"
             >
-              Inspirados en la solidez del concreto y la calidez del bronce, Holding Reynaga redefine el horizonte urbano con una propuesta que equilibra la estética minimalista y el confort absoluto. Cada ángulo ha sido diseñado para maximizar la luz natural y ofrecer espacios que respiran.
+              Inspirados en la solidez del concreto y la alta duración del titanium, Holding Reynaga redefine el horizonte urbano con una propuesta que equilibra la estética minimalista y el confort absoluto. Cada ángulo ha sido diseñado para maximizar la luz natural y ofrecer espacios que respiran.
             </motion.p>
 
             {/* Stats row */}

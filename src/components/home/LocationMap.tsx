@@ -70,6 +70,18 @@ const mapLocations = [
     type: "commercial",
     name: "Real Plaza",
   },
+  {
+    id: "elcarmen",
+    coords: [-12.069799, -75.214119] as [number, number],
+    type: "hospital",
+    name: "Hospital El Carmen",
+  },
+  {
+    id: "lalibertad",
+    coords: [-12.051582, -75.189645] as [number, number],
+    type: "hospital",
+    name: "Hospital La Libertad",
+  },
 ];
 
 const SVGS = {
@@ -95,6 +107,7 @@ const SVGS = {
   education: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full text-[#00224A]"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
   park: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full text-[#4A5D23]"><path d="M12 22v-7"/><path d="M12 15C8 15 5 11 5 7a7 7 0 0 1 14 0c0 4-3 8-7 8z"/></svg>`,
   commercial: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full text-[#00224A]"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`,
+  hospital: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full text-[#9B111E]"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
 };
 
 const createCustomIcon = (

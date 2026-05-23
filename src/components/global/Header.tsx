@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
@@ -29,13 +29,14 @@ const TikTokIcon = ({ size = 24, className = "" }) => (
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -56,7 +57,7 @@ export default function Header() {
       }, 1000);
     }
     
-    if (isMobileMenuOpen) setIsMobileMenuOpen(false);
+    if (isMobileMenuOpen) startTransition(() => setIsMobileMenuOpen(false));
   };
 
   const navLinks = [
@@ -77,7 +78,7 @@ export default function Header() {
             : "bg-transparent py-4"
         }`}
       >
-        <div className="container mx-auto px-6 lg:pl-6 lg:pr-28 xl:pr-6 max-w-7xl flex items-center justify-between">
+        <div className="container mx-auto px-6 xl:pr-6 max-w-7xl flex items-center justify-between">
           <Link href="/" className={`relative z-50 transition-transform duration-300 origin-left ${isScrolled ? "scale-[0.85]" : "scale-100"}`}>
             {/* Default to white logic if hero is dark and not scrolled, else original logo */}
             <Image
@@ -94,7 +95,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-4 xl:gap-8">
+          <nav className="hidden xl:flex items-center gap-4 xl:gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -117,32 +118,44 @@ export default function Header() {
 
           {/* Mobile Toggle */}
           <button
-            className="lg:hidden relative z-50 text-white mix-blend-difference"
-            onClick={() => setIsMobileMenuOpen(true)}
+            className="xl:hidden relative z-50 text-white mix-blend-difference"
+            onClick={() => startTransition(() => setIsMobileMenuOpen(true))}
           >
             <Menu size={28} color="#fff" />
           </button>
+        </div>
+
+        {/* Sub-bar: Holding Reynaga presenta (Appears on scroll) */}
+        <div 
+          className={`absolute left-0 w-full bg-[#f4f4f4] border-b border-black/5 transition-all duration-500 ease-out overflow-hidden flex items-center justify-center shadow-sm ${
+            isScrolled ? "h-6 opacity-100 top-full" : "h-0 opacity-0 top-[80%]"
+          }`}
+        >
+          <span className="text-[6.5px] min-[340px]:text-[7px] min-[360px]:text-[8px] sm:text-[9px] md:text-[11px] font-black uppercase tracking-normal min-[360px]:tracking-[0.1em] sm:tracking-[0.2em] md:tracking-[0.5em] text-deep-navy/70 whitespace-nowrap">
+            Holding Reynaga <span className="text-primary mx-0.5 sm:mx-1">presenta</span> Torres Titanium
+          </span>
         </div>
       </header>
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`fixed inset-0 bg-surface z-[100] flex flex-col transition-transform duration-500 ease-in-out lg:hidden ${
+        className={`fixed inset-0 bg-deep-navy z-[100] flex flex-col transition-transform duration-500 ease-in-out xl:hidden ${
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* Mobile Menu Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-black/5">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <Image
             src="/images/logo_cortado.webp"
             alt="Holding Reynaga"
             width={180}
             height={45}
             style={{ width: "auto", height: "auto", maxHeight: "45px" }}
+            className="brightness-0 invert opacity-90"
           />
           <button
-            className="text-[#1a1c1c] p-2 rounded-full hover:bg-black/5 transition-colors"
-            onClick={() => setIsMobileMenuOpen(false)}
+            className="text-white p-2 rounded-full hover:bg-white/5 transition-colors"
+            onClick={() => startTransition(() => setIsMobileMenuOpen(false))}
           >
             <X size={32} />
           </button>
@@ -154,7 +167,7 @@ export default function Header() {
             <Link
               key={link.name}
               href={link.href}
-              className="text-display font-display text-4xl text-on-surface transition-colors hover:text-primary cursor-pointer"
+              className="text-display font-display text-4xl text-white/90 transition-colors hover:text-primary cursor-pointer"
               onClick={(e) => scrollToSection(e, link.href)}
             >
               {link.name}
@@ -172,13 +185,13 @@ export default function Header() {
           
           {/* Mobile Social Links */}
           <div className="flex items-center gap-6 mt-12">
-            <a href="https://www.instagram.com/holdingreynaga/" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-surface/20 flex items-center justify-center text-surface/80 hover:bg-gold-metallic hover:text-black hover:border-gold-metallic transition-all duration-300">
+            <a href="https://www.instagram.com/holdingreynaga/" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-white/80 hover:bg-gold-metallic hover:text-black hover:border-gold-metallic transition-all duration-300">
               <InstagramIcon size={22} />
             </a>
-            <a href="https://www.facebook.com/profile.php?id=61588196065630" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-surface/20 flex items-center justify-center text-surface/80 hover:bg-gold-metallic hover:text-black hover:border-gold-metallic transition-all duration-300">
+            <a href="https://www.facebook.com/profile.php?id=61588196065630" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-white/80 hover:bg-gold-metallic hover:text-black hover:border-gold-metallic transition-all duration-300">
               <FacebookIcon size={22} />
             </a>
-            <a href="https://www.tiktok.com/@inmobiliariaholding" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-surface/20 flex items-center justify-center text-surface/80 hover:bg-gold-metallic hover:text-black hover:border-gold-metallic transition-all duration-300">
+            <a href="https://www.tiktok.com/@inmobiliariaholding" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-white/80 hover:bg-gold-metallic hover:text-black hover:border-gold-metallic transition-all duration-300">
               <TikTokIcon size={20} />
             </a>
           </div>

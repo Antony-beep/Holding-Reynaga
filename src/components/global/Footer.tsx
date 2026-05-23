@@ -24,8 +24,8 @@ const TikTokIcon = ({ size = 24, className = "" }) => (
 
 export default function Footer() {
   return (
-    <footer className="bg-deep-navy text-surface py-16" id="contacto">
-      <div className="container mx-auto px-6 max-w-7xl">
+    <footer className="bg-deep-navy text-surface py-16 relative overflow-hidden border-t border-t-[#D4AF37]/20" id="contacto">
+      <div className="container mx-auto px-6 max-w-7xl relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
           {/* Brand */}
           <div className="flex flex-col items-center md:items-start gap-6">
@@ -37,56 +37,84 @@ export default function Footer() {
               style={{ width: "auto", height: "auto" }}
               className="brightness-0 invert opacity-100"
             />
-            <p className="text-surface/80 max-w-sm font-body leading-relaxed">
+            <p className="text-surface/80 max-w-sm font-body leading-relaxed text-sm sm:text-base">
               Desarrollando espacios urbanos de alto valor, diseño excepcional y exclusividad en el corazón de Huancayo.
             </p>
             
             {/* Social Links */}
             <div className="flex items-center gap-5 mt-2">
-              <a href="https://www.instagram.com/holdingreynaga/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-surface/10 flex items-center justify-center text-white/80 hover:bg-gold-metallic hover:text-black transition-all duration-300">
-                <InstagramIcon size={20} />
+              <a href="https://www.instagram.com/holdingreynaga/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/80 hover:bg-primary/20 hover:border-primary/50 hover:text-white transition-all duration-300 hover:-translate-y-1 shadow-sm hover:shadow-primary/20">
+                <InstagramIcon size={18} />
               </a>
-              <a href="https://www.facebook.com/profile.php?id=61588196065630" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-surface/10 flex items-center justify-center text-white/80 hover:bg-gold-metallic hover:text-black transition-all duration-300">
-                <FacebookIcon size={20} />
+              <a href="https://www.facebook.com/profile.php?id=61588196065630" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/80 hover:bg-primary/20 hover:border-primary/50 hover:text-white transition-all duration-300 hover:-translate-y-1 shadow-sm hover:shadow-primary/20">
+                <FacebookIcon size={18} />
               </a>
-              <a href="https://www.tiktok.com/@inmobiliariaholding" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-surface/10 flex items-center justify-center text-white/80 hover:bg-gold-metallic hover:text-black transition-all duration-300">
-                <TikTokIcon size={18} />
+              <a href="https://www.tiktok.com/@inmobiliariaholding" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/80 hover:bg-primary/20 hover:border-primary/50 hover:text-white transition-all duration-300 hover:-translate-y-1 shadow-sm hover:shadow-primary/20">
+                <TikTokIcon size={16} />
               </a>
             </div>
           </div>
 
           {/* Contacto */}
           <div className="flex flex-col items-center md:items-start gap-4">
-            <h3 className="font-display text-xl text-primary-container font-semibold uppercase tracking-widest">Oficina de Ventas</h3>
-            <div className="flex flex-col gap-4 mt-3">
-              <a href="tel:+51981407634" className="flex items-center gap-3 text-surface/90 hover:text-white transition-colors">
-                <Phone size={20} className="text-primary-container" />
-                <span className="font-medium">+51 981 407 634</span>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-[1px] w-8 bg-gradient-to-r from-primary to-transparent hidden md:block"></div>
+              <h3 className="font-display text-xs md:text-sm text-primary font-bold uppercase tracking-[0.2em]">Oficina de Ventas</h3>
+            </div>
+            <div className="flex flex-col gap-5 mt-2 w-full max-w-[300px] md:max-w-none mx-auto md:mx-0">
+              <a href="tel:+51981407634" className="flex items-center gap-4 text-surface/80 hover:text-white transition-colors group">
+                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-primary/20 group-hover:border-primary/50 transition-colors shrink-0">
+                  <Phone size={18} className="text-primary" />
+                </div>
+                <span className="font-medium text-sm sm:text-base">+51 981 407 634</span>
               </a>
-              <div className="flex items-start gap-3 text-surface/90 text-left">
-                <MapPin size={20} className="text-primary-container mt-1 shrink-0" />
-                <span className="font-medium max-w-[250px]">Jr. Lino 132 oficina 401 a una cuadra del parque grau</span>
+              <a href="mailto:holdingreynagaredes@gmail.com" className="flex items-center gap-4 text-surface/80 hover:text-white transition-colors group">
+                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-primary/20 group-hover:border-primary/50 transition-colors shrink-0">
+                  <Mail size={18} className="text-primary" />
+                </div>
+                <span className="font-medium break-all text-xs sm:text-sm">holdingreynagaredes@gmail.com</span>
+              </a>
+              <div className="flex items-start gap-4 text-surface/80 text-left group">
+                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-primary/20 group-hover:border-primary/50 transition-colors shrink-0 mt-1">
+                  <MapPin size={18} className="text-primary" />
+                </div>
+                <span className="font-medium max-w-[220px] text-sm sm:text-base leading-relaxed">
+                  Jr. Lino 132, Oficina 401<br/>
+                  <span className="text-xs text-surface/60 font-light block mt-0.5">A una cuadra del parque Grau</span>
+                </span>
               </div>
             </div>
           </div>
 
           {/* Links */}
           <div className="flex flex-col items-center md:items-start gap-4">
-            <h3 className="font-display text-xl text-primary-container font-semibold uppercase tracking-widest">Enlaces Rápidos</h3>
-            <div className="flex flex-col gap-3 mt-3">
-              <Link href="#nosotros" className="text-surface/80 hover:text-white transition-colors">Nosotros</Link>
-              <Link href="#ubicacion" className="text-surface/80 hover:text-white transition-colors">Ubicación</Link>
-              <Link href="#galeria" className="text-surface/80 hover:text-white transition-colors">Áreas Comunes</Link>
-              <Link href="#recorrido" className="text-surface/80 hover:text-white transition-colors">Tour 360°</Link>
-              <Link href="#departamentos" className="text-surface/80 hover:text-white transition-colors">Departamentos</Link>
-              <Link href="#titanium" className="text-surface/80 hover:text-white transition-colors">Dossier Informativo</Link>
-              <Link href="#reserva" className="text-primary hover:text-white transition-colors font-medium mt-2">Reservar Unidad</Link>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-[1px] w-8 bg-gradient-to-r from-primary to-transparent hidden md:block"></div>
+              <h3 className="font-display text-xs md:text-sm text-primary font-bold uppercase tracking-[0.2em]">Enlaces Rápidos</h3>
+            </div>
+            <div className="flex flex-col gap-3 mt-2 text-center md:text-left">
+              <Link href="#nosotros" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Nosotros</Link>
+              <Link href="#ubicacion" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Ubicación</Link>
+              <Link href="#galeria" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Áreas Comunes</Link>
+              <Link href="#recorrido" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Tour 360°</Link>
+              <Link href="#departamentos" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Departamentos</Link>
+              <Link href="#titanium" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block mb-2">Dossier Informativo</Link>
+              
+              <Link href="#reserva" className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#BF953F] via-[#F3E5AB] to-[#D4AF37] bg-[length:200%_auto] hover:bg-[position:right_center] text-deep-navy font-bold px-6 py-3 rounded-xl transition-all duration-500 hover:-translate-y-1 shadow-[0_10px_20px_rgba(212,175,55,0.2)] hover:shadow-[0_15px_30px_rgba(212,175,55,0.3)] mt-2 w-fit mx-auto md:mx-0 text-xs sm:text-sm uppercase tracking-widest border border-white/40">
+                Reservar Unidad
+              </Link>
             </div>
           </div>
         </div>
         
-        <div className="mt-16 pt-8 border-t border-surface/10 text-center text-sm text-surface/60 font-body">
-          <p>&copy; {new Date().getFullYear()} Holding Reynaga. Todos los derechos reservados.</p>
+        {/* Bottom Bar */}
+        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs sm:text-sm text-surface/50 font-body">
+          <p className="order-2 md:order-1 text-center md:text-left">&copy; {new Date().getFullYear()} Holding Reynaga. Todos los derechos reservados.</p>
+          <div className="flex items-center justify-center gap-4 sm:gap-6 order-1 md:order-2 flex-wrap">
+            <Link href="/terminos-y-condiciones" className="hover:text-white transition-colors">Términos y Condiciones</Link>
+            <span className="w-1 h-1 rounded-full bg-surface/30"></span>
+            <Link href="/terminos-y-condiciones" className="hover:text-white transition-colors">Políticas de Privacidad</Link>
+          </div>
         </div>
       </div>
     </footer>

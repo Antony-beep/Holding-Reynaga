@@ -63,16 +63,19 @@ export default function TermsPage() {
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
                     <Eye className="w-6 h-6" />
                   </div>
-                  <h2 className="text-2xl font-black m-0 tracking-tight">2. NATURALEZA DE LA INFORMACIÓN INMOBILIARIA</h2>
+                  <h2 className="text-2xl font-black m-0 tracking-tight">2. NATURALEZA DE LA INFORMACIÓN INMOBILIARIA (IMÁGENES REFERENCIALES)</h2>
                 </div>
                 <p>
-                  Toda la información visual y textual contenida en este sitio web, incluyendo renders, recorridos 360°, planos, metrajes y descripciones de áreas comunes, constituye una representación artística e ilustrativa del proyecto.
+                  Toda la información visual y textual contenida en este sitio web, incluyendo de manera enunciativa pero no limitativa: imágenes, renders, fotografías, videos, recorridos 360°, planos, diseño de interiores, metrajes y descripciones de áreas comunes, son estrictamente de carácter referencial y constituyen una representación artística e ilustrativa del proyecto.
+                </p>
+                <p>
+                  Las imágenes pueden mostrar mobiliario, equipamiento o acabados que no están incluidos en la entrega final del inmueble o que podrían sufrir modificaciones por razones técnicas o arquitectónicas durante la obra.
                 </p>
                 <p>
                   Los precios anunciados (ej. precios de preventa) y las condiciones de reserva (ej. separación con S/ 1,000) están sujetos a disponibilidad, variaciones del mercado y pueden ser modificados por la empresa sin previo aviso.
                 </p>
                 <p>
-                  Las características definitivas del inmueble serán única y exclusivamente las que se estipulen en el contrato de compraventa suscrito entre las partes.
+                  Las características definitivas, exactas y vinculantes del inmueble (así como los acabados finales) serán única y exclusivamente las que se estipulen de manera expresa en el contrato de compraventa y en las especificaciones técnicas suscritas entre las partes.
                 </p>
               </section>
 
@@ -103,7 +106,7 @@ export default function TermsPage() {
 
                 <h3 className="text-xl font-bold mt-8 mb-4">3.3. Derechos ARCO:</h3>
                 <p>
-                  Usted puede ejercer sus derechos de Acceso, Rectificación, Cancelación y Oposición sobre sus datos personales comunicándose al número oficial <strong>981407634</strong> o enviando una solicitud a nuestro domicilio legal en Jr. Lino Nro. 132, Oficina 401, Huancayo.
+                  Usted puede ejercer sus derechos de Acceso, Rectificación, Cancelación y Oposición sobre sus datos personales comunicándose al número oficial <strong>981407634</strong>, enviando un correo a <strong>holdingreynagaredes@gmail.com</strong> o enviando una solicitud a nuestro domicilio legal en Jr. Lino Nro. 132, Oficina 401, Huancayo.
                 </p>
               </section>
 
@@ -159,6 +162,7 @@ export default function TermsPage() {
                 </div>
                 <ul className="list-none p-0 space-y-4">
                   <li><strong>Teléfono / WhatsApp de Ventas:</strong> 981407634</li>
+                  <li><strong>Correo Electrónico:</strong> holdingreynagaredes@gmail.com</li>
                   <li><strong>Sala de Ventas / Proyecto:</strong> Av. San Agustín 154, San Carlos, Huancayo.</li>
                   <li><strong>Oficina Administrativa:</strong> Jr. Lino Nro. 132, Oficina 401, Huancayo Cercado.</li>
                 </ul>

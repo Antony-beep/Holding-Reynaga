@@ -16,7 +16,7 @@ const PriceTag = ({ className = "" }: { className?: string }) => (
     className={`cursor-pointer origin-[10%_50%] hover:scale-[1.05] transition-transform duration-300 hero-tag-animated drop-shadow-[0_15px_30px_rgba(0,0,0,0.4)] relative inline-block group ${className}`}
   >
     <div
-      className="overflow-hidden w-[220px] xl:w-[260px] relative inline-block backdrop-blur-md rounded-r-xl border-[0.5px] border-white/10"
+      className="overflow-hidden w-[200px] xl:w-[240px] relative inline-block backdrop-blur-md rounded-r-xl border-[0.5px] border-white/10"
       style={{
         clipPath: "polygon(1.5rem 0, 100% 0, 100% 100%, 1.5rem 100%, 0 50%)",
       }}
@@ -25,13 +25,13 @@ const PriceTag = ({ className = "" }: { className?: string }) => (
       <div className="absolute left-[0.45rem] top-[50%] -translate-y-1/2 w-3 h-3 bg-[#0a0f1a]/80 border-[1.5px] border-surface/40 rounded-full z-30 shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)]" />
 
       <div className="bg-gold-metallic pl-10 xl:pl-12 pr-6 pt-5 pb-5 relative z-0 border-b border-[#FFE896]/30">
-        <span className="text-black text-xs xl:text-sm font-black tracking-[0.3em] uppercase block relative z-10 text-left opacity-95">
+        <span className="text-black text-[0.65rem] xl:text-xs font-black tracking-[0.3em] uppercase block relative z-10 text-left opacity-95">
           Separa con
         </span>
       </div>
       <div className="bg-[#001736]/95 pl-10 xl:pl-12 pr-6 pt-5 pb-8 relative z-0">
         <span
-          className="text-surface font-display text-[2.2rem] xl:text-[2.8rem] leading-none font-black italic tracking-tighter drop-shadow-lg inline-block"
+          className="text-surface font-display text-[2rem] xl:text-[2.5rem] leading-none font-black italic tracking-tighter drop-shadow-lg inline-block"
           style={{ textShadow: "1px 1px 0px rgba(0,0,0,0.8)" }}
         >
           S/1,000
@@ -96,7 +96,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative h-screen w-full flex items-center overflow-hidden">
+    <section className="relative min-h-[100dvh] lg:h-screen w-full flex items-center pt-24 sm:pt-28 lg:pt-0 pb-12 lg:pb-0 overflow-hidden">
       <div className="absolute inset-0 z-0 bg-deep-navy">
         {/* Video Background */}
         <video
@@ -287,8 +287,8 @@ export default function Hero() {
         )}
       </div>
 
-      {/* Sidebar Stats Strip - High Prominence */}
-      <div className="hidden lg:flex absolute right-4 xl:right-8 top-1/2 -translate-y-1/2 flex-col items-center gap-5 lg:gap-6 2xl:gap-8 z-40 bg-surface/10 backdrop-blur-md border border-white/20 rounded-2xl py-6 lg:py-8 2xl:py-10 px-3 lg:px-4 2xl:px-5 shadow-[0_15px_40px_rgba(0,0,0,0.3)] transition-all duration-500 hover:bg-surface/20">
+      {/* Vertical Stats Bar - Desktop Only */}
+      <div className="hidden xl:flex absolute right-4 xl:right-8 top-1/2 -translate-y-1/2 flex-col items-center gap-5 lg:gap-6 2xl:gap-8 z-40 bg-surface/10 backdrop-blur-md border border-white/20 rounded-2xl py-6 lg:py-8 2xl:py-10 px-3 lg:px-4 2xl:px-5 shadow-[0_15px_40px_rgba(0,0,0,0.3)] transition-all duration-500 hover:bg-surface/20">
         <div className="flex flex-col items-center gap-2 lg:gap-3 2xl:gap-4 group">
           <span className="text-gold-metallic font-display font-black text-xl lg:text-2xl 2xl:text-4xl tracking-tighter group-hover:scale-110 transition-transform drop-shadow-lg">
             13
@@ -333,11 +333,11 @@ export default function Hero() {
       </div>
 
       {/* Content Container */}
-      <div className="relative z-10 px-6 md:px-12 max-w-[90rem] mx-auto w-full mt-24 lg:mt-6 xl:mt-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-          {/* Left Column Text & CTAs */}
+      <div className="relative z-10 px-6 md:px-12 max-w-[90rem] mx-auto w-full mt-4 lg:mt-6 xl:mt-16">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8 items-center">
+          {/* Left Column (Content) */}
           <motion.div
-            className="col-span-1 lg:col-span-7 xl:col-span-6 flex flex-col items-start text-left"
+            className="col-span-1 xl:col-span-6 flex flex-col items-start text-left"
             initial="hidden"
             animate="visible"
             variants={{
@@ -512,7 +512,7 @@ export default function Hero() {
                 onClick={(e) => scrollToSection(e, "reserva")}
                 className="bg-gold-metallic text-black px-4 sm:px-6 xl:px-8 py-3.5 sm:py-4 rounded-lg font-body font-black tracking-[0.15em] sm:tracking-widest transition-all duration-300 hover:scale-105 hover:brightness-110 uppercase text-[0.65rem] sm:text-sm lg:text-xs xl:text-sm shadow-[0_0_20px_rgba(212,175,55,0.4)] min-h-[48px] sm:min-h-[56px] xl:min-h-[60px] flex items-center justify-center gap-2 sm:gap-3 w-full sm:w-auto border border-[#FFE896]/50 cursor-pointer"
               >
-                Reserva Tu Departamento
+                Separa con S/.1000
                 <svg
                   className="w-3.5 h-3.5 sm:w-5 sm:h-5"
                   fill="none"
@@ -531,7 +531,7 @@ export default function Hero() {
 
             {/* Mobile/Tablet Horizontal Stats Strip */}
             <motion.div
-              className="lg:hidden w-full flex justify-between items-center bg-surface/10 backdrop-blur-xl border border-white/10 rounded-2xl px-4 sm:px-6 py-3 sm:py-4 mt-6 drop-shadow-2xl"
+              className="xl:hidden w-full flex justify-between items-center bg-surface/10 backdrop-blur-xl border border-white/10 rounded-2xl px-4 sm:px-6 py-3 sm:py-4 mt-3 sm:mt-6 drop-shadow-2xl"
               variants={{
                 hidden: { opacity: 0, y: 20 },
                 visible: {
@@ -571,7 +571,7 @@ export default function Hero() {
 
             {/* Mobile Tag (Visible solo en dispositivos móviles) */}
             <motion.div
-              className="mt-6 sm:mt-10 mb-8 w-full flex justify-center lg:hidden z-20 scale-90 sm:scale-100 origin-top"
+              className="mt-3 sm:mt-6 mb-2 sm:mb-8 w-full flex justify-center xl:hidden z-20 scale-75 sm:scale-100 origin-top"
               variants={{
                 hidden: { opacity: 0, scale: 0.8 },
                 visible: {
@@ -593,19 +593,29 @@ export default function Hero() {
           </motion.div>
 
           {/* Right Column (Open for Video visibility) */}
-          <div className="hidden lg:block col-span-5 xl:col-span-6 relative h-full pointer-events-none">
-            {/* Animated Floating Tag positioned over the building */}
-            <div className="absolute top-[18%] xl:top-[12%] right-[-15%] xl:right-[-8%] pointer-events-auto z-50 mix-blend-normal transform scale-[0.75] xl:scale-90 origin-right">
-              <a
-                href="https://wa.me/51981407634?text=Hola,%20quiero%20reservar%20mi%20departamento%20con%20S/1,000"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="cursor-pointer"
-              >
-                <PriceTag />
-              </a>
-            </div>
+          <div className="hidden xl:block col-span-6 relative h-full pointer-events-none">
+            {/* El badge flotante ha sido movido a la raíz de la sección para mantener posición absoluta perfecta respecto al edificio */}
           </div>
+        </div>
+      </div>
+
+      {/* Desktop Floating Tag - Anchored absolute to the main Hero container for perfect alignment */}
+      <div 
+        className="hidden xl:block absolute z-30 pointer-events-auto mix-blend-normal origin-right"
+        style={{
+          top: "clamp(15%, 18vh, 22%)",
+          right: "clamp(8%, 10vw, 12%)"
+        }}
+      >
+        <div className="scale-75 xl:scale-90 2xl:scale-100 transition-transform duration-300 origin-right">
+          <a
+            href="https://wa.me/51981407634?text=Hola,%20quiero%20reservar%20mi%20departamento%20con%20S/1,000"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer block"
+          >
+            <PriceTag />
+          </a>
         </div>
       </div>
 

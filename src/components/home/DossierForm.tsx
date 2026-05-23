@@ -52,10 +52,10 @@ export default function DossierForm() {
         <div className="flex flex-col lg:flex-row bg-white rounded-3xl shadow-architectural border border-surface-container-highest overflow-hidden">
           
           {/* Left Side - Deep Navy */}
-          <div className="lg:w-5/12 bg-deep-navy p-10 md:p-14 flex flex-col relative overflow-hidden">
+          <div className="lg:w-5/12 bg-deep-navy p-8 md:p-14 flex flex-col items-start text-left relative overflow-hidden">
             <div className="absolute top-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
             
-            <div className="relative z-10 mb-10">
+            <div className="relative z-10 mb-10 w-full flex flex-col items-start">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-1 h-4 bg-[#D4AF37] rounded-sm"></div>
                 <span className="font-display font-bold text-[#D4AF37] tracking-[0.15em] text-[10px] md:text-xs uppercase">

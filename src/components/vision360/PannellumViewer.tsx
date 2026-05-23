@@ -34,6 +34,8 @@ export default function PannellumViewer({
               viewerInstance.current.destroy();
             }
 
+            const isMobile = window.innerWidth < 768;
+
             viewerInstance.current = (window as any).pannellum.viewer(
               viewerRef.current.id,
               {
@@ -46,7 +48,7 @@ export default function PannellumViewer({
                 showFullscreenCtrl: true,
                 showZoomCtrl: true,
                 mouseZoom: true,
-                hfov: 120,
+                hfov: isMobile ? 85 : 120,
                 minHfov: 50,
                 maxHfov: 120,
               },

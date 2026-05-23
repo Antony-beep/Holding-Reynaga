@@ -1,21 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
 
 const faqs = [
   {
     question: "¿Dónde está ubicado el proyecto Torres Titanium?",
-    answer: "Torres Titanium está estratégicamente ubicado en la Av. San Agustín 154, San Carlos, Huancayo, Junín. Una zona de alta plusvalía que brinda una conexión inigualable a las instituciones de mayor prestigio como la Universidad Continental y UPLA.",
+    answer: "Torres Titanium está estratégicamente ubicado en San Carlos, Huancayo. Una zona de alta plusvalía que brinda una conexión inigualable a instituciones de mayor prestigio como la Universidad Continental y la UPLA (a solo 7 minutos).",
   },
   {
     question: "¿Cuáles son los precios de preventa y cómo puedo separar mi departamento?",
-    answer: "Actualmente contamos con precios exclusivos de preventa desde S/ 268,509.00 hasta S/ 348,004.00, dependiendo del tipo y tamaño del departamento. Puedes asegurar el tuyo y congelar el precio separándolo con solo S/ 1,000.",
+    answer: "Actualmente contamos con precios exclusivos de preventa desde S/ 157,130.00 hasta S/ 348,004.00, dependiendo del tipo y tamaño del departamento. Puedes asegurar el tuyo y congelar el precio separándolo con solo S/ 1,000.",
   },
   {
     question: "¿Qué tipos de departamentos ofrecen y de cuántos dormitorios?",
-    answer: "Ofrecemos departamentos flat y dúplex diseñados para brindar la máxima comodidad y elegancia. Contamos con distribuciones optimizadas que incluyen opciones de 1, 2 y 3 dormitorios, ideales tanto para familias como para inversión.",
+    answer: "Ofrecemos exactamente 7 tipos de departamentos (Tipo A, B, C, D, F, G y H) en formatos flat y dúplex, diseñados para brindar la máxima comodidad y elegancia. Contamos con distribuciones optimizadas que incluyen opciones de 1, 2 y 3 dormitorios, ideales tanto para familias como para inversión.",
   },
   {
     question: "¿Cuándo es la fecha de entrega del proyecto?",
@@ -29,6 +29,7 @@ const faqs = [
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [isPending, startTransition] = useTransition();
 
   return (
     <section id="faq" className="py-20 md:py-32 bg-surface relative z-10">
@@ -57,7 +58,7 @@ export default function FAQ() {
             >
               <button
                 className="w-full px-6 md:px-8 py-6 flex items-center justify-between text-left focus:outline-none"
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                onClick={() => startTransition(() => setOpenIndex(openIndex === index ? null : index))}
               >
                 <span className="font-display font-bold text-deep-navy text-lg md:text-xl pr-8">
                   {faq.question}
