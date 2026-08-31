@@ -170,7 +170,11 @@ export default function LocationMap({ activeLocationId }: LocationMapProps) {
       attributionControl={false}
       className="w-full h-full bg-surface-container-low"
     >
-      <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        maxZoom={19}
+        className="map-tiles-muted"
+      />
       <MapEffects />
 
       {mapLocations.map((loc) => (

@@ -357,3 +357,9 @@ body {
   animation: gold-shine 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   animation-delay: 2.5s; /* Delays start to avoid LCP impact */
 }
+
+/* Custom map tiles filter for a cleaner, less colorful look */
+.map-tiles-muted {
+  filter: grayscale(100%) opacity(75%) contrast(1.1);
+  transition: filter 0.3s ease;
+}
