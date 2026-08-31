@@ -5,6 +5,7 @@ import "./globals.css";
 import Preloader from "@/components/global/Preloader";
 import StructuredData from "@/components/global/StructuredData";
 import ClientOnlyComponents from "@/components/global/ClientOnlyComponents";
+import MetaPixel from "@/components/global/MetaPixel";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
@@ -35,6 +36,7 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body className="min-h-full flex flex-col font-body bg-background text-foreground overflow-x-hidden text-lg">
+        <MetaPixel />
         <Preloader />
         {children}
         <ClientOnlyComponents />
