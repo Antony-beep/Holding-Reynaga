@@ -133,47 +133,47 @@ export default function Catalog() {
                   onClick={() => setIsLightboxOpen(true)}
                 >
                   
-                  {/* Blurred Backdrop for Portrait Images */}
-                  {activeApartment.images && activeApartment.images.map((imgName, idx) => {
-                    const isActive = activeImageIndex === idx;
-                    return (
+                  {/* Blurred Backdrop for Portrait Images (Active Only to prevent GPU layer memory leak) */}
+                  {activeApartment.images && activeApartment.images.length > 0 && (
+                    <Image 
+                      key={`blur-${activeImageIndex}`}
+                      src={`${activeApartment.basePath}/${activeApartment.images[activeImageIndex]}`}
+                      alt=""
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 65vw"
+                      className="object-cover blur-2xl opacity-0 scale-110 z-0 pointer-events-none animate-fade-in-backdrop"
+                    />
+                  )}
+
+                  {/* Main Foreground Images (Active Only to prevent GPU layer memory leak) */}
+                  {activeApartment.images && activeApartment.images.length > 0 && (
+                    <Image 
+                      key={`main-${activeImageIndex}`}
+                      src={`${activeApartment.basePath}/${activeApartment.images[activeImageIndex]}`}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 65vw"
+                      onError={(e) => { 
+                        e.currentTarget.srcset = ""; 
+                        e.currentTarget.src = "/images/Otraseccion.png"; 
+                      }}
+                      alt={`Departamento en venta Tipo ${activeApartment.type} en San Carlos Huancayo - Imagen ${activeImageIndex + 1}`}
+                      className="object-contain opacity-0 pointer-events-none group-hover:scale-105 animate-fade-in-simple z-10"
+                    />
+                  )}
+
+                  {/* Preload Next Image with Next.js Image component (ensures exact responsive cache hit) */}
+                  {activeApartment.images && activeApartment.images.length > 1 && (
+                    <div className="absolute inset-0 opacity-0 pointer-events-none -z-20" aria-hidden="true">
                       <Image 
-                        key={`blur-${idx}`}
-                        src={`${activeApartment.basePath}/${imgName}`}
+                        key={`preload-next-${activeImageIndex}`}
+                        src={`${activeApartment.basePath}/${activeApartment.images[(activeImageIndex + 1) % activeApartment.images.length]}`}
                         alt=""
                         fill
                         sizes="(max-width: 1024px) 100vw, 65vw"
-                        priority={idx === 0}
-                        style={{ transitionProperty: 'opacity, transform', willChange: 'opacity, transform' }}
-                        className={`object-cover blur-2xl duration-1000 ease-in-out transform-gpu pointer-events-none ${
-                          isActive ? 'opacity-40 scale-110 z-0' : 'opacity-0 scale-100 -z-10'
-                        }`}
+                        priority={false}
                       />
-                    );
-                  })}
-
-                  {/* Main Foreground Images */}
-                  {activeApartment.images && activeApartment.images.map((imgName, idx) => {
-                    const isActive = activeImageIndex === idx;
-                    return (
-                      <Image 
-                        key={`main-${idx}`}
-                        src={`${activeApartment.basePath}/${imgName}`}
-                        priority={idx === 0}
-                        fill
-                        sizes="(max-width: 1024px) 100vw, 65vw"
-                        style={{ transitionProperty: 'opacity, transform', willChange: 'opacity, transform' }}
-                        onError={(e) => { 
-                          e.currentTarget.srcset = ""; 
-                          e.currentTarget.src = "/images/Otraseccion.png"; 
-                        }}
-                        alt={`Departamento en venta Tipo ${activeApartment.type} en San Carlos Huancayo - Imagen ${idx + 1}`}
-                        className={`object-contain duration-1000 ease-in-out transform-gpu pointer-events-none group-hover:scale-105 ${
-                          isActive ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-[1.02]'
-                        }`}
-                      />
-                    );
-                  })}
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-deep-navy/70 via-transparent to-deep-navy/10 pointer-events-none transition-opacity duration-500 z-10" />
                   
                   <div className="absolute top-4 left-4 md:top-6 md:left-6 flex flex-wrap gap-2 z-20">

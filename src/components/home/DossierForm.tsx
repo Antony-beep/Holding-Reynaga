@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import { 
   Phone, Mail, ShieldCheck, Clock, Lock, 
@@ -10,6 +10,7 @@ import {
 
 export default function DossierForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [formData, setFormData] = useState({
     name: "",
     document: "",
@@ -19,6 +20,26 @@ export default function DossierForm() {
     message: "",
     privacy: false
   });
+  
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, target?: string) => {
+    e.preventDefault();
+    startTransition(() => {
+      // Pequeño retraso para permitir que React pinte el feedback visual (hover/active)
+      // antes de que el navegador congele el hilo principal abriendo apps externas.
+      setTimeout(() => {
+        if (target === "_blank") {
+          window.open(href, "_blank", "noopener,noreferrer");
+        } else if (href.startsWith("#")) {
+          const element = document.getElementById(href.substring(1));
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
+        } else {
+          window.location.href = href;
+        }
+      }, 50);
+    });
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -281,7 +302,7 @@ export default function DossierForm() {
         {/* Bottom Bar Container */}
         <div className="mt-8 bg-[#fdfdfd] border border-surface-container-highest rounded-2xl flex flex-col md:flex-row items-center justify-between divide-y md:divide-y-0 md:divide-x divide-surface-container-highest shadow-sm">
           
-          <a href="tel:+51981407634" className="flex-1 flex items-center justify-center gap-4 p-6 w-full hover:bg-black/5 transition-colors rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none group">
+          <a href="tel:+51981407634" onClick={(e) => handleLinkClick(e, "tel:+51981407634")} className="flex-1 flex items-center justify-center gap-4 p-6 w-full hover:bg-black/5 transition-colors rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none group">
             <Headphones className="text-[#D4AF37] w-7 h-7 group-hover:scale-110 transition-transform" />
             <div>
               <p className="text-deep-navy font-bold text-sm">¿Prefieres hablar?</p>
@@ -289,7 +310,7 @@ export default function DossierForm() {
             </div>
           </a>
 
-          <a href="#contacto" className="flex-1 flex items-center justify-center gap-4 p-6 w-full hover:bg-black/5 transition-colors group">
+          <a href="#contacto" onClick={(e) => handleLinkClick(e, "#contacto")} className="flex-1 flex items-center justify-center gap-4 p-6 w-full hover:bg-black/5 transition-colors group">
             <Calendar className="text-[#D4AF37] w-7 h-7 group-hover:scale-110 transition-transform" />
             <div>
               <p className="text-deep-navy font-bold text-sm">Agenda una reunión</p>
@@ -297,7 +318,7 @@ export default function DossierForm() {
             </div>
           </a>
 
-          <a href="https://wa.me/51981407634" target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-4 p-6 w-full hover:bg-black/5 transition-colors rounded-b-2xl md:rounded-r-2xl md:rounded-bl-none group">
+          <a href="https://wa.me/51981407634" onClick={(e) => handleLinkClick(e, "https://wa.me/51981407634", "_blank")} className="flex-1 flex items-center justify-center gap-4 p-6 w-full hover:bg-black/5 transition-colors rounded-b-2xl md:rounded-r-2xl md:rounded-bl-none group">
             <MessageCircle className="text-[#D4AF37] w-7 h-7 group-hover:scale-110 transition-transform" />
             <div>
               <p className="text-deep-navy font-bold text-sm">Escríbenos por WhatsApp</p>

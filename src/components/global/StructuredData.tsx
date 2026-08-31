@@ -87,7 +87,7 @@ export default function StructuredData() {
         "name": "¿Cuáles son los precios de preventa y cómo puedo separar mi departamento?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Actualmente contamos con precios exclusivos de preventa desde S/ 268,509.00 hasta S/ 348,004.00, dependiendo del tipo y tamaño del departamento. Puedes asegurar el tuyo y congelar el precio separándolo con solo S/ 1,000."
+          "text": "Actualmente contamos con precios exclusivos de preventa desde S/ 157,130.00 hasta S/ 348,004.00, dependiendo del tipo y tamaño del departamento. Puedes asegurar el tuyo y congelar el precio separándolo con solo S/ 1,000."
         }
       },
       {
