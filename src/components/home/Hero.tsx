@@ -96,7 +96,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-[100dvh] lg:h-screen w-full flex items-center pt-24 sm:pt-28 lg:pt-0 pb-12 lg:pb-0 overflow-hidden">
+    <section id="hero-section" className="relative min-h-[100dvh] lg:h-screen w-full flex items-center pt-24 sm:pt-28 lg:pt-0 pb-12 lg:pb-0 overflow-hidden">
       <div className="absolute inset-0 z-0 bg-deep-navy">
         {/* Video Background */}
         <video
@@ -333,7 +333,7 @@ export default function Hero() {
       </div>
 
       {/* Content Container */}
-      <div className="relative z-10 px-6 md:px-12 max-w-[90rem] mx-auto w-full mt-4 lg:mt-6 xl:mt-16">
+      <div className="relative z-10 px-6 md:px-12 lg:px-16 xl:px-20 2xl:px-24 max-w-[90rem] mx-auto w-full mt-4 lg:mt-6 xl:mt-4 2xl:mt-16">
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8 items-center">
           {/* Left Column (Content) */}
           <motion.div
@@ -364,7 +364,7 @@ export default function Hero() {
             </motion.p>
 
             {/* Main Title Stacked */}
-            <h1 className="text-display font-display text-5xl sm:text-6xl md:text-7xl lg:text-[4.5rem] xl:text-[6.5rem] 2xl:text-[8.5rem] leading-[0.9] drop-shadow-2xl mb-3 lg:mb-4 xl:mb-8 flex flex-col">
+            <h1 className="text-display font-display text-5xl sm:text-6xl md:text-7xl lg:text-[4.5rem] xl:text-[4.8rem] 2xl:text-[7.5rem] leading-[0.9] drop-shadow-2xl mb-3 lg:mb-4 xl:mb-6 2xl:mb-8 flex flex-col">
               <motion.div
                 className="flex overflow-hidden mb-1 sm:mb-2 pb-1"
                 variants={{
@@ -419,7 +419,7 @@ export default function Hero() {
                   transition: { duration: 0.8, ease: "easeOut" },
                 },
               }}
-              className="font-body text-surface/90 text-sm sm:text-base lg:text-base xl:text-xl 2xl:text-2xl max-w-xl mb-4 lg:mb-5 xl:mb-12 leading-relaxed font-light drop-shadow"
+              className="font-body text-surface/90 text-sm sm:text-base lg:text-base xl:text-base 2xl:text-2xl max-w-xl mb-4 lg:mb-5 xl:mb-8 2xl:mb-12 leading-relaxed font-light drop-shadow"
             >
               Elegancia Urbana en el Corazón de Huancayo.
               <br className="hidden md:block" /> Vive cerca de TODO.
@@ -437,7 +437,7 @@ export default function Hero() {
                 },
               }}
             >
-              <div className="bg-surface/10 backdrop-blur-md border border-surface/20 px-4 sm:px-6 py-3.5 sm:py-4 rounded-lg flex items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto min-h-[48px] sm:min-h-[56px] xl:min-h-[60px]">
+              <div className="bg-surface/10 backdrop-blur-md border border-surface/20 px-4 sm:px-6 py-3.5 sm:py-4 rounded-lg flex items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto min-h-[48px] sm:min-h-[56px] xl:min-h-[48px] 2xl:min-h-[60px]">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 shrink-0">
                   <svg
                     className="w-4 h-4 sm:w-5 sm:h-5 text-surface"
@@ -467,7 +467,7 @@ export default function Hero() {
               <a
                 href="#departamentos"
                 onClick={(e) => scrollToSection(e, "departamentos")}
-                className="bg-surface/10 backdrop-blur-md border border-surface/20 px-4 sm:px-6 py-3.5 sm:py-4 rounded-lg flex items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto min-h-[48px] sm:min-h-[56px] xl:min-h-[60px] text-left hover:bg-surface/20 transition-all duration-300 cursor-pointer"
+                className="bg-surface/10 backdrop-blur-md border border-surface/20 px-4 sm:px-6 py-3.5 sm:py-4 rounded-lg flex items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto min-h-[48px] sm:min-h-[56px] xl:min-h-[48px] 2xl:min-h-[60px] text-left hover:bg-surface/20 transition-all duration-300 cursor-pointer"
               >
                 <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 shrink-0">
                   <svg
@@ -510,7 +510,7 @@ export default function Hero() {
               <a
                 href="#reserva"
                 onClick={(e) => scrollToSection(e, "reserva")}
-                className="bg-gold-metallic text-black px-4 sm:px-6 xl:px-8 py-3.5 sm:py-4 rounded-lg font-body font-black tracking-[0.15em] sm:tracking-widest transition-all duration-300 hover:scale-105 hover:brightness-110 uppercase text-[0.65rem] sm:text-sm lg:text-xs xl:text-sm shadow-[0_0_20px_rgba(212,175,55,0.4)] min-h-[48px] sm:min-h-[56px] xl:min-h-[60px] flex items-center justify-center gap-2 sm:gap-3 w-full sm:w-auto border border-[#FFE896]/50 cursor-pointer"
+                className="bg-gold-metallic text-black px-4 sm:px-6 xl:px-6 2xl:px-8 py-3.5 sm:py-4 xl:py-3 2xl:py-4 rounded-lg font-body font-black tracking-[0.15em] sm:tracking-widest transition-all duration-300 hover:scale-105 hover:brightness-110 uppercase text-[0.65rem] sm:text-sm lg:text-xs xl:text-xs 2xl:text-sm shadow-[0_0_20px_rgba(212,175,55,0.4)] min-h-[48px] sm:min-h-[56px] xl:min-h-[48px] 2xl:min-h-[60px] flex items-center justify-center gap-2 sm:gap-3 w-full sm:w-auto border border-[#FFE896]/50 cursor-pointer"
               >
                 Separa con S/.1000
                 <svg
@@ -604,10 +604,10 @@ export default function Hero() {
         className="hidden xl:block absolute z-30 pointer-events-auto mix-blend-normal origin-right"
         style={{
           top: "clamp(15%, 18vh, 22%)",
-          right: "clamp(8%, 10vw, 12%)"
+          right: "clamp(5%, 8vw, 10%)"
         }}
       >
-        <div className="scale-75 xl:scale-90 2xl:scale-100 transition-transform duration-300 origin-right">
+        <div className="scale-75 xl:scale-80 2xl:scale-100 transition-transform duration-300 origin-right">
           <a
             href="https://wa.me/51981407634?text=Hola,%20quiero%20reservar%20mi%20departamento%20con%20S/1,000"
             target="_blank"

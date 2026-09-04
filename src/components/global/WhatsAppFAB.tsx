@@ -6,6 +6,9 @@ import { useState, useEffect, useTransition } from 'react';
 export default function WhatsAppFAB() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [isPreloading, setIsPreloading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -35,13 +38,38 @@ export default function WhatsAppFAB() {
     };
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitted(true);
-    setTimeout(() => {
+    setError("");
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.get("name"),
+          document: data.get("document"),
+          phone: data.get("phone"),
+          email: data.get("email"),
+          company: honeypot,
+          source: "fab",
+        }),
+      });
+      const result = await res.json();
+      if (!res.ok || !result.ok) {
+        throw new Error(result.error || "No se pudo enviar. Intente nuevamente.");
+      }
+      setSuccess(true);
+      form.reset();
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Ocurrió un error. Intente nuevamente.",
+      );
+    } finally {
       setSubmitted(false);
-      alert("Solicitud enviada exitosamente. Un asesor se comunicará con usted en breve.");
-    }, 1500);
+    }
   };
 
   return (
@@ -72,12 +100,48 @@ export default function WhatsAppFAB() {
               <h3 className="font-display font-black text-deep-navy text-2xl mb-1.5 tracking-tight">Reserva Ahora</h3>
               <p className="font-body text-sm text-deep-navy/60 leading-relaxed">Déjanos tus datos y un asesor se comunicará contigo rápidamente.</p>
             </div>
-            
+
+            {success ? (
+              <div className="flex flex-col items-center text-center gap-4 py-6">
+                <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                  <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h4 className="font-display font-black text-xl text-deep-navy">¡Reserva recibida!</h4>
+                <p className="font-body text-sm text-deep-navy/60 leading-relaxed">Un asesor se comunicará contigo en breve.</p>
+                <button
+                  type="button"
+                  onClick={() => { setSuccess(false); setIsFormOpen(false); }}
+                  className="text-deep-navy font-bold text-sm hover:underline"
+                >
+                  Cerrar
+                </button>
+              </div>
+            ) : (
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+              <input
+                type="text"
+                name="company"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                autoComplete="off"
+                tabIndex={-1}
+                aria-hidden="true"
+                className="absolute -left-[9999px] opacity-0 h-0 w-0 overflow-hidden pointer-events-none"
+              />
+
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 text-xs font-medium rounded-xl px-3 py-2.5">
+                  {error}
+                </div>
+              )}
+
               <div>
                 <label className="block text-[11px] font-bold text-deep-navy/70 uppercase tracking-wider mb-1.5 ml-1">Nombre Completo</label>
                 <input
                   type="text"
+                  name="name"
                   placeholder="Ej. Juan Pérez"
                   maxLength={100}
                   className="w-full bg-gray-50/50 text-deep-navy font-body rounded-xl px-4 py-3 outline-none focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/40 border border-gray-200 focus:border-[#D4AF37]/50 transition-all placeholder:text-gray-400 text-sm shadow-sm"
@@ -90,6 +154,7 @@ export default function WhatsAppFAB() {
                   <label className="block text-[11px] font-bold text-deep-navy/70 uppercase tracking-wider mb-1.5 ml-1">DNI / CE</label>
                   <input
                     type="text"
+                    name="document"
                     placeholder="00000000"
                     maxLength={8}
                     pattern="[A-Za-z0-9]+"
@@ -101,6 +166,7 @@ export default function WhatsAppFAB() {
                   <label className="block text-[11px] font-bold text-deep-navy/70 uppercase tracking-wider mb-1.5 ml-1">Teléfono</label>
                   <input
                     type="tel"
+                    name="phone"
                     placeholder="+51 999 999 999"
                     minLength={9}
                     maxLength={15}
@@ -116,6 +182,7 @@ export default function WhatsAppFAB() {
                 <label className="block text-[11px] font-bold text-deep-navy/70 uppercase tracking-wider mb-1.5 ml-1">Correo Electrónico</label>
                 <input
                   type="email"
+                  name="email"
                   placeholder="correo@ejemplo.com"
                   maxLength={100}
                   className="w-full bg-gray-50/50 text-deep-navy font-body rounded-xl px-4 py-3 outline-none focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/40 border border-gray-200 focus:border-[#D4AF37]/50 transition-all placeholder:text-gray-400 text-sm shadow-sm"
@@ -147,6 +214,7 @@ export default function WhatsAppFAB() {
                 )}
               </button>
             </form>
+            )}
           </div>
         </div>
 

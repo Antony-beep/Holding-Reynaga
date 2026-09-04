@@ -108,6 +108,26 @@ pnpm install
 pnpm build
 ```
 
+## Variables de entorno (formulario de leads)
+
+El endpoint `POST /api/leads` guarda cada lead en SQLite (`data/leads.db` en el servidor) y luego lo replica a Google Sheets. Configurar estas variables antes de levantar la app (archivo `.env.local` en la raíz del proyecto, nunca subirlo a Git):
+
+```bash
+GOOGLE_SERVICE_ACCOUNT_EMAIL=<email>@<proyecto>.iam.gserviceaccount.com
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+GOOGLE_SHEET_ID=<id de la hoja, entre /d/ y /edit en la URL>
+```
+
+Notas:
+
+- La carpeta `data/` se crea sola; hacer backup copiando `data/leads.db`.
+- Si un lead no logra llegar a Google Sheets, queda marcado con `sheets_synced = 0` y el siguiente cron lo reintenta:
+
+```bash
+# crontab: reintentar cada 15 minutos los leads no sincronizados
+*/15 * * * * cd /ruta/al/proyecto && node --env-file=.env.local scripts/sync-sheets.js >> /var/log/sync-sheets.log 2>&1
+```
+
 ---
 
 # Fase 4: Despliegue Permanente

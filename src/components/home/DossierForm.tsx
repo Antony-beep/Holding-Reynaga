@@ -10,7 +10,10 @@ import {
 
 export default function DossierForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
+  const [honeypot, setHoneypot] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     document: "",
@@ -51,16 +54,39 @@ export default function DossierForm() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
-    // Simular evento
-    setTimeout(() => {
-      setSubmitted(false);
-      alert(
-        "Solicitud enviada exitosamente. Un asesor se comunicará con usted en breve.",
+    setError("");
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          document: formData.document,
+          phone: formData.phone,
+          email: formData.email,
+          interest: formData.interest,
+          message: formData.message,
+          company: honeypot,
+          source: "dossier",
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "No se pudo enviar. Intente nuevamente.");
+      }
+      setSuccess(true);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Ocurrió un error. Intente nuevamente.",
       );
-    }, 1500);
+    } finally {
+      setSubmitted(false);
+    }
   };
 
   return (
@@ -127,8 +153,46 @@ export default function DossierForm() {
 
           {/* Right Side - Form */}
           <div className="lg:w-7/12 p-8 md:p-12 lg:p-14 bg-white flex flex-col justify-center">
+            {success ? (
+              <div className="flex flex-col items-center text-center gap-6 py-10">
+                <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
+                  <ShieldCheck className="w-10 h-10 text-green-600" />
+                </div>
+                <h3 className="font-display font-black text-3xl text-deep-navy tracking-tight">
+                  ¡Solicitud enviada!
+                </h3>
+                <p className="text-deep-navy/70 text-sm md:text-base leading-relaxed max-w-md">
+                  Gracias por tu interés en Torres Titanium. Un asesor especializado se comunicará contigo en menos de 24 horas.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setSuccess(false)}
+                  className="text-[#B8860B] font-bold text-sm hover:underline"
+                >
+                  Enviar otra solicitud
+                </button>
+              </div>
+            ) : (
             <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
-              
+
+              {/* Honeypot anti-spam: invisible para humanos, bots lo rellenan */}
+              <input
+                type="text"
+                name="company"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                autoComplete="off"
+                tabIndex={-1}
+                aria-hidden="true"
+                className="absolute -left-[9999px] opacity-0 h-0 w-0 overflow-hidden pointer-events-none"
+              />
+
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 text-sm font-medium rounded-xl px-4 py-3">
+                  {error}
+                </div>
+              )}
+
               {/* Nombre Completo */}
               <div>
                 <label htmlFor="name" className="font-display font-bold text-deep-navy/80 tracking-widest text-[10px] uppercase block mb-2">
@@ -296,6 +360,7 @@ export default function DossierForm() {
                 </p>
               </div>
             </form>
+            )}
           </div>
         </div>
 

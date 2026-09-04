@@ -78,7 +78,7 @@ export default function Header() {
             : "bg-transparent py-4"
         }`}
       >
-        <div className="container mx-auto px-6 xl:pr-6 max-w-7xl flex items-center justify-between">
+        <div className="mx-auto px-6 lg:px-12 xl:px-20 2xl:px-24 max-w-[90rem] flex items-center justify-between">
           <Link href="/" className={`relative z-50 transition-transform duration-300 origin-left ${isScrolled ? "scale-[0.85]" : "scale-100"}`}>
             {/* Default to white logic if hero is dark and not scrolled, else original logo */}
             <Image
@@ -87,21 +87,21 @@ export default function Header() {
               width={240}
               height={60}
               priority
-              style={{ width: "auto", height: "auto", maxHeight: "60px" }}
-              className={`transition-all duration-300 ${
+              style={{ width: "auto", height: "auto", maxHeight: "40px" }}
+              className={`transition-all duration-300 lg:max-h-[45px] xl:max-h-[50px] 2xl:max-h-[60px] ${
                 !isScrolled ? "brightness-0 invert opacity-90" : "opacity-100"
               }`}
             />
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden xl:flex items-center gap-4 xl:gap-8">
+          <nav className="hidden xl:flex items-center gap-2 xl:gap-4 2xl:gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
                 onClick={(e) => scrollToSection(e, link.href)}
-                className="text-base font-medium tracking-wide transition-colors text-white/90 hover:text-primary cursor-pointer"
+                className="text-[12px] xl:text-[13px] 2xl:text-base font-medium tracking-wide transition-colors text-white/90 hover:text-primary cursor-pointer whitespace-nowrap"
               >
                 {link.name}
               </Link>
@@ -110,7 +110,7 @@ export default function Header() {
               href="https://wa.me/51981407634?text=Hola,%20quiero%20reservar%20mi%20departamento%20con%20S/1,000"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-gold-metallic text-[#1a1a1a] text-sm tracking-wider uppercase font-bold px-7 py-3 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-transform hover:scale-105 hover:brightness-110 border border-[#FFE896]/50 cursor-pointer"
+              className="bg-gold-metallic text-[#1a1a1a] text-[11px] 2xl:text-sm tracking-wider uppercase font-bold px-4 py-2 2xl:px-7 2xl:py-3 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-transform hover:scale-105 hover:brightness-110 border border-[#FFE896]/50 cursor-pointer"
             >
               Reservar con S/ 1,000
             </a>
