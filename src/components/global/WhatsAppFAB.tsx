@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect, useTransition } from 'react';
+import { Turnstile } from "@marsidev/react-turnstile";
 
 export default function WhatsAppFAB() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -9,6 +10,9 @@ export default function WhatsAppFAB() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [honeypot, setHoneypot] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [tsKey, setTsKey] = useState(0);
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
   const [isPreloading, setIsPreloading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -54,6 +58,7 @@ export default function WhatsAppFAB() {
           phone: data.get("phone"),
           email: data.get("email"),
           company: honeypot,
+          turnstileToken,
           source: "fab",
         }),
       });
@@ -67,6 +72,8 @@ export default function WhatsAppFAB() {
       setError(
         err instanceof Error ? err.message : "Ocurrió un error. Intente nuevamente.",
       );
+      setTurnstileToken("");
+      setTsKey((k) => k + 1);
     } finally {
       setSubmitted(false);
     }
@@ -202,10 +209,23 @@ export default function WhatsAppFAB() {
                 </span>
               </label>
 
+              {siteKey && (
+                <div className="flex justify-center mt-2">
+                  <Turnstile
+                    key={tsKey}
+                    siteKey={siteKey}
+                    onSuccess={(token) => setTurnstileToken(token)}
+                    onExpire={() => setTurnstileToken("")}
+                    onError={() => setTurnstileToken("")}
+                    options={{ theme: "light", language: "es", size: "flexible" }}
+                  />
+                </div>
+              )}
+
               <button
                 type="submit"
-                disabled={submitted}
-                className="w-full bg-deep-navy hover:bg-[#1a2942] text-white font-display font-bold tracking-widest text-sm uppercase px-6 py-4 rounded-xl mt-3 transition-all shadow-[0_8px_20px_rgba(10,25,47,0.2)] hover:shadow-[0_12px_25px_rgba(10,25,47,0.3)] hover:-translate-y-0.5 disabled:opacity-70 disabled:hover:translate-y-0 flex justify-center items-center"
+                disabled={submitted || (siteKey !== "" && turnstileToken === "")}
+                className="w-full bg-deep-navy hover:bg-[#1a2942] text-white font-display font-bold tracking-widest text-sm uppercase px-6 py-4 rounded-xl mt-3 transition-all shadow-[0_8px_20px_rgba(10,25,47,0.2)] hover:shadow-[0_12px_25px_rgba(10,25,47,0.3)] hover:-translate-y-0.5 disabled:opacity-70 disabled:hover:translate-y-0 disabled:cursor-not-allowed flex justify-center items-center"
               >
                 {submitted ? (
                   <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>

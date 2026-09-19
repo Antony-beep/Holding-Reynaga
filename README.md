@@ -122,6 +122,9 @@ Notas:
 
 - La carpeta `data/` se crea sola; hacer backup copiando `data/leads.db`.
 - Si un lead no logra llegar a Google Sheets, queda marcado con `sheets_synced = 0` y el siguiente cron lo reintenta:
+- **IMPORTANTE**: no pegues el `GOOGLE_PRIVATE_KEY` a mano en `nano`/`vim` del VPS — los editores suelen deformar la clave y falla con `error:1E08010C:DECODER routines::unsupported`. Transfiere el archivo `.env.local` directamente desde tu PC con `scp` (ver pasos de despliegue en el historial del proyecto).
+- Después de cambiar `.env.local`, siempre haz `pm2 restart <nombre-app>` porque Next.js lee las variables solo al arrancar.
+- Para diagnosticar sync: `node --env-file=.env.local scripts/sync-sheets.js` imprime el error exacto de Google.
 
 ```bash
 # crontab: reintentar cada 15 minutos los leads no sincronizados

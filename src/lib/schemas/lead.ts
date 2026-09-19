@@ -23,6 +23,8 @@ export const leadSchema = z.object({
   // Honeypot: cualquier string es válido aquí; si viene con contenido,
   // la ruta lo descarta silenciosamente fingiendo éxito (ver /api/leads).
   company: z.string().max(200).optional(),
+  // Token de Cloudflare Turnstile (se valida contra la API de Cloudflare en la ruta)
+  turnstileToken: z.string().max(2048).optional(),
 });
 
 export type LeadInput = z.infer<typeof leadSchema>;

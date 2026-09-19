@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { 
   Phone, Mail, ShieldCheck, Clock, Lock, 
   User, CreditCard, Building2, MessageSquare, 
@@ -14,6 +15,11 @@ export default function DossierForm() {
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
   const [honeypot, setHoneypot] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  // Al fallar un envío el token se gasta; incrementamos la key para remontar el widget.
+  const [tsKey, setTsKey] = useState(0);
+
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
   const [formData, setFormData] = useState({
     name: "",
     document: "",
@@ -70,6 +76,7 @@ export default function DossierForm() {
           interest: formData.interest,
           message: formData.message,
           company: honeypot,
+          turnstileToken,
           source: "dossier",
         }),
       });
@@ -84,6 +91,8 @@ export default function DossierForm() {
           ? err.message
           : "Ocurrió un error. Intente nuevamente.",
       );
+      setTurnstileToken("");
+      setTsKey((k) => k + 1);
     } finally {
       setSubmitted(false);
     }
@@ -330,6 +339,20 @@ export default function DossierForm() {
                 </div>
               </div>
 
+              {/* Captcha Cloudflare Turnstile */}
+              {siteKey && (
+                <div className="flex justify-center">
+                  <Turnstile
+                    key={tsKey}
+                    siteKey={siteKey}
+                    onSuccess={(token) => setTurnstileToken(token)}
+                    onExpire={() => setTurnstileToken("")}
+                    onError={() => setTurnstileToken("")}
+                    options={{ theme: "light", language: "es" }}
+                  />
+                </div>
+              )}
+
               {/* Checkbox */}
               <div className="flex items-start gap-3 mt-1">
                 <input 
@@ -346,8 +369,8 @@ export default function DossierForm() {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={submitted}
-                className="w-full bg-[#B8860B] hover:bg-[#996515] text-white font-display font-bold tracking-widest text-xs uppercase px-6 py-4 rounded-xl shadow-md transition-all duration-300 flex items-center justify-center gap-3 mt-1 disabled:opacity-70"
+                disabled={submitted || (siteKey !== "" && turnstileToken === "")}
+                className="w-full bg-[#B8860B] hover:bg-[#996515] text-white font-display font-bold tracking-widest text-xs uppercase px-6 py-4 rounded-xl shadow-md transition-all duration-300 flex items-center justify-center gap-3 mt-1 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {submitted ? "Enviando..." : "Enviar Solicitud"}
                 {!submitted && <ArrowRight className="w-[18px] h-[18px]" />}

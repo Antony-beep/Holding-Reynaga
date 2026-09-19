@@ -29,6 +29,37 @@ function getClientIp(req: NextRequest): string {
   return req.headers.get("x-real-ip") ?? "unknown";
 }
 
+/**
+ * Verifica el token de Cloudflare Turnstile.
+ * Si TURNSTILE_SECRET_KEY no está configurada (entorno local), se omite.
+ */
+async function verifyTurnstile(token: string | undefined, ip: string): Promise<boolean> {
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+  if (!secret) {
+    console.warn("[leads] TURNSTILE_SECRET_KEY no configurada; captcha omitido.");
+    return true;
+  }
+  if (!token) return false;
+
+  try {
+    const res = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ secret, response: token, remoteip: ip }),
+        signal: AbortSignal.timeout(5000),
+      },
+    );
+    const data = (await res.json()) as { success?: boolean };
+    return data.success === true;
+  } catch (err) {
+    console.error("[leads] Fallo al llamar a Turnstile siteverify:", err);
+    // Ante una falla de red hacia Cloudflare, rechazamos para no dejar entrada libre a bots.
+    return false;
+  }
+}
+
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
 
@@ -56,6 +87,16 @@ export async function POST(request: NextRequest) {
   // Devolvemos éxito falso para no dar pistas, sin guardar nada.
   if (parsed.data.company) {
     return NextResponse.json({ ok: true });
+  }
+
+  // Captcha Turnstile: si no valida, rechazamos (a los bots les devolvemos
+  // éxito falso después de un pequeño retraso para no confirmar el rechazo).
+  const captchaOk = await verifyTurnstile(parsed.data.turnstileToken, ip);
+  if (!captchaOk) {
+    return NextResponse.json(
+      { ok: false, error: "No se pudo verificar el captcha. Actualice la página e intente de nuevo." },
+      { status: 400 },
+    );
   }
 
   const leadId = insertLead({
