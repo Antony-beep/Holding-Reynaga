@@ -29,7 +29,14 @@ export default function CookieConsent() {
   }, []);
 
   const acceptCookies = () => {
-    localStorage.setItem("cookie-consent", "true");
+    localStorage.setItem("cookie-consent", "accepted");
+    window.dispatchEvent(new CustomEvent("consent-updated", { detail: "accepted" }));
+    setIsVisible(false);
+  };
+
+  const rejectCookies = () => {
+    localStorage.setItem("cookie-consent", "rejected");
+    window.dispatchEvent(new CustomEvent("consent-updated", { detail: "rejected" }));
     setIsVisible(false);
   };
 
@@ -78,11 +85,19 @@ export default function CookieConsent() {
             >
               Aceptar Todo
             </button>
+            <button
+              onClick={rejectCookies}
+              className="flex-1 bg-surface-container-lowest border border-black/5 hover:bg-white text-deep-navy/60 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-300"
+            >
+              Solo necesarias
+            </button>
+          </div>
+          <div className="mt-3 text-center">
             <Link
               href="/terminos-y-condiciones"
-              className="flex-1 bg-surface-container-lowest border border-black/5 hover:bg-white text-deep-navy/60 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center"
+              className="text-[11px] text-deep-navy/40 hover:text-primary font-medium transition-colors"
             >
-              Ver Detalles
+              Ver detalles de cookies
             </Link>
           </div>
         </div>

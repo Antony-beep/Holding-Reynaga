@@ -5,10 +5,10 @@ import { appendLeadToSheet } from "@/lib/sheets";
 
 export const runtime = "nodejs";
 
-// Rate limit simple en memoria: 5 requests por IP cada 60 segundos.
+// Rate limit simple en memoria: 3 intentos cada 5 minutos por IP.
 const rateLimit = new Map<string, { count: number; resetAt: number }>();
-const WINDOW_MS = 60_000;
-const MAX_REQUESTS = 5;
+const WINDOW_MS = 5 * 60_000;
+const MAX_REQUESTS = 3;
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
 
   if (isRateLimited(ip)) {
     return NextResponse.json(
-      { ok: false, error: "Demasiados intentos. Intente nuevamente en un minuto." },
+      { ok: false, error: "Demasiados intentos. Espere 5 minutos e intente nuevamente." },
       { status: 429 },
     );
   }

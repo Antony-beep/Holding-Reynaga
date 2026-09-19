@@ -2,17 +2,37 @@
 
 import Script from "next/script";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
+const PIXEL_ID = "1385005433052216";
 
 export default function MetaPixel() {
   const pathname = usePathname();
+  const [consentGranted, setConsentGranted] = useState(false);
 
+  // Leer el consentimiento guardado y reaccionar si el usuario cambia
+  // su preferencia en esta misma sesión (sin recargar la página).
   useEffect(() => {
-    // Track page views on route changes
-    if (typeof window !== "undefined" && (window as any).fbq) {
+    const readConsent = () => {
+      const consent = localStorage.getItem("cookie-consent");
+      // "true" cubre a usuarios que aceptaron con la versión anterior del banner
+      setConsentGranted(consent === "accepted" || consent === "true");
+    };
+
+    readConsent();
+    window.addEventListener("consent-updated", readConsent);
+    return () => window.removeEventListener("consent-updated", readConsent);
+  }, []);
+
+  // Registrar vistas de página en cada navegación, solo con consentimiento.
+  useEffect(() => {
+    if (consentGranted && typeof window !== "undefined" && (window as any).fbq) {
       (window as any).fbq("track", "PageView");
     }
-  }, [pathname]);
+  }, [pathname, consentGranted]);
+
+  // Sin consentimiento, el pixel NUNCA se carga: ni el script ni el pixel de imagen.
+  if (!consentGranted) return null;
 
   return (
     <>
@@ -29,7 +49,7 @@ export default function MetaPixel() {
             t.src=v;s=b.getElementsByTagName(e)[0];
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '1385005433052216');
+            fbq('init', '${PIXEL_ID}');
             fbq('track', 'PageView');
           `,
         }}
@@ -39,7 +59,7 @@ export default function MetaPixel() {
           height="1"
           width="1"
           style={{ display: "none" }}
-          src="https://www.facebook.com/tr?id=1385005433052216&ev=PageView&noscript=1"
+          src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
           alt=""
         />
       </noscript>

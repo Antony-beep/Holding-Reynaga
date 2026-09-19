@@ -4,12 +4,7 @@
 
 ▲ Next.js 16.2.3
 - Local:         http://localhost:3000
-- Network:       http://192.168.1.31:3000
-✓ Ready in 1027ms
-[leads] TURNSTILE_SECRET_KEY no configurada; captcha omitido.
-[leads] TURNSTILE_SECRET_KEY no configurada; captcha omitido.
-[leads] TURNSTILE_SECRET_KEY no configurada; captcha omitido.
-[leads] TURNSTILE_SECRET_KEY no configurada; captcha omitido.
-[leads] TURNSTILE_SECRET_KEY no configurada; captcha omitido.
+- Network:       http://192.168.1.36:3000
+✓ Ready in 502ms
 
 D:\Claude Projects\Holding Claude>
