@@ -8,6 +8,39 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { APARTMENTS } from "@/data/apartments";
 
+/**
+ * Imagen que hace fade-in SOLO cuando terminó de cargar.
+ * Se usa con `key` distinto por índice: cada foto nueva vuelve a empezar
+ * en opacity-0 y aparece suavemente cuando está lista. Así nunca se ve
+ * una imagen vacía ni un recuadro azul mientras carga.
+ */
+function FadeInImage({
+  src,
+  alt,
+  sizes,
+  className = "",
+  priority = false,
+}: {
+  src: string;
+  alt: string;
+  sizes: string;
+  className?: string;
+  priority?: boolean;
+}) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <Image
+      src={src}
+      fill
+      sizes={sizes}
+      priority={priority}
+      onLoad={() => setLoaded(true)}
+      alt={alt}
+      className={`transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"} ${className}`}
+    />
+  );
+}
+
 export default function Catalog() {
   const [activeTab, setActiveTab] = useState(APARTMENTS[0].type);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -133,31 +166,29 @@ export default function Catalog() {
                   onClick={() => setIsLightboxOpen(true)}
                 >
                   
-                  {/* Blurred Backdrop for Portrait Images (Active Only to prevent GPU layer memory leak) */}
+                  {/* Blurred Backdrop for Portrait Images — rendered via CSS background
+                      (more reliable than a second <Image> + opacity keyframe) */}
                   {activeApartment.images && activeApartment.images.length > 0 && (
-                    <Image 
-                      key={`blur-${activeImageIndex}`}
-                      src={`${activeApartment.basePath}/${activeApartment.images[activeImageIndex]}`}
-                      alt=""
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 65vw"
-                      className="object-cover blur-2xl opacity-0 scale-110 z-0 pointer-events-none animate-fade-in-backdrop"
+                    <div
+                      aria-hidden
+                      className="absolute inset-0 scale-125 blur-2xl opacity-40 pointer-events-none z-0"
+                      style={{
+                        backgroundImage: `url("${activeApartment.basePath}/${activeApartment.images[activeImageIndex]}")`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                      }}
                     />
                   )}
 
-                  {/* Main Foreground Images (Active Only to prevent GPU layer memory leak) */}
+                  {/* Main Foreground Image — fades in only when fully loaded */}
                   {activeApartment.images && activeApartment.images.length > 0 && (
-                    <Image 
+                    <FadeInImage
                       key={`main-${activeImageIndex}`}
                       src={`${activeApartment.basePath}/${activeApartment.images[activeImageIndex]}`}
-                      fill
                       sizes="(max-width: 1024px) 100vw, 65vw"
-                      onError={(e) => { 
-                        e.currentTarget.srcset = ""; 
-                        e.currentTarget.src = "/images/Otraseccion.png"; 
-                      }}
-                      alt={`Departamento en venta Tipo ${activeApartment.type} en San Carlos Huancayo - Imagen ${activeImageIndex + 1}`}
-                      className="object-contain opacity-0 pointer-events-none group-hover:scale-105 animate-fade-in-simple z-10"
+                      priority={activeImageIndex === 0}
+                      alt={`Departamento en venta ${activeApartment.type} en San Carlos Huancayo - Imagen ${activeImageIndex + 1}`}
+                      className="object-contain pointer-events-none group-hover:scale-100 duration-700 z-10"
                     />
                   )}
 
@@ -180,6 +211,14 @@ export default function Catalog() {
                     <span className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full font-display font-bold text-[10px] md:text-xs text-deep-navy shadow-md uppercase tracking-wider border border-white/20">
                       {activeApartment.bedrooms} Dormitorios
                     </span>
+                    <span className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full font-display font-bold text-[10px] md:text-xs text-deep-navy shadow-md uppercase tracking-wider border border-white/20">
+                      {activeApartment.sqm} m²
+                    </span>
+                    {activeApartment.price && (
+                      <span className="bg-deep-navy/95 backdrop-blur-md px-3 py-1.5 rounded-full font-display font-bold text-[10px] md:text-xs text-[#D4AF37] shadow-md uppercase tracking-wider border border-[#D4AF37]/30">
+                        {activeApartment.price}
+                      </span>
+                    )}
                   </div>
 
                   {/* Carousel Controls */}
@@ -237,6 +276,26 @@ export default function Catalog() {
                     <p className="font-body text-on-surface/75 mb-6 leading-relaxed text-sm lg:text-base">
                       Concebido bajo estrictos cánones de asimetría espacial y flujo de luz natural, esta configuración representa la vida premium corporativa en su máxima expresión.
                     </p>
+
+                    {/* Distribución según brochure */}
+                    {activeApartment.features && activeApartment.features.length > 0 && (
+                      <div className="mb-6">
+                        <p className="font-display font-bold text-[10px] lg:text-xs uppercase tracking-widest text-deep-navy/50 mb-3">
+                          Distribución
+                        </p>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {activeApartment.features.map((feature) => (
+                            <li
+                              key={feature}
+                              className="flex items-center gap-2 text-sm font-body text-deep-navy/80"
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] shrink-0" />
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                   
                   <div className="relative z-10 mt-auto pt-6 border-t border-surface-container-highest flex flex-col gap-3">
@@ -305,11 +364,11 @@ export default function Catalog() {
               alt={`Vista ampliada ${activeApartment.type}`}
               fill
               sizes="(max-width: 768px) 95vw, 90vw"
-              className="object-contain"
-              onError={(e) => { 
-                e.currentTarget.srcset = ""; 
-                e.currentTarget.src = "/images/Otraseccion.png"; 
-              }}
+            className="object-contain"
+            onError={(e) => {
+              e.currentTarget.srcset = "";
+              e.currentTarget.src = "/images/Fachada TT 1.webp";
+            }}
             />
           </div>
 

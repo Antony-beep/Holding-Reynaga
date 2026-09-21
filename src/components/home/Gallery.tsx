@@ -3,15 +3,14 @@
 import Image from "next/image";
 
 const GALLERY_ITEMS = [
-  { img: "Woman_exercising.webp", title: "Fitness Center", span: "md:col-span-2 md:row-span-2" },
-  { img: "Sala_tertulias_condominio.webp", title: "Lobby Principal", span: "md:col-span-1 md:row-span-2" },
+  { img: "Sala_tertulias_condominio.webp", title: "Área de Tertulias", span: "md:col-span-2 md:row-span-2" },
   { img: "pergolas-de-sol.webp", title: "Rooftop & Pérgolas", span: "md:col-span-1 md:row-span-2" },
-  { img: "Create_campfire_area.webp", title: "Campfire & Relax", span: "md:col-span-2 md:row-span-1" },
-  { img: "area_de_juegos.webp", title: "Sala de Juegos", span: "md:col-span-1 md:row-span-1" },
-  { img: "ascensores.webp", title: "Ascensores Mellizos", span: "md:col-span-1 md:row-span-1" },
-  { img: "sotano-de-estacionamiento.webp", title: "2 pisos de estacionamiento", span: "md:col-span-1 md:row-span-1" },
-  { img: "Gabinetes_Contra_Incendios.webp", title: "Seguridad Integral", span: "md:col-span-1 md:row-span-1" },
-  { img: "area_parrillas_barra.webp", title: "Bar & Parrillas", span: "md:col-span-2 md:row-span-1" },
+  { img: "area_de_juegos.webp", title: "Juegos para Niños", span: "md:col-span-1 md:row-span-1" },
+  { img: "ascensores.webp", title: "2 Ascensores Modernos", span: "md:col-span-1 md:row-span-1" },
+  { img: "Create_campfire_area.webp", title: "Área de Fogata", span: "md:col-span-2 md:row-span-1" },
+  { img: "sotano-de-estacionamiento.webp", title: "2 Sótanos de Estacionamiento", span: "md:col-span-2 md:row-span-1" },
+  { img: "area_parrillas_barra.webp", title: "Parrillas con Barra", span: "md:col-span-2 md:row-span-1" },
+  { img: "Gabinetes_Contra_Incendios.webp", title: "Seguridad Integral", span: "md:col-span-2 md:row-span-1" },
 ];
 
 export default function Gallery() {

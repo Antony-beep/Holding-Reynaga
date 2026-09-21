@@ -135,23 +135,51 @@ export default async function DepartmentPage({
                 iluminación natural.
               </p>
 
+              {/* Precio y métricas clave */}
+              {apt.price && (
+                <div className="bg-deep-navy rounded-2xl p-6 mb-8 flex flex-wrap items-center gap-6">
+                  <div>
+                    <p className="font-display font-bold text-[10px] uppercase tracking-widest text-white/50 mb-1">
+                      Precio preventa
+                    </p>
+                    <p className="text-display font-black text-2xl md:text-3xl text-gold-metallic">
+                      {apt.price}
+                    </p>
+                  </div>
+                  <div className="h-10 w-px bg-white/10" />
+                  <div>
+                    <p className="font-display font-bold text-[10px] uppercase tracking-widest text-white/50 mb-1">
+                      Área
+                    </p>
+                    <p className="font-display font-bold text-xl text-white">
+                      {apt.sqm} m²
+                    </p>
+                  </div>
+                  <div className="h-10 w-px bg-white/10" />
+                  <div>
+                    <p className="font-display font-bold text-[10px] uppercase tracking-widest text-white/50 mb-1">
+                      Distribución
+                    </p>
+                    <p className="font-display font-bold text-xl text-white">
+                      {apt.bedrooms} dormitorios · {apt.baths === "1" ? "1 baño" : `${apt.baths} baños`}
+                    </p>
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-4">
+                {apt.features && apt.features.map((feature: string) => (
+                  <div key={feature} className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
+                    <span className="font-body text-deep-navy font-medium">
+                      {feature}
+                    </span>
+                  </div>
+                ))}
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
                   <span className="font-body text-deep-navy font-medium">
-                    {apt.bedrooms} Dormitorios optimizados
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-                  <span className="font-body text-deep-navy font-medium">
-                    Acabados europeos de lujo
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-                  <span className="font-body text-deep-navy font-medium">
-                    Diseño {apt.area.toLowerCase()} exclusivo
+                    Acabados de primera e iluminación natural
                   </span>
                 </div>
               </div>

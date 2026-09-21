@@ -5,9 +5,9 @@ export default function StructuredData() {
     "@context": "https://schema.org",
     "@type": ["LocalBusiness", "RealEstateAgent"],
     "name": "Holding Reynaga",
-    "image": "https://torrestitanium.com/images/logo.webp", // Replace with actual URL if different
-    "@id": "https://torrestitanium.com",
-    "url": "https://torrestitanium.com",
+    "image": "https://inmobiliariaholdingreynaga.com/images/logo.webp",
+    "@id": "https://inmobiliariaholdingreynaga.com",
+    "url": "https://inmobiliariaholdingreynaga.com",
     "telephone": "981407634",
     "address": {
       "@type": "PostalAddress",
@@ -42,7 +42,7 @@ export default function StructuredData() {
     "@type": "ApartmentComplex",
     "name": "Torres Titanium",
     "description": "Elegancia Urbana en el Corazón de Huancayo. Vive cerca de TODO.",
-    "url": "https://torrestitanium.com",
+    "url": "https://inmobiliariaholdingreynaga.com",
     "telephone": "981407634",
     "address": {
       "@type": "PostalAddress",
@@ -54,17 +54,52 @@ export default function StructuredData() {
     "amenityFeature": [
       {
         "@type": "LocationFeatureSpecification",
-        "name": "Gimnasio",
+        "name": "Rooftop con Zonas de Esparcimiento",
         "value": "True"
       },
       {
         "@type": "LocationFeatureSpecification",
-        "name": "Rooftop",
+        "name": "Área para Parrillas con Barra",
         "value": "True"
       },
       {
         "@type": "LocationFeatureSpecification",
-        "name": "Coworking",
+        "name": "Área para Fogata",
+        "value": "True"
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Mirador",
+        "value": "True"
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Área para Tertulias",
+        "value": "True"
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Área de Juegos para Niños",
+        "value": "True"
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Pérgolas de Sol y Sombra",
+        "value": "True"
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "2 Sótanos de Estacionamiento",
+        "value": "True"
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "2 Ascensores Modernos",
+        "value": "True"
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Recepción y Cámaras de Vigilancia",
         "value": "True"
       }
     ]
@@ -87,7 +122,7 @@ export default function StructuredData() {
         "name": "¿Cuáles son los precios de preventa y cómo puedo separar mi departamento?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Actualmente contamos con precios exclusivos de preventa desde S/ 157,130.00 hasta S/ 348,004.00, dependiendo del tipo y tamaño del departamento. Puedes asegurar el tuyo y congelar el precio separándolo con solo S/ 1,000."
+          "text": "Actualmente contamos con precios exclusivos de preventa desde S/ 163,332.50 hasta S/ 361,741.00, según el tipo y tamaño del departamento. Además, contamos con bonos de preventa de S/ 24,900 a S/ 47,850. Puedes asegurar el tuyo y congelar el precio separándolo con solo S/ 1,000."
         }
       },
       {

@@ -406,7 +406,7 @@ export default function Hero() {
             {/* Semantic SEO Transaccional (Visually Hidden) */}
             <div className="sr-only">
               <h2>Preventa Exclusiva de Departamentos en Huancayo</h2>
-              <p>Adquiere tu departamento de lujo en San Carlos desde S/ 157,130.00 hasta S/ 348,004.00. Reserva con S/ 1,000 y congela el precio hoy mismo.</p>
+              <p>Adquiere tu departamento de lujo en San Carlos desde S/ 163,332.50 hasta S/ 361,741.00. Bonos de preventa de S/ 24,900 a S/ 47,850. Reserva con S/ 1,000 y congela el precio hoy mismo.</p>
             </div>
 
             {/* Description */}

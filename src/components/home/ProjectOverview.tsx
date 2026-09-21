@@ -103,7 +103,7 @@ export default function ProjectOverview() {
             {/* Download Button */}
             <div className="w-full relative">
               <a
-                href="/docs/dosier_informativo.pdf"
+                href="/docs/BROUCHURE_Setiembre.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-gradient-to-r from-[#BF953F] via-[#D4AF37] to-[#B38728] hover:from-[#B38728] hover:to-[#996515] text-white font-display font-bold tracking-widest text-xs md:text-sm uppercase px-8 py-5 flex items-center justify-center gap-3 rounded-2xl shadow-[0_10px_30px_rgba(212,175,55,0.3)] hover:shadow-[0_15px_40px_rgba(212,175,55,0.4)] hover:-translate-y-1 transition-all duration-300 w-full relative overflow-hidden group/btn border border-white/40 mb-4"

@@ -6,6 +6,7 @@ import Preloader from "@/components/global/Preloader";
 import StructuredData from "@/components/global/StructuredData";
 import ClientOnlyComponents from "@/components/global/ClientOnlyComponents";
 import MetaPixel from "@/components/global/MetaPixel";
+import GoogleAnalytics from "@/components/global/GoogleAnalytics";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
@@ -18,6 +19,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://inmobiliariaholdingreynaga.com"),
   title: "Torres Titanium | Holding Reynaga",
   description: "Una obra maestra arquitectónica en Huancayo. Lujo, exclusividad y ubicación privilegiada.",
 };
@@ -36,6 +38,7 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body className="min-h-full flex flex-col font-body bg-background text-foreground overflow-x-hidden text-lg">
+        <GoogleAnalytics />
         <MetaPixel />
         <Preloader />
         {children}
