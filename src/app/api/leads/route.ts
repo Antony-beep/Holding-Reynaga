@@ -5,6 +5,19 @@ import { appendLeadToSheet } from "@/lib/sheets";
 
 export const runtime = "nodejs";
 
+// Mensajes de validación en español (por campo) para la API pública.
+const FIELD_ERRORS_ES: Record<string, string> = {
+  name: "Ingrese su nombre completo (solo letras, 3 a 80 caracteres).",
+  document: "El documento debe tener 8 dígitos (DNI) o hasta 12 caracteres (CE).",
+  phone: "Ingrese un teléfono válido (mínimo 9 dígitos).",
+  email: "Ingrese un correo electrónico válido.",
+  interest: "Seleccione una opción válida.",
+  message: "El mensaje no puede superar los 300 caracteres.",
+  source: "Solicitud inválida. Actualice la página e intente de nuevo.",
+  company: "Solicitud inválida.",
+  turnstileToken: "No se pudo verificar el captcha. Actualice la página.",
+};
+
 // Rate limit simple en memoria: 3 intentos cada 5 minutos por IP.
 const rateLimit = new Map<string, { count: number; resetAt: number }>();
 const WINDOW_MS = 5 * 60_000;
@@ -79,8 +92,14 @@ export async function POST(request: NextRequest) {
 
   const parsed = leadSchema.safeParse(body);
   if (!parsed.success) {
-    const firstError = parsed.error.issues[0]?.message ?? "Datos inválidos.";
-    return NextResponse.json({ ok: false, error: firstError }, { status: 400 });
+    const firstIssue = parsed.error.issues[0];
+    const field = Array.isArray(firstIssue?.path)
+      ? firstIssue.path.join(".")
+      : String(firstIssue?.path ?? "");
+    const msg =
+      FIELD_ERRORS_ES[field] ??
+      "Datos inválidos. Revise el formulario e intente de nuevo.";
+    return NextResponse.json({ ok: false, error: msg }, { status: 400 });
   }
 
   // Honeypot: si el campo oculto tiene contenido, es un bot.

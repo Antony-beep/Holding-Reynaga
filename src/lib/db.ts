@@ -107,3 +107,59 @@ export function markLeadSynced(id: number): void {
     )
     .run(id);
 }
+
+// ---- Consultas para el panel /admin ----
+
+/** Leads de los últimos `days` días (o todos si days es null), los más recientes primero. */
+export function getLeadsRange(days: number | null, limit = 1000): LeadRow[] {
+  const db = getDb();
+  if (days === null) {
+    return db
+      .prepare("SELECT * FROM leads ORDER BY created_at DESC, id DESC LIMIT ?")
+      .all(limit) as LeadRow[];
+  }
+  return db
+    .prepare(
+      `SELECT * FROM leads
+       WHERE created_at >= datetime('now', ?)
+       ORDER BY created_at DESC, id DESC
+       LIMIT ?`,
+    )
+    .all(`-${days} days`, limit) as LeadRow[];
+}
+
+export function countLeads(): number {
+  const row = getDb().prepare("SELECT COUNT(*) AS c FROM leads").get() as {
+    c: number;
+  };
+  return row.c;
+}
+
+/** Cuántos leads son más antiguos que X días (para el modo de limpieza). */
+export function countLeadsOlderThan(days: number): number {
+  const row = getDb()
+    .prepare(
+      "SELECT COUNT(*) AS c FROM leads WHERE created_at < datetime('now', ?)",
+    )
+    .get(`-${days} days`) as { c: number };
+  return row.c;
+}
+
+/** Elimina leads anteriores a X días. Devuelve la cantidad eliminada. */
+export function deleteLeadsOlderThan(days: number): number {
+  const info = getDb()
+    .prepare("DELETE FROM leads WHERE created_at < datetime('now', ?)")
+    .run(`-${days} days`);
+  return info.changes;
+}
+
+/** Elimina leads concretos por id (lote). Devuelve la cantidad eliminada. */
+export function deleteLeadsByIds(ids: number[]): number {
+  if (ids.length === 0) return 0;
+  const db = getDb();
+  const placeholders = ids.map(() => "?").join(",");
+  const info = db
+    .prepare(`DELETE FROM leads WHERE id IN (${placeholders})`)
+    .run(...ids);
+  return info.changes;
+}

@@ -116,7 +116,22 @@ El endpoint `POST /api/leads` guarda cada lead en SQLite (`data/leads.db` en el 
 GOOGLE_SERVICE_ACCOUNT_EMAIL=<email>@<proyecto>.iam.gserviceaccount.com
 GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 GOOGLE_SHEET_ID=<id de la hoja, entre /d/ y /edit en la URL>
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=0x4AAAA...
+TURNSTILE_SECRET_KEY=0x4AAAA...
+ADMIN_PASSWORD=<contraseña fuerte del panel /admin>
 ```
+
+## Panel de administración de leads (/admin)
+
+Acceso: `https://inmobiliariaholdingreynaga.com/admin` con la contraseña de `ADMIN_PASSWORD`.
+
+- Ver leads de la última semana, último mes o todos.
+- Seleccionar y eliminar leads individuales o por lotes.
+- Limpieza por antigüedad (más de 1 mes / 3 meses / 6 meses / 1 año) para liberar espacio del VPS. Los leads ya sincronizados permanecen en Google Sheets.
+- Seguridad: sesión con cookie HttpOnly firmada (8 horas), rate limit de 5 intentos de login por 15 minutos por IP, noindex y bloqueado en robots.txt.
+
+Si olvidas la contraseña: cámbiala en el `.env.local` del VPS y reinicia con `pm2 restart holding-reynaga`.
 
 Notas:
 
