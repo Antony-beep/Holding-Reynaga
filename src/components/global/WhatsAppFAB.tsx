@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect, useTransition } from 'react';
 import { Turnstile } from "@marsidev/react-turnstile";
+import { trackLeadSubmitted } from "@/lib/analytics";
 
 export default function WhatsAppFAB() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -66,6 +67,7 @@ export default function WhatsAppFAB() {
       if (!res.ok || !result.ok) {
         throw new Error(result.error || "No se pudo enviar. Intente nuevamente.");
       }
+      trackLeadSubmitted("fab");
       setSuccess(true);
       form.reset();
     } catch (err) {

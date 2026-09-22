@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { Turnstile } from "@marsidev/react-turnstile";
+import { trackLeadSubmitted } from "@/lib/analytics";
 import { 
   Phone, Mail, ShieldCheck, Clock, Lock, 
   User, CreditCard, Building2, MessageSquare, 
@@ -84,6 +85,7 @@ export default function DossierForm() {
       if (!res.ok || !data.ok) {
         throw new Error(data.error || "No se pudo enviar. Intente nuevamente.");
       }
+      trackLeadSubmitted("dossier");
       setSuccess(true);
     } catch (err) {
       setError(
