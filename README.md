@@ -130,8 +130,83 @@ Acceso: `https://inmobiliariaholdingreynaga.com/admin` con la contraseña de `AD
 - Seleccionar y eliminar leads individuales o por lotes.
 - Limpieza por antigüedad (más de 1 mes / 3 meses / 6 meses / 1 año) para liberar espacio del VPS. Los leads ya sincronizados permanecen en Google Sheets.
 - Seguridad: sesión con cookie HttpOnly firmada (8 horas), rate limit de 5 intentos de login por 15 minutos por IP, noindex y bloqueado en robots.txt.
+- Pestaña "Redes Sociales": gestiona los posts de la sección "Síguenos" de la home y muestra la salud de cada conector del scraper.
 
 Si olvidas la contraseña: cámbiala en el `.env.local` del VPS y reinicia con `pm2 restart holding-reynaga`.
+
+## Libro de Reclamaciones Virtual (Ley N° 29571 / D.S. N° 011-2011-PCM)
+
+Página pública: `/libro-de-reclamaciones` (enlazada en el Footer y en la sección de contacto).
+
+### Checklist de cumplimiento
+
+| Requisito legal | Implementación |
+|---|---|
+| Formato Anexo I (D.S. 011-2011-PCM) | Formulario con todos los campos: numeración correlativa, proveedor (razón social, RUC, dirección), fecha, datos del consumidor, bien/servicio y monto, tipo (reclamo/queja), detalle, pedido concreto, acciones del proveedor |
+| Accesible en el mismo medio virtual | Página propia dentro del sitio web |
+| Aviso visible en el portal | Link en el Footer + en la sección de contacto |
+| Copia al consumidor (imprimir/enviar) | PDF generado al instante (descarga + adjunto por email) |
+| Código de registro | Correlativo: LR-<año>-NNNNNN |
+| Plazo de 15 días hábiles | Contador con feriados peruanos (tabla editable en /admin, 2026 precargado), semáforo rojo/ámbar |
+| Conservación de registros | Reclamos inmutables en SQLite: sin borrado, solo atendido/anulado con motivo. Cubiertos por el respaldo de `data/leads.db` |
+| Fiscalización INDECOPI | Export CSV desde /admin con todos los registros |
+| Aviso Anexo II (sala de ventas) | Generable desde /admin → Reclamos → Configuración → "Descargar aviso PDF" |
+| Respuesta escrita fundamentada | Flujo en /admin: registrar respuesta → enviar desde el correo de la empresa → marcar enviada (fecha de evidencia) → marcar atendido |
+
+### Variables de entorno
+
+```bash
+RESEND_API_KEY=            # crear en resend.com (gratis, 100 correos/día)
+RESEND_FROM_EMAIL=libro@inmobiliariaholdingreynaga.com
+RECLAMOS_NOTIFY_EMAIL=holdingreynagaventas@gmail.com   # editable también en /admin
+```
+
+**Sin RESEND_API_KEY el sistema degrada con elegancia**: el reclamo se registra y el PDF se descarga, pero no salen correos (queda logueado en el servidor; la copia se puede reenviar desde /admin una vez configurado el envío).
+
+### Configurar Resend (una sola vez)
+
+1. Crear cuenta en [resend.com](https://resend.com) → **API Keys** → crear y poner el valor en `RESEND_API_KEY` (PC y VPS)
+2. En Resend → **Domains** → agregar `inmobiliariaholdingreynaga.com`
+3. Agregar los registros DNS que muestra Resend (SPF: TXT en la raíz; DKIM: CNAME) en el panel del dominio
+4. En `/admin` → Reclamos → Configuración → **"Enviar email de prueba"** para verificar el circuito completo
+
+### Gestión de reclamos (equipo de ventas)
+
+1. Llega un reclamo → notificación al correo configurado (editable en /admin)
+2. `/admin` → pestaña **Reclamos** → abrir el reclamo (ver semáforo de días hábiles)
+3. Redactar la **respuesta formal** → guardar
+4. **Enviar** la respuesta desde el correo de la empresa (Gmail) al email del consumidor
+5. Marcar **"Respuesta enviada"** (queda la fecha como evidencia) → marcar **"ATENDIDO"**
+6. Si el pedido es improcedente: fundamentar la negativa en la respuesta (obligación legal)
+7. Los reclamos **no se pueden borrar** — solo anular con motivo (queda en el historial)
+
+## Scraper de redes sociales (sección de video "Desde nuestras redes")
+
+Extrae los últimos 3 posts de TikTok, Facebook e Instagram una vez al día (03:00), los guarda en SQLite, descarga los thumbnails y regenera la home automáticamente. En TikTok se saltan los 2 videos anclados de la cuenta para traer solo contenido reciente. La sección de video (`SocialVideos`) va después del formulario de contacto; el CTA de botones (`FollowUs`) cierra la página.
+
+Instalación en el VPS (una sola vez):
+
+```bash
+cd ~/Holding-Reynaga
+apt install python3-venv -y
+python3 -m venv venv
+./venv/bin/pip install -r scripts/requirements.txt
+./venv/bin/python -m scrapling install   # descarga los browsers stealth (~600MB)
+```
+
+Cron diario (03:00) + token de regeneración:
+
+```bash
+# crontab -e
+0 3 * * * cd /root/Holding-Reynaga && ./venv/bin/python scripts/scrap_social.py >> /var/log/scrap-social.log 2>&1
+```
+
+Notas:
+
+- `REVALIDATE_SECRET` debe estar en el `.env.local` del VPS (igual que en local) para que la home se regenere tras el scraping.
+- Prueba manual: `./venv/bin/python scripts/scrap_social.py`
+- Si un conector falla (p. ej. Facebook con login-wall), lo anterior queda intacto y el panel /admin lo refleja. Los posts también se pueden agregar a mano desde el panel.
+- Health check en `/admin` → pestaña "Redes Sociales".
 
 Notas:
 

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Mail, Phone, MapPin } from "lucide-react";
+import CookieSettingsLink from "./CookieSettingsLink";
 
 const InstagramIcon = ({ size = 24, className = "" }) => (
   <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -113,7 +114,17 @@ export default function Footer() {
           <div className="flex items-center justify-center gap-4 sm:gap-6 order-1 md:order-2 flex-wrap">
             <Link href="/terminos-y-condiciones" className="hover:text-white transition-colors">Términos y Condiciones</Link>
             <span className="w-1 h-1 rounded-full bg-surface/30"></span>
-            <Link href="/terminos-y-condiciones" className="hover:text-white transition-colors">Políticas de Privacidad</Link>
+            <Link href="/terminos-y-condiciones#privacidad" className="hover:text-white transition-colors">Políticas de Privacidad</Link>
+            <span className="w-1 h-1 rounded-full bg-surface/30"></span>
+            <Link href="/libro-de-reclamaciones" className="hover:text-white transition-colors inline-flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+                <path d="m10 15 5-3-5-3z" />
+              </svg>
+              Libro de Reclamaciones
+            </Link>
+            <span className="w-1 h-1 rounded-full bg-surface/30"></span>
+            <CookieSettingsLink />
           </div>
         </div>
       </div>

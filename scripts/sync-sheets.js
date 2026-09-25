@@ -33,14 +33,8 @@ for (const key of required) {
 
 async function main() {
   const db = new Database(DB_PATH);
-  const pending = db
-    .prepare("SELECT * FROM leads WHERE sheets_synced = 0 ORDER BY id ASC LIMIT 100")
-    .all();
-
-  if (pending.length === 0) {
-    console.log("sync-sheets: todos los leads ya están sincronizados.");
-    return;
-  }
+  let ok = 0;
+  let failed = 0;
 
   const auth = new google.auth.JWT({
     email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
@@ -49,8 +43,10 @@ async function main() {
   });
   const sheets = google.sheets({ version: "v4", auth });
 
-  let ok = 0;
-  let failed = 0;
+  // ---- Leads comerciales (hoja principal) ----
+  const pending = db
+    .prepare("SELECT * FROM leads WHERE sheets_synced = 0 ORDER BY id ASC LIMIT 100")
+    .all();
 
   for (const lead of pending) {
     try {
@@ -82,6 +78,59 @@ async function main() {
     } catch (err) {
       failed += 1;
       console.error(`sync-sheets: fallo lead #${lead.id}:`, err.message);
+    }
+  }
+
+  // ---- Libro de Reclamaciones (hoja "Reclamos", espejo legal) ----
+  // Asegura que la hoja exista antes de sincronizar.
+  try {
+    const meta = await sheets.spreadsheets.get({ spreadsheetId: process.env.GOOGLE_SHEET_ID });
+    const exists = (meta.data.sheets ?? []).some((s) => s.properties?.title === "Reclamos");
+    if (!exists) {
+      await sheets.spreadsheets.batchUpdate({
+        spreadsheetId: process.env.GOOGLE_SHEET_ID,
+        requestBody: { requests: [{ addSheet: { properties: { title: "Reclamos" } } }] },
+      });
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: process.env.GOOGLE_SHEET_ID,
+        range: "Reclamos!A1",
+        valueInputOption: "USER_ENTERED",
+        requestBody: {
+          values: [["Código", "Fecha (UTC)", "Tipo", "Bien/Servicio", "Monto", "Nombre", "Documento", "Domicilio", "Teléfono", "Email", "Detalle", "Pedido", "Estado", "Respuesta", "Respuesta enviada"]],
+        },
+      });
+    }
+  } catch (err) {
+    console.error("sync-sheets: no se pudo preparar la hoja Reclamos:", err.message);
+  }
+
+  const pendingReclamos = db
+    .prepare("SELECT * FROM reclamos WHERE sheets_synced = 0 ORDER BY id ASC LIMIT 100")
+    .all();
+
+  for (const r of pendingReclamos) {
+    try {
+      await sheets.spreadsheets.values.append({
+        spreadsheetId: process.env.GOOGLE_SHEET_ID,
+        range: "Reclamos!A1",
+        valueInputOption: "USER_ENTERED",
+        insertDataOption: "INSERT_ROWS",
+        requestBody: {
+          values: [[
+            r.codigo, r.created_at, r.tipo,
+            r.bien_contratado + (r.bien_detalle ? ` — ${r.bien_detalle}` : ""),
+            r.monto, r.nombre, r.documento, r.domicilio, r.telefono, r.email,
+            r.detalle, r.pedido, r.estado, r.respuesta, r.respuesta_enviada_en ?? "",
+          ]],
+        },
+      });
+      db.prepare(
+        "UPDATE reclamos SET sheets_synced = 1, sheets_synced_at = datetime('now') WHERE id = ?",
+      ).run(r.id);
+      ok += 1;
+    } catch (err) {
+      failed += 1;
+      console.error(`sync-sheets: fallo reclamo ${r.codigo}:`, err.message);
     }
   }
 

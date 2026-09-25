@@ -3,36 +3,30 @@
 import Script from "next/script";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { readConsent } from "@/lib/consent";
 
 const PIXEL_ID = "1385005433052216";
 
 export default function MetaPixel() {
   const pathname = usePathname();
-  const [consentGranted, setConsentGranted] = useState(false);
+  const [marketingAllowed, setMarketingAllowed] = useState(false);
 
-  // Leer el consentimiento guardado y reaccionar si el usuario cambia
-  // su preferencia en esta misma sesión (sin recargar la página).
   useEffect(() => {
-    const readConsent = () => {
-      const consent = localStorage.getItem("cookie-consent");
-      // "true" cubre a usuarios que aceptaron con la versión anterior del banner
-      setConsentGranted(consent === "accepted" || consent === "true");
-    };
-
-    readConsent();
-    window.addEventListener("consent-updated", readConsent);
-    return () => window.removeEventListener("consent-updated", readConsent);
+    const readMarketing = () => setMarketingAllowed(readConsent().marketing);
+    readMarketing();
+    window.addEventListener("consent-updated", readMarketing);
+    return () => window.removeEventListener("consent-updated", readMarketing);
   }, []);
 
   // Registrar vistas de página en cada navegación, solo con consentimiento.
   useEffect(() => {
-    if (consentGranted && typeof window !== "undefined" && (window as any).fbq) {
+    if (marketingAllowed && typeof window !== "undefined" && (window as any).fbq) {
       (window as any).fbq("track", "PageView");
     }
-  }, [pathname, consentGranted]);
+  }, [pathname, marketingAllowed]);
 
-  // Sin consentimiento, el pixel NUNCA se carga: ni el script ni el pixel de imagen.
-  if (!consentGranted) return null;
+  // Sin consentimiento de marketing, el pixel NUNCA se carga: ni el script ni el pixel de imagen.
+  if (!marketingAllowed) return null;
 
   return (
     <>

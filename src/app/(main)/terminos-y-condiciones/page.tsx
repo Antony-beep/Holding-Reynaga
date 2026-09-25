@@ -93,7 +93,7 @@ export default function TermsPage() {
                 
                 <h3 className="text-xl font-bold mt-8 mb-4">3.1. Recopilación y Almacenamiento:</h3>
                 <p>
-                  Los datos personales proporcionados voluntariamente a través de nuestro formulario de "Contáctanos" serán almacenados en el banco de datos de clientes de HOLDING INVERSIONES REYNAGA S.A.C.. Para fines de gestión comercial, esta información será sincronizada en una base de datos segura y un archivo Excel compartido en la nube, con acceso restringido exclusivamente a nuestro equipo de ventas y marketing.
+                  Los datos personales proporcionados voluntariamente a través de nuestro formulario de "Contáctanos" y del <strong>Libro de Reclamaciones Virtual</strong> serán almacenados en el banco de datos de clientes de HOLDING INVERSIONES REYNAGA S.A.C.. Para fines de gestión comercial, esta información será sincronizada en una base de datos segura y un archivo Excel compartido en la nube, con acceso restringido exclusivamente a nuestro equipo de ventas y marketing. Las hojas de reclamación constituyen, además, registros legales sujetos al Código de Protección y Defensa del Consumidor que pueden ser requeridos por INDECOPI.
                 </p>
 
                 <h3 className="text-xl font-bold mt-8 mb-4">3.2. Finalidad del Tratamiento:</h3>
@@ -118,47 +118,69 @@ export default function TermsPage() {
                   </div>
                   <h2 className="text-2xl font-black m-0 tracking-tight">4. POLÍTICA DE COOKIES Y HERRAMIENTAS DE TERCEROS</h2>
                 </div>
-                <p>Para optimizar nuestro contenido y ofrecer publicidad relevante, este sitio web utiliza cookies:</p>
+                <p>Para optimizar nuestro contenido y ofrecer publicidad relevante, este sitio web utiliza las siguientes categorías de cookies:</p>
                 <ul className="list-disc pl-6 space-y-4 mb-6">
-                  <li><strong>4.1. Google Analytics:</strong> Recopila información estadística anónima sobre el comportamiento de los usuarios (páginas visitadas, tiempo, dispositivo) para mejorar el rendimiento de nuestra web.</li>
-                  <li><strong>4.2. Píxel de Facebook (Meta):</strong> Utiliza cookies para rastrear conversiones desde anuncios en redes sociales y construir audiencias de remarketing. Esto nos permite mostrarle publicidad de Torres Titanium basada en su interés previo.</li>
-                  <li><strong>4.3. Gestión:</strong> Puede configurar su navegador para bloquear estas cookies, aunque esto podría afectar el funcionamiento de elementos interactivos (como mapas o renders 360°).</li>
+                  <li><strong>4.1. Cookies necesarias:</strong> Imprescindibles para el funcionamiento básico del sitio (navegación, formularios, seguridad). No requieren su consentimiento y no pueden desactivarse.</li>
+                  <li><strong>4.2. Análisis y estadísticas (Google Analytics):</strong> Recopila información estadística anónima sobre el comportamiento de los usuarios (páginas visitadas, tiempo, dispositivo) para mejorar el rendimiento de nuestra web.</li>
+                  <li><strong>4.3. Marketing y publicidad (Píxel de Facebook/Meta):</strong> Utiliza cookies para rastrear conversiones desde anuncios en redes sociales y construir audiencias de remarketing. Esto nos permite mostrarle publicidad de Torres Titanium basada en su interés previo.</li>
+                  <li><strong>4.4. Gestión de su consentimiento:</strong> Al visitar el sitio por primera vez, puede elegir qué categorías aceptar ("Aceptar todo", "Solo necesarias" o "Personalizar preferencias"). Puede modificar su elección en cualquier momento desde el enlace <strong>"Preferencias de Cookies"</strong> al pie de esta página. Si lo prefiere, también puede configurar su navegador para bloquear estas cookies, aunque esto podría afectar el funcionamiento de elementos interactivos (como mapas o renders 360°).</li>
                 </ul>
               </section>
 
               {/* Section 5 */}
+              <section id="libro-reclamaciones">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                    <Scale className="w-6 h-6" />
+                  </div>
+                  <h2 className="text-2xl font-black m-0 tracking-tight">5. LIBRO DE RECLAMACIONES VIRTUAL</h2>
+                </div>
+                <p>
+                  En cumplimiento del <strong>Código de Protección y Defensa del Consumidor (Ley N° 29571)</strong> y su Reglamento (<strong>D.S. N° 011-2011-PCM</strong>), ponemos a su disposición nuestro <strong>Libro de Reclamaciones Virtual</strong>, accesible en <Link href="/libro-de-reclamaciones" className="text-primary font-bold hover:underline">este enlace</Link> y desde el pie de página de este sitio.
+                </p>
+                <ul className="list-disc pl-6 space-y-3 mb-6">
+                  <li><strong>Reclamo:</strong> disconformidad relacionada al producto o servicio (p. ej., el departamento adquirido, la reserva, la información entregada).</li>
+                  <li><strong>Queja:</strong> disconformidad no relacionada al producto o servicio, sino a la atención al público.</li>
+                  <li>Al registrar su hoja, recibirá de forma inmediata una <strong>copia en PDF con un código correlativo único</strong>, descargable y remitida a su correo electrónico.</li>
+                  <li>Nuestro equipo atenderá su hoja en un plazo máximo de <strong>quince (15) días hábiles, improrrogables</strong>, mediante respuesta escrita al correo electrónico declarado.</li>
+                  <li>El registro de su hoja no impide ni sustituye su derecho de acudir a <strong>INDECOPI</strong> o a la Sala de Defensa del Consumidor competente en cualquier momento.</li>
+                  <li>Nuestra sala de ventas (Av. San Agustín 154, San Carlos, Huancayo) cuenta adicionalmente con un <strong>Libro de Reclamaciones físico</strong> de respaldo y el aviso oficial correspondiente.</li>
+                </ul>
+              </section>
+
+              {/* Section 6 */}
               <section id="propiedad-intelectual">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
                     <FileText className="w-6 h-6" />
                   </div>
-                  <h2 className="text-2xl font-black m-0 tracking-tight">5. PROPIEDAD INTELECTUAL</h2>
+                  <h2 className="text-2xl font-black m-0 tracking-tight">6. PROPIEDAD INTELECTUAL</h2>
                 </div>
                 <p>
                   Todos los contenidos de esta página web (textos, logotipos, renders, videos y código) son propiedad exclusiva de <strong>HOLDING INVERSIONES REYNAGA S.A.C.</strong> y están protegidos por las leyes de propiedad intelectual en Perú. Queda prohibida su reproducción sin autorización expresa.
                 </p>
               </section>
 
-              {/* Section 6 */}
+              {/* Section 7 */}
               <section id="jurisdiccion">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
                     <Scale className="w-6 h-6" />
                   </div>
-                  <h2 className="text-2xl font-black m-0 tracking-tight">6. JURISDICCIÓN</h2>
+                  <h2 className="text-2xl font-black m-0 tracking-tight">7. JURISDICCIÓN</h2>
                 </div>
                 <p>
                   Cualquier controversia que surja del uso de este sitio web será sometida a la jurisdicción de los jueces y tribunales de la ciudad de <strong>Huancayo, Junín, Perú</strong>.
                 </p>
               </section>
 
-              {/* Section 7 */}
+              {/* Section 8 */}
               <section id="contacto">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
                     <Phone className="w-6 h-6" />
                   </div>
-                  <h2 className="text-2xl font-black m-0 tracking-tight">7. CONTACTO OFICIAL</h2>
+                  <h2 className="text-2xl font-black m-0 tracking-tight">8. CONTACTO OFICIAL</h2>
                 </div>
                 <ul className="list-none p-0 space-y-4">
                   <li><strong>Teléfono / WhatsApp de Ventas:</strong> 981407634</li>

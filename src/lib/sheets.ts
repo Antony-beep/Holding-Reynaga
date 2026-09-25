@@ -58,3 +58,95 @@ export async function appendLeadToSheet(lead: LeadRow): Promise<void> {
     },
   });
 }
+
+// ---- Libro de Reclamaciones: hoja "Reclamos" (espejo) ----
+
+export async function ensureReclamosSheet(): Promise<void> {
+  const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+  if (!spreadsheetId) {
+    throw new Error("Falta GOOGLE_SHEET_ID en las variables de entorno.");
+  }
+  const auth = getAuth();
+  const sheets = google.sheets({ version: "v4", auth });
+
+  const meta = await sheets.spreadsheets.get({ spreadsheetId });
+  const exists = (meta.data.sheets ?? []).some(
+    (s) => s.properties?.title === "Reclamos",
+  );
+  if (exists) return;
+
+  await sheets.spreadsheets.batchUpdate({
+    spreadsheetId,
+    requestBody: {
+      requests: [{ addSheet: { properties: { title: "Reclamos" } } }],
+    },
+  });
+
+  await sheets.spreadsheets.values.update({
+    spreadsheetId,
+    range: "Reclamos!A1",
+    valueInputOption: "USER_ENTERED",
+    requestBody: {
+      values: [[
+        "Código", "Fecha (UTC)", "Tipo", "Bien/Servicio", "Monto",
+        "Nombre", "Documento", "Domicilio", "Teléfono", "Email",
+        "Detalle", "Pedido", "Estado", "Respuesta", "Respuesta enviada",
+      ]],
+    },
+  });
+}
+
+export async function appendReclamoToSheet(reclamo: {
+  codigo: string;
+  created_at: string;
+  tipo: string;
+  bien_contratado: string;
+  bien_detalle: string;
+  monto: string;
+  nombre: string;
+  documento: string;
+  domicilio: string;
+  telefono: string;
+  email: string;
+  detalle: string;
+  pedido: string;
+  estado: string;
+  respuesta: string;
+  respuesta_enviada_en: string | null;
+}): Promise<void> {
+  const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+  if (!spreadsheetId) {
+    throw new Error("Falta GOOGLE_SHEET_ID en las variables de entorno.");
+  }
+  const auth = getAuth();
+  const sheets = google.sheets({ version: "v4", auth });
+
+  await ensureReclamosSheet();
+
+  const bien = reclamo.bien_contratado + (reclamo.bien_detalle ? ` — ${reclamo.bien_detalle}` : "");
+  await sheets.spreadsheets.values.append({
+    spreadsheetId,
+    range: "Reclamos!A1",
+    valueInputOption: "USER_ENTERED",
+    insertDataOption: "INSERT_ROWS",
+    requestBody: {
+      values: [[
+        reclamo.codigo,
+        reclamo.created_at,
+        reclamo.tipo,
+        bien,
+        reclamo.monto,
+        reclamo.nombre,
+        reclamo.documento,
+        reclamo.domicilio,
+        reclamo.telefono,
+        reclamo.email,
+        reclamo.detalle,
+        reclamo.pedido,
+        reclamo.estado,
+        reclamo.respuesta,
+        reclamo.respuesta_enviada_en ?? "",
+      ]],
+    },
+  });
+}

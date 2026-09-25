@@ -1,5 +1,7 @@
 "use client";
 
+import { readConsent } from "./consent";
+
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
@@ -8,25 +10,24 @@ declare global {
 }
 
 /**
- * Dispara el evento de conversión de lead en GA4 y Meta Pixel.
- * Respeta el consentimiento de cookies: si el usuario no aceptó, no hace nada.
+ * Dispara el evento de conversión de lead en GA4 y Meta Pixel,
+ * respetando el consentimiento por categoría de cada uno.
  */
 export function trackLeadSubmitted(source: "dossier" | "fab") {
   if (typeof window === "undefined") return;
 
-  const consent = localStorage.getItem("cookie-consent");
-  if (consent !== "accepted" && consent !== "true") return;
+  const consent = readConsent();
 
-  // GA4: evento recomendado "generate_lead"
-  if (typeof window.gtag === "function") {
+  // GA4 (categoría análisis): evento recomendado "generate_lead"
+  if (consent.analytics && typeof window.gtag === "function") {
     window.gtag("event", "generate_lead", {
       source,
       currency: "PEN",
     });
   }
 
-  // Meta Pixel: evento estándar "Lead"
-  if (typeof window.fbq === "function") {
+  // Meta Pixel (categoría marketing): evento estándar "Lead"
+  if (consent.marketing && typeof window.fbq === "function") {
     window.fbq("track", "Lead", { source });
   }
 }

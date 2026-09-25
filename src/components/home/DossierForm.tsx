@@ -386,6 +386,25 @@ export default function DossierForm() {
               </div>
             </form>
             )}
+
+            {/* Aviso legal: Libro de Reclamaciones (visible en la sección de contacto) */}
+            <div className="mt-8 text-center">
+              <p className="text-xs text-deep-navy/50 leading-relaxed">
+                ¿Inconforme con la atención o el servicio recibido? Ejercite su derecho
+                como consumidor en nuestro{" "}
+                <Link
+                  href="/libro-de-reclamaciones"
+                  className="text-[#B8860B] font-bold hover:underline inline-flex items-center gap-1"
+                >
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+                    <path d="m10 15 5-3-5-3z" />
+                  </svg>
+                  Libro de Reclamaciones
+                </Link>
+                {" "}— Ley N° 29571.
+              </p>
+            </div>
           </div>
         </div>
 

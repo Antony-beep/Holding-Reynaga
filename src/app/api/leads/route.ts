@@ -2,6 +2,7 @@ import { after, type NextRequest, NextResponse } from "next/server";
 import { leadSchema } from "@/lib/schemas/lead";
 import { getLeadById, insertLead, markLeadSynced } from "@/lib/db";
 import { appendLeadToSheet } from "@/lib/sheets";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 export const runtime = "nodejs";
 
@@ -43,35 +44,9 @@ function getClientIp(req: NextRequest): string {
 }
 
 /**
- * Verifica el token de Cloudflare Turnstile.
- * Si TURNSTILE_SECRET_KEY no está configurada (entorno local), se omite.
+ * Verificación del captcha: extraída a lib/turnstile.ts (compartida con
+ * el Libro de Reclamaciones).
  */
-async function verifyTurnstile(token: string | undefined, ip: string): Promise<boolean> {
-  const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret) {
-    console.warn("[leads] TURNSTILE_SECRET_KEY no configurada; captcha omitido.");
-    return true;
-  }
-  if (!token) return false;
-
-  try {
-    const res = await fetch(
-      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({ secret, response: token, remoteip: ip }),
-        signal: AbortSignal.timeout(5000),
-      },
-    );
-    const data = (await res.json()) as { success?: boolean };
-    return data.success === true;
-  } catch (err) {
-    console.error("[leads] Fallo al llamar a Turnstile siteverify:", err);
-    // Ante una falla de red hacia Cloudflare, rechazamos para no dejar entrada libre a bots.
-    return false;
-  }
-}
 
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);

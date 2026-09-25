@@ -11,6 +11,8 @@ import {
   AlertTriangle,
   Database,
 } from "lucide-react";
+import SocialManager from "./SocialManager";
+import ReclamosManager from "./ReclamosManager";
 
 interface Lead {
   id: number;
@@ -41,6 +43,7 @@ const AGE_OPTIONS = [
 ];
 
 export default function AdminDashboard() {
+  const [view, setView] = useState<"leads" | "social" | "reclamos">("leads");
   const [range, setRange] = useState<RangeKey>("week");
   const [leads, setLeads] = useState<Lead[]>([]);
   const [total, setTotal] = useState(0);
@@ -159,6 +162,51 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Switcher de vistas + logout global */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex gap-2 bg-white/5 border border-white/10 rounded-xl p-1.5 w-fit">
+          <button
+            onClick={() => setView("leads")}
+            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+              view === "leads"
+                ? "bg-[#D4AF37] text-deep-navy"
+                : "text-white/70 hover:text-white hover:bg-white/10"
+            }`}
+          >
+            Leads
+          </button>
+          <button
+            onClick={() => setView("social")}
+            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+              view === "social"
+                ? "bg-[#D4AF37] text-deep-navy"
+                : "text-white/70 hover:text-white hover:bg-white/10"
+            }`}
+          >
+            Redes Sociales
+          </button>
+          <button
+            onClick={() => setView("reclamos")}
+            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+              view === "reclamos"
+                ? "bg-[#D4AF37] text-deep-navy"
+                : "text-white/70 hover:text-white hover:bg-white/10"
+            }`}
+          >
+            Reclamos
+          </button>
+        </div>
+        <button
+          onClick={logout}
+          className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm hover:bg-red-500/20 hover:border-red-400/30 transition-colors flex items-center gap-2"
+        >
+          <LogOut className="w-4 h-4" />
+          Salir
+        </button>
+      </div>
+
+      {view === "leads" && (
+      <>
       {/* Barra de estado */}
       <div className="flex flex-wrap items-center gap-3 justify-between">
         <div className="flex flex-wrap gap-3">
@@ -178,13 +226,6 @@ export default function AdminDashboard() {
             Actualizar
           </button>
         </div>
-        <button
-          onClick={logout}
-          className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm hover:bg-red-500/20 hover:border-red-400/30 transition-colors flex items-center gap-2"
-        >
-          <LogOut className="w-4 h-4" />
-          Salir
-        </button>
       </div>
 
       {/* Pestañas de rango */}
@@ -343,6 +384,12 @@ export default function AdminDashboard() {
           servidor, no afecta la hoja de cálculo.
         </p>
       </div>
+      </>
+      )}
+
+      {view === "social" && <SocialManager />}
+
+      {view === "reclamos" && <ReclamosManager />}
     </div>
   );
 }

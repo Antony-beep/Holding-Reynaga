@@ -3,6 +3,7 @@
 import Script from "next/script";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { readConsent } from "@/lib/consent";
 
 declare global {
   interface Window {
@@ -20,30 +21,27 @@ declare global {
  */
 export default function GoogleAnalytics() {
   const pathname = usePathname();
-  const [consentGranted, setConsentGranted] = useState(false);
+  const [analyticsAllowed, setAnalyticsAllowed] = useState(false);
 
   const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "";
 
   useEffect(() => {
-    const readConsent = () => {
-      const consent = localStorage.getItem("cookie-consent");
-      setConsentGranted(consent === "accepted" || consent === "true");
-    };
-    readConsent();
-    window.addEventListener("consent-updated", readConsent);
-    return () => window.removeEventListener("consent-updated", readConsent);
+    const readAnalytics = () => setAnalyticsAllowed(readConsent().analytics);
+    readAnalytics();
+    window.addEventListener("consent-updated", readAnalytics);
+    return () => window.removeEventListener("consent-updated", readAnalytics);
   }, []);
 
   // Registrar cada navegación como page_view (SPA)
   useEffect(() => {
-    if (!consentGranted || !measurementId) return;
+    if (!analyticsAllowed || !measurementId) return;
     if (typeof window.gtag !== "function") return;
     window.gtag("event", "page_view", {
       page_path: pathname + window.location.search,
     });
-  }, [pathname, consentGranted, measurementId]);
+  }, [pathname, analyticsAllowed, measurementId]);
 
-  if (!consentGranted || !measurementId) return null;
+  if (!analyticsAllowed || !measurementId) return null;
 
   return (
     <>
