@@ -180,33 +180,60 @@ RECLAMOS_NOTIFY_EMAIL=holdingreynagaventas@gmail.com   # editable también en /a
 6. Si el pedido es improcedente: fundamentar la negativa en la respuesta (obligación legal)
 7. Los reclamos **no se pueden borrar** — solo anular con motivo (queda en el historial)
 
-## Scraper de redes sociales (sección de video "Desde nuestras redes")
+## Scraper de redes sociales (arquitectura PC → VPS)
 
-Extrae los últimos 3 posts de TikTok, Facebook e Instagram una vez al día (03:00), los guarda en SQLite, descarga los thumbnails y regenera la home automáticamente. En TikTok se saltan los 2 videos anclados de la cuenta para traer solo contenido reciente. La sección de video (`SocialVideos`) va después del formulario de contacto; el CTA de botones (`FollowUs`) cierra la página.
+La sección "Desde nuestras redes" de la home muestra un reel 9:16 destacado + mini-feed con las últimas publicaciones de TikTok e Instagram. 
 
-Instalación en el VPS (una sola vez):
+**Arquitectura** (los anti-bot de Meta/TikTok bloquean IPs de datacenter, por eso el scraping sale desde una PC con IP residencial):
 
-```bash
-cd ~/Holding-Reynaga
-apt install python3-venv -y
-python3 -m venv venv
-./venv/bin/pip install -r scripts/requirements.txt
-./venv/bin/python -m scrapling install   # descarga los browsers stealth (~600MB)
+```
+PC (19:00, Programador de tareas de Windows)
+  → scrap_social.py --push   (navegadores stealth de Scrapling; salta los
+                              2 videos anclados de TikTok; 6 posts por red)
+  → POST https://inmobiliariaholdingreynaga.com/api/social-ingest
+      (posts + thumbnails en base64 + salud de conectores, ~15MB, secreto)
+VPS
+  → guarda en SQLite + thumbs, REEMPLAZA los posts antiguos de cada red,
+    registra la salud, limpia huérfanos y regenera la home al instante
 ```
 
-Cron diario (03:00) + token de regeneración:
+**Requisitos en el VPS** (no necesita Python ni cron):
 
-```bash
-# crontab -e
-0 3 * * * cd /root/Holding-Reynaga && ./venv/bin/python scripts/scrap_social.py >> /var/log/scrap-social.log 2>&1
+1. Deploy del código: `git pull && npm install && npm run build && pm2 restart holding-reynaga --update-env`
+2. `.env.local` del VPS: agregar `SOCIAL_INGEST_SECRET=` con el MISMO valor que la PC
+3. Nginx — permitir el paquete grande en el server block (`nano /etc/nginx/sites-available/mi-dominio`):
+   ```nginx
+   client_max_body_size 25m;
+   ```
+   luego `nginx -t && systemctl restart nginx`
+
+**Requisitos en la PC** (ya configurados):
+
+- `venv/` del proyecto con `scrapling[fetchers]` (`python -m venv venv` + `pip install -r scripts/requirements.txt`)
+- `.env.local` con `SOCIAL_INGEST_URL` y `SOCIAL_INGEST_SECRET`
+- Tarea programada "TorresTitanium-ScrapSocial": diaria 19:00, ejecuta `scripts\run_scrape_push.bat`, con recuperación si la PC estaba apagada (log en `data\scrape-push.log`)
+
+**Comandos útiles (PC)**:
+
+```powershell
+# corrida manual contra producción (usa SOCIAL_INGEST_URL del .env.local):
+.\venv\Scripts\python.exe scripts\scrap_social.py --push
+
+# corrida manual contra el server local (pruebas):
+.\venv\Scripts\python.exe scripts\scrap_social.py --push --url http://localhost:3000/api/social-ingest
+
+# ver la tarea programada:
+Get-ScheduledTask -TaskName "TorresTitanium-ScrapSocial"
+# ver el log diario:
+Get-Content data\scrape-push.log -Tail 30
 ```
 
 Notas:
 
-- `REVALIDATE_SECRET` debe estar en el `.env.local` del VPS (igual que en local) para que la home se regenere tras el scraping.
-- Prueba manual: `./venv/bin/python scripts/scrap_social.py`
-- Si un conector falla (p. ej. Facebook con login-wall), lo anterior queda intacto y el panel /admin lo refleja. Los posts también se pueden agregar a mano desde el panel.
-- Health check en `/admin` → pestaña "Redes Sociales".
+- Facebook falla con login-wall (requiere sesión de Meta) — queda registrado en la salud del panel; los posts de FB se pueden agregar manualmente desde `/admin`.
+- Si un día la PC no corre (apagada), la web sigue mostrando los posts del último día exitoso (no destructivo) y la tarea se recupera al encenderla.
+- Salud por conector visible en `/admin` → pestaña "Redes Sociales".
+- La sección de video (`SocialVideos`) va después del formulario de contacto; el CTA de botones (`FollowUs`) cierra la página.
 
 Notas:
 

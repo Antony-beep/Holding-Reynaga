@@ -64,6 +64,8 @@ def load_env(path: Path) -> dict:
 ENV = load_env(ENV_PATH)
 APP_URL = ENV.get("APP_URL", "http://localhost:3000").rstrip("/")
 REVALIDATE_SECRET = ENV.get("REVALIDATE_SECRET", "")
+INGEST_URL = ENV.get("SOCIAL_INGEST_URL", "")
+INGEST_SECRET = ENV.get("SOCIAL_INGEST_SECRET", "")
 
 
 def log(msg: str) -> None:
@@ -524,6 +526,71 @@ def cleanup_orphan_thumbs(conn: sqlite3.Connection) -> int:
     return removed
 
 
+# ---------------------------------------------------------------- push (PC → VPS)
+
+def push_to_vps(posts_by_network: dict, sync_statuses: list, url_override: str = "") -> None:
+    """
+    Envía los posts scrapeados + thumbs (base64) + salud de conectores al VPS
+    vía POST /api/social-ingest. El VPS es el dueño del dato: reemplaza los
+    registros antiguos y regenera la home él solo.
+    """
+    import base64
+
+    from curl_cffi import requests as creq
+
+    target = url_override or INGEST_URL
+    if not target or not INGEST_SECRET:
+        log("push: falta SOCIAL_INGEST_URL o SOCIAL_INGEST_SECRET en .env.local")
+        return
+
+    payload_posts = []
+    for network, posts in posts_by_network.items():
+        for p in posts:
+            item = {
+                "network": network,
+                "postUrl": p["url"],
+                "caption": p["caption"],
+                "postedAt": p.get("posted_at"),
+            }
+            if p.get("thumb_path"):
+                fname = p["thumb_path"].lstrip("/").split("/")[-1]
+                fpath = THUMB_DIR / fname
+                if fpath.exists():
+                    item["thumbName"] = fname
+                    item["thumbB64"] = base64.b64encode(fpath.read_bytes()).decode()
+            payload_posts.append(item)
+
+    payload = {"posts": payload_posts, "sync": sync_statuses, "replace": True}
+    log(f"push: enviando {len(payload_posts)} posts a {target} …")
+    try:
+        # Sin impersonación: es NUESTRO servidor (no tiene anti-bot), y
+        # curl_cffi con impersonate + bodies grandes falla contra Node.
+        r = creq.post(
+            target,
+            json=payload,
+            headers={"x-ingest-secret": INGEST_SECRET},
+            timeout=180,
+        )
+        if r.status_code == 200:
+            data = r.json()
+            log(
+                f"push: OK — recibidos {data.get('ingested')}, reemplazados "
+                f"{data.get('replaced')}, thumbs {data.get('thumbsOk')}, "
+                f"huérfanos limpiados {data.get('pruned')}"
+            )
+            # Los thumbs ya viven en el VPS: limpiar los locales de esta corrida
+            for f in THUMB_DIR.iterdir():
+                if f.is_file() and not f.name.startswith("."):
+                    try:
+                        f.unlink()
+                    except Exception:
+                        pass
+        else:
+            log(f"push: FALLO HTTP {r.status_code} → {r.text[:200]}")
+    except Exception as e:
+        log(f"push: FALLO ({e})")
+
+
 # ---------------------------------------------------------------- main
 
 CONNECTORS = [
@@ -534,6 +601,44 @@ CONNECTORS = [
 
 
 def main() -> int:
+    push_mode = "--push" in sys.argv
+    url_override = ""
+    if "--url" in sys.argv:
+        url_override = sys.argv[sys.argv.index("--url") + 1]
+
+    if push_mode:
+        # ===================== MODO PUSH (arquitectura PC → VPS) =====================
+        # La PC scrapea con su IP residencial y envía el paquete al VPS por
+        # HTTPS. La DB local NO se toca: el VPS es el dueño del dato.
+        log("=== scraping en modo PUSH (PC → VPS) - inicio ===")
+
+        if not url_override and (not INGEST_URL or not INGEST_SECRET):
+            log("push: falta SOCIAL_INGEST_URL o SOCIAL_INGEST_SECRET en .env.local")
+            return 1
+
+        posts_by_network: dict = {}
+        sync_statuses: list = []
+        for network, fn in CONNECTORS:
+            try:
+                posts = fn()
+                posts_by_network[network] = posts
+                sync_statuses.append({
+                    "network": network, "ok": True, "error": "", "found": len(posts),
+                })
+            except Exception as e:
+                log(f"{network}: FALLO -> {e}")
+                sync_statuses.append({
+                    "network": network, "ok": False, "error": str(e)[:300], "found": 0,
+                })
+
+        if any(posts_by_network.values()):
+            push_to_vps(posts_by_network, sync_statuses, url_override)
+        else:
+            log("push: ningún conector obtuvo posts — no se envía nada")
+        log("=== fin (push) ===")
+        return 0
+
+    # ===================== MODO LOCAL (desarrollo: escribe la DB local) =====================
     log("=== scraping diario de redes - inicio ===")
     conn = db_connect()
     any_ok = False

@@ -266,6 +266,24 @@ export function upsertSocialPost(post: {
     .run(post);
 }
 
+/**
+ * Modo REEMPLAZO del ingest: borra los posts automáticos de una red que
+ * NO estén en el lote recibido (los manuales del panel nunca se tocan).
+ * Devuelve la cantidad eliminada.
+ */
+export function replaceAutoPosts(network: string, keepUrls: string[]): number {
+  if (keepUrls.length === 0) return 0;
+  const placeholders = keepUrls.map(() => "?").join(",");
+  const info = getDb()
+    .prepare(
+      `DELETE FROM social_posts
+       WHERE network = ? AND source = 'auto'
+         AND post_url NOT IN (${placeholders})`,
+    )
+    .run(network, ...keepUrls);
+  return info.changes;
+}
+
 export function getSocialPosts(): SocialPostRow[] {
   return getDb()
     .prepare(

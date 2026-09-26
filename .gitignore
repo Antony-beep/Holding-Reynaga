@@ -42,3 +42,7 @@ next-env.d.ts
 
 # base de datos local de leads
 /data
+
+# venv de Python del scraper (modo PC → VPS)
+/venv
+/venv-scrap
