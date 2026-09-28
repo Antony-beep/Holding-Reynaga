@@ -253,40 +253,60 @@ def scrape_tiktok() -> list:
         # y completamos cada video con el oEmbed público de TikTok.
         # Se saltan los primeros 2 links: son los videos anclados de la cuenta.
         log("TikTok: usando DOM + oEmbed...")
+        import time as _time
+
         from urllib.parse import quote
 
         from curl_cffi import requests as creq
 
+        # 1) Recorrer el grid: además del id, el <img> de portada de cada
+        #    video lleva el caption completo en su atributo alt (respaldo
+        #    para cuando el oEmbed no devuelve título).
         seen = set()
-        video_ids = []
+        video_data = []  # [(video_id, dom_caption)]
         for a in resp.css(f"a[href*='@{TIKTOK_USER}/video/']"):
             href = (a.attrib or {}).get("href", "")
             m = re.search(r"/video/(\d+)", href)
             if not m or m.group(1) in seen:
                 continue
             seen.add(m.group(1))
-            video_ids.append(m.group(1))
+            dom_caption = ""
+            img_el = first(a, "img")
+            if img_el is not None:
+                dom_caption = ((img_el.attrib or {}).get("alt") or "")[:300]
+            video_data.append((m.group(1), dom_caption))
 
-        for video_id in video_ids[TIKTOK_PINNED_VIDEOS:TIKTOK_PINNED_VIDEOS + MAX_PER_NETWORK["tiktok"]]:
+        # 2) Por cada video (saltando los anclados): oEmbed para título +
+        #    thumbnail, con reintento y caption del DOM como respaldo.
+        for video_id, dom_caption in video_data[TIKTOK_PINNED_VIDEOS:TIKTOK_PINNED_VIDEOS + MAX_PER_NETWORK["tiktok"]]:
             url = f"https://www.tiktok.com/@{TIKTOK_USER}/video/{video_id}"
 
             caption = ""
             thumb_path = ""
-            try:
-                r = creq.get(
-                    f"https://www.tiktok.com/oembed?url={quote(url)}",
-                    impersonate="chrome",
-                    timeout=20,
-                )
-                if r.status_code == 200:
-                    oe = r.json()
-                    caption = (oe.get("title") or "")[:300]
-                    thumb_url = oe.get("thumbnail_url") or ""
-                    if thumb_url:
-                        img, ctype = download_image(thumb_url)
-                        thumb_path = save_thumb("tiktok", url, img, ctype)
-            except Exception as e:
-                log(f"  [warn] oEmbed TikTok {video_id}: {e}")
+            for attempt in (1, 2):
+                try:
+                    r = creq.get(
+                        f"https://www.tiktok.com/oembed?url={quote(url)}",
+                        impersonate="chrome",
+                        timeout=20,
+                    )
+                    if r.status_code == 200:
+                        oe = r.json()
+                        caption = (oe.get("title") or "")[:300]
+                        thumb_url = oe.get("thumbnail_url") or ""
+                        if thumb_url:
+                            img, ctype = download_image(thumb_url)
+                            thumb_path = save_thumb("tiktok", url, img, ctype)
+                except Exception as e:
+                    log(f"  [warn] oEmbed TikTok {video_id} (intento {attempt}): {e}")
+                if caption:
+                    break
+                if attempt == 1:
+                    _time.sleep(1.5)  # pausa breve antes del reintento
+
+            # Respaldo final: caption del alt de la portada en el DOM
+            if not caption and dom_caption:
+                caption = dom_caption
 
             posts.append({
                 "url": url,
