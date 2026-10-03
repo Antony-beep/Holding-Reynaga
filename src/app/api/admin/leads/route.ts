@@ -6,6 +6,11 @@ import {
   deleteLeadsByIds,
   deleteLeadsOlderThan,
   getLeadsRange,
+  getLeadStats,
+  searchLeads,
+  updateLeadEstado,
+  updateLeadNotes,
+  LEAD_ESTADOS,
 } from "@/lib/db";
 
 export const runtime = "nodejs";
@@ -24,6 +29,7 @@ export async function GET(request: NextRequest) {
   if (!isAuthorized(request.headers.get("cookie"))) return unauthorized();
 
   const rangeParam = request.nextUrl.searchParams.get("range") ?? "week";
+  const searchQuery = request.nextUrl.searchParams.get("q") ?? "";
   const days = RANGES[rangeParam];
   if (days === undefined) {
     return NextResponse.json(
@@ -32,8 +38,12 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const leads = getLeadsRange(days);
+  // Si hay búsqueda, usar searchLeads
+  const leads = searchQuery.trim()
+    ? searchLeads(searchQuery.trim(), days)
+    : getLeadsRange(days);
   const total = countLeads();
+  const stats = getLeadStats();
   const pendingSync = leads.filter((l) => l.sheets_synced === 0).length;
 
   return NextResponse.json({
@@ -42,8 +52,41 @@ export async function GET(request: NextRequest) {
     total,
     shown: leads.length,
     pendingSync,
+    stats,
     leads,
   });
+}
+
+export async function POST(request: NextRequest) {
+  if (!isAuthorized(request.headers.get("cookie"))) return unauthorized();
+
+  let body: { action?: string; id?: number; estado?: string; notes?: string };
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ ok: false, error: "Solicitud inválida." }, { status: 400 });
+  }
+
+  try {
+    const id = Number(body.id);
+    switch (body.action) {
+      case "cambiar_estado": {
+        updateLeadEstado(id, String(body.estado));
+        return NextResponse.json({ ok: true, message: "Estado actualizado a " + body.estado + "." });
+      }
+      case "guardar_notas": {
+        updateLeadNotes(id, String(body.notes ?? ""));
+        return NextResponse.json({ ok: true, message: "Notas guardadas." });
+      }
+      default:
+        return NextResponse.json({ ok: false, error: "Acción desconocida." }, { status: 400 });
+    }
+  } catch (err) {
+    return NextResponse.json(
+      { ok: false, error: err instanceof Error ? err.message : "Error inesperado." },
+      { status: 400 },
+    );
+  }
 }
 
 export async function DELETE(request: NextRequest) {

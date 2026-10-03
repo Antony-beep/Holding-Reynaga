@@ -11,6 +11,7 @@ export interface SendMailInput {
 
 export interface SendMailResult {
   ok: boolean;
+  messageId?: string;
   error?: string;
 }
 
@@ -43,7 +44,7 @@ export async function sendMail(input: SendMailInput): Promise<SendMailResult> {
     if (result.error) {
       return { ok: false, error: result.error.message };
     }
-    return { ok: true };
+    return { ok: true, messageId: result.data?.id };
   } catch (err) {
     return {
       ok: false,

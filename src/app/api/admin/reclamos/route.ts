@@ -14,6 +14,7 @@ import {
 } from "@/lib/db";
 import { businessDaysLeft, deadlineHabil, limaToday } from "@/lib/holidays";
 import { sendMail, getNotifyEmail } from "@/lib/mailer";
+import { getDb } from "@/lib/db";
 import { generateAvisoPdf } from "@/lib/reclamos-pdf";
 import { labelBien } from "@/lib/schemas/reclamo";
 
@@ -121,7 +122,67 @@ export async function POST(request: NextRequest) {
         if (!reclamo) throw new Error("Reclamo no encontrado.");
         if (respuesta.trim().length < 10) throw new Error("La respuesta debe tener al menos 10 caracteres.");
         updateReclamo(id, { respuesta, respondido_por: respondidoPor });
-        return NextResponse.json({ ok: true, message: "Respuesta registrada. Recuerde enviarla al consumidor desde su correo y luego marcar 'Respuesta enviada'." });
+        return NextResponse.json({ ok: true, message: "Respuesta registrada. Ya puede enviarla con el botón 'Enviar respuesta'." });
+      }
+
+      case "enviar_respuesta": {
+        const id = Number(body.id);
+        const reclamo = getReclamoById(id);
+        if (!reclamo) throw new Error("Reclamo no encontrado.");
+        if (!reclamo.respuesta || reclamo.respuesta.trim().length < 10) {
+          throw new Error("Primero registre la respuesta (mínimo 10 caracteres).");
+        }
+
+        // Generar PDF de la hoja con la respuesta incluida
+        const { generateReclamoPdf } = await import("@/lib/reclamos-pdf");
+        const pdf = await generateReclamoPdf(reclamo);
+        const pdfBase64 = Buffer.from(pdf).toString("base64");
+
+        // Enviar vía Resend con PDF adjunto
+        const result = await sendMail({
+          to: reclamo.email,
+          subject: `Respuesta a su reclamo ${reclamo.codigo} — Holding Reynaga`,
+          html: `
+            <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+              <div style="background:#0a1931;padding:24px;border-radius:12px 12px 0 0;text-align:center;">
+                <h2 style="color:#fff;margin:0;">HOLDING INVERSIONES REYNAGA S.A.C.</h2>
+                <p style="color:#D4AF37;margin:6px 0 0;letter-spacing:1px;">RESPUESTA A SU RECLAMO</p>
+              </div>
+              <div style="border:1px solid #e5e5e5;border-top:none;padding:24px;border-radius:0 0 12px 12px;">
+                <p style="font-size:15px;">Estimado/a <strong>${reclamo.nombre}</strong>:</p>
+                <p>En respuesta a su reclamo <strong>${reclamo.codigo}</strong>, registrado el ${reclamo.created_at}, le comunicamos lo siguiente:</p>
+                <div style="background:#f9f9f9;padding:16px;border-left:4px solid #D4AF37;border-radius:4px;">
+                  <p style="white-space:pre-wrap;font-size:14px;line-height:1.6;">${reclamo.respuesta.replace(/</g, "<").replace(/\n/g, "<br>")}</p>
+                </div>
+                <p style="font-size:12px;color:#888;margin-top:24px;">
+                  Adjuntamos la hoja de reclamación actualizada con esta respuesta.
+                  Si no está conforme, puede acudir a INDECOPI en cualquier momento.
+                </p>
+                <p style="font-size:12px;color:#888;">
+                  Atentamente,<br>
+                  <strong>${reclamo.respondido_por || "Equipo de Atención"}</strong><br>
+                  Holding Inversiones Reynaga S.A.C.<br>
+                  Tel: +51 981 407 634
+                </p>
+              </div>
+            </div>`,
+          attachments: [{ filename: `${reclamo.codigo}-respuesta.pdf`, content: pdfBase64 }],
+        });
+
+        if (!result.ok) {
+          throw new Error("No se pudo enviar el email: " + (result.error ?? "error desconocido") + ". Verifique la configuración de Resend.");
+        }
+
+        // Auto-marcar como enviada con evidencia del messageId de Resend
+        const fechaEnvio = new Date().toISOString().slice(0, 19).replace("T", " ");
+        updateReclamo(id, { respuesta_enviada_en: fechaEnvio });
+        // Guardar messageId como evidencia de entrega
+        getDb().prepare("UPDATE reclamos SET message_id = ? WHERE id = ?").run(result.messageId ?? "", id);
+
+        return NextResponse.json({
+          ok: true,
+          message: `Respuesta enviada a ${reclamo.email}. Marcada como enviada automáticamente.${result.messageId ? " Evidencia: " + result.messageId : ""}`,
+        });
       }
 
       case "marcar_enviada": {

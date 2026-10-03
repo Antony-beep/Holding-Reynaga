@@ -282,17 +282,30 @@ export default function ReclamosManager() {
                 />
                 <div className="flex flex-wrap gap-2">
                   <button onClick={() => action({ action: "guardar_respuesta", id: selected.id, respuesta: respuestaText, respondidoPor })} disabled={busy}
-                    className="bg-[#D4AF37] text-deep-navy font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl disabled:opacity-50 flex items-center gap-2">
-                    <Save className="w-4 h-4" /> Guardar respuesta
+                    className="bg-white/10 border border-white/15 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl disabled:opacity-50 flex items-center gap-2">
+                    <Save className="w-4 h-4" /> Guardar borrador
                   </button>
-                  <button onClick={() => action({ action: "marcar_enviada", id: selected.id })} disabled={busy || !selected.respuesta}
-                    className="bg-white/10 border border-white/15 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl disabled:opacity-40 flex items-center gap-2">
-                    <Send className="w-4 h-4" /> Marcar respuesta enviada
+                  <button
+                    onClick={() => {
+                      if (respuestaText.trim().length < 10) {
+                        setError("La respuesta debe tener al menos 10 caracteres antes de enviar.");
+                        return;
+                      }
+                      if (!window.confirm("Enviar respuesta a " + selected.email + "? Se adjuntará el PDF de la hoja.")) return;
+                      action({ action: "guardar_respuesta", id: selected.id, respuesta: respuestaText, respondidoPor }).then(() => {
+                        action({ action: "enviar_respuesta", id: selected.id });
+                      });
+                    }}
+                    disabled={busy}
+                    className="bg-[#D4AF37] text-deep-navy font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl disabled:opacity-50 flex items-center gap-2 shadow-lg hover:shadow-[#D4AF37]/30 transition-all">
+                    <Send className="w-4 h-4" /> Enviar respuesta por email
                   </button>
-                  <button onClick={() => action({ action: "marcar_atendido", id: selected.id })} disabled={busy || !selected.respuesta_enviada_en}
-                    className="bg-green-600/80 hover:bg-green-600 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl disabled:opacity-40 flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4" /> Marcar ATENDIDO
-                  </button>
+                  {selected.respuesta_enviada_en && (
+                    <button onClick={() => action({ action: "marcar_atendido", id: selected.id })} disabled={busy}
+                      className="bg-green-600/80 hover:bg-green-600 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl disabled:opacity-40 flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4" /> Marcar ATENDIDO
+                    </button>
+                  )}
                   <button onClick={() => action({ action: "reenviar_emails", id: selected.id })} disabled={busy}
                     className="bg-white/10 border border-white/15 text-white/70 font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl disabled:opacity-40 flex items-center gap-2">
                     <Send className="w-4 h-4" /> Reenviar copia al consumidor

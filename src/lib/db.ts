@@ -176,6 +176,18 @@ export function getDb(): Database.Database {
       const reclamoCols = db.prepare("PRAGMA table_info(reclamos)").all() as { name: string }[];
       if (!reclamoCols.some((c) => c.name === "bien_tipo")) {
         db.exec("ALTER TABLE reclamos ADD COLUMN bien_tipo TEXT NOT NULL DEFAULT ''");
+  }
+  if (!reclamoCols.some((c) => c.name === "message_id")) {
+        db.exec("ALTER TABLE reclamos ADD COLUMN message_id TEXT NOT NULL DEFAULT ''");
+  }
+  const leadCols = db.prepare("PRAGMA table_info(leads)").all() as {
+    name: string;
+  }[];
+  if (!leadCols.some((c) => c.name === "estado_lead")) {
+        db.exec("ALTER TABLE leads ADD COLUMN estado_lead TEXT NOT NULL DEFAULT 'nuevo'");
+  }
+  if (!leadCols.some((c) => c.name === "lead_notes")) {
+        db.exec("ALTER TABLE leads ADD COLUMN lead_notes TEXT NOT NULL DEFAULT ''");
       }
       // Sin DEFAULT ni backfill: NULL significa que no se capturó evidencia histórica.
       for (const table of ["leads", "reclamos"]) {
@@ -224,9 +236,23 @@ export interface LeadRow extends ConsentEvidenceRow {
   message: string;
   ip: string;
   user_agent: string;
+  estado_lead: string;
+  lead_notes: string;
   sheets_synced: number;
   sheets_synced_at: string | null;
 }
+
+export type LeadEstado =
+  | "nuevo"
+  | "contactado"
+  | "calificado"
+  | "visita_agendada"
+  | "reservado"
+  | "descartado";
+
+export const LEAD_ESTADOS: LeadEstado[] = [
+  "nuevo", "contactado", "calificado", "visita_agendada", "reservado", "descartado",
+];
 
 export function insertLead(lead: {
   source: string;
@@ -332,6 +358,57 @@ export function deleteLeadsOlderThan(days: number): number {
 }
 
 /** Elimina leads concretos por id (lote). Devuelve la cantidad eliminada. */
+export function updateLeadEstado(id: number, estado: string): void {
+  if (!LEAD_ESTADOS.includes(estado as LeadEstado)) {
+    throw new Error("Estado inválido: " + estado);
+  }
+  getDb()
+    .prepare("UPDATE leads SET estado_lead = ? WHERE id = ?")
+    .run(estado, id);
+}
+
+export function updateLeadNotes(id: number, notes: string): void {
+  getDb()
+    .prepare("UPDATE leads SET lead_notes = ? WHERE id = ?")
+    .run(notes.slice(0, 2000), id);
+}
+
+export function searchLeads(query: string, range: number | null): LeadRow[] {
+  const db = getDb();
+  const q = `%${query.toLowerCase()}%`;
+  const rangeClause =
+    range === null ? "" : "AND created_at >= datetime('now', ?)";
+  const params = range === null ? [q, q, q] : [q, q, q, `-${range} days`];
+  return db
+    .prepare(
+      `SELECT * FROM leads
+       WHERE (LOWER(name) LIKE ? OR LOWER(email) LIKE ? OR LOWER(phone) LIKE ?)
+       ${rangeClause}
+       ORDER BY created_at DESC, id DESC LIMIT 500`,
+    )
+    .all(...params) as LeadRow[];
+}
+
+export function getLeadStats(): {
+  total: number;
+  nuevos: number;
+  contactados: number;
+  calificados: number;
+  reservados: number;
+  weekCount: number;
+  monthCount: number;
+} {
+  const db = getDb();
+  const total = (db.prepare("SELECT COUNT(*) c FROM leads").get() as { c: number }).c;
+  const nuevos = (db.prepare("SELECT COUNT(*) c FROM leads WHERE estado_lead = 'nuevo'").get() as { c: number }).c;
+  const contactados = (db.prepare("SELECT COUNT(*) c FROM leads WHERE estado_lead = 'contactado'").get() as { c: number }).c;
+  const calificados = (db.prepare("SELECT COUNT(*) c FROM leads WHERE estado_lead = 'calificado'").get() as { c: number }).c;
+  const reservados = (db.prepare("SELECT COUNT(*) c FROM leads WHERE estado_lead = 'reservado'").get() as { c: number }).c;
+  const weekCount = (db.prepare("SELECT COUNT(*) c FROM leads WHERE created_at >= datetime('now','-7 days')").get() as { c: number }).c;
+  const monthCount = (db.prepare("SELECT COUNT(*) c FROM leads WHERE created_at >= datetime('now','-30 days')").get() as { c: number }).c;
+  return { total, nuevos, contactados, calificados, reservados, weekCount, monthCount };
+}
+
 export function deleteLeadsByIds(ids: number[]): number {
   if (ids.length === 0) return 0;
   const db = getDb();

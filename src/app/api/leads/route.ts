@@ -147,6 +147,41 @@ export async function POST(request: NextRequest) {
     } catch (err) {
       console.error(`[leads] Fallo sync a Google Sheets (lead ${leadId}):`, err);
     }
+
+    // Notificación por email al equipo de ventas
+    try {
+      const lead = getLeadById(leadId);
+      if (!lead) return;
+      const { sendMail } = await import("@/lib/mailer");
+      const interestLabel: Record<string, string> = {
+        "1": "1 Dormitorio", "2": "2 Dormitorios", "3": "3 Dormitorios",
+        inv: "Inversión", "": "Sin especificar",
+      };
+      await sendMail({
+        to: process.env.RECLAMOS_NOTIFY_EMAIL || "holdingreynagaventas@gmail.com",
+        subject: `Nuevo lead #${leadId}: ${lead.name}${lead.interest ? " — " + (interestLabel[lead.interest] ?? lead.interest) : ""}`,
+        html: `
+          <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;">
+            <div style="background:#0a1931;padding:18px 24px;border-radius:12px 12px 0 0;">
+              <h3 style="color:#D4AF37;margin:0;">NUEVO LEAD #${leadId}</h3>
+            </div>
+            <div style="border:1px solid #e5e5e5;border-top:none;padding:20px 24px;border-radius:0 0 12px 12px;font-size:14px;">
+              <p><strong>Nombre:</strong> ${lead.name}</p>
+              <p><strong>Teléfono:</strong> ${lead.phone}${lead.document ? " | <strong>Doc:</strong> " + lead.document : ""}</p>
+              <p><strong>Email:</strong> ${lead.email}</p>
+              <p><strong>Interés:</strong> ${interestLabel[lead.interest] ?? lead.interest ?? "—"} | <strong>Origen:</strong> ${lead.source === "fab" ? "Reserva WhatsApp" : "Cotización"}</p>
+              ${lead.message ? `<p style="background:#f9f9f9;padding:10px;border-left:3px solid #D4AF37;"><strong>Mensaje:</strong><br>${lead.message.replace(/</g, "<").replace(/\n/g, "<br>")}</p>` : ""}
+              <p><strong>Registrado:</strong> ${lead.created_at}</p>
+              <p style="margin-top:20px;">
+                <a href="https://wa.me/${lead.phone.replace(/\D/g, "")}" style="background:#25D366;color:#fff;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:bold;">Responder por WhatsApp</a>
+              </p>
+              <p style="font-size:11px;color:#888;margin-top:16px;">Gestionar desde el panel: https://inmobiliariaholdingreynaga.com/admin</p>
+            </div>
+          </div>`,
+      });
+    } catch (err) {
+      console.error(`[leads] Fallo email notificación (lead ${leadId}):`, err);
+    }
   });
 
   return NextResponse.json({ ok: true, id: leadId });

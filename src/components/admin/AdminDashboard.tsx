@@ -24,6 +24,8 @@ interface Lead {
   email: string;
   interest: string;
   message: string;
+  estado_lead: string;
+  lead_notes: string;
   sheets_synced: number;
 }
 
@@ -47,6 +49,11 @@ export default function AdminDashboard() {
   const [range, setRange] = useState<RangeKey>("week");
   const [leads, setLeads] = useState<Lead[]>([]);
   const [total, setTotal] = useState(0);
+  const [stats, setStats] = useState<{
+    total: number; nuevos: number; contactados: number;
+    calificados: number; reservados: number; weekCount: number; monthCount: number;
+  } | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -54,11 +61,13 @@ export default function AdminDashboard() {
   const [busy, setBusy] = useState(false);
 
   const load = useCallback(
-    async (r: RangeKey) => {
+    async (r: RangeKey, q?: string) => {
       setLoading(true);
       setError("");
       try {
-        const res = await fetch(`/api/admin/leads?range=${r}`, {
+        const params = new URLSearchParams({ range: r });
+        if (q && q.trim()) params.set("q", q.trim());
+        const res = await fetch(`/api/admin/leads?${params}`, {
           cache: "no-store",
         });
         const data = await res.json();
@@ -71,6 +80,7 @@ export default function AdminDashboard() {
         }
         setLeads(data.leads ?? []);
         setTotal(data.total ?? 0);
+        if (data.stats) setStats(data.stats);
         setSelected(new Set());
       } catch (err) {
         setError(err instanceof Error ? err.message : "Error inesperado.");
@@ -228,6 +238,52 @@ export default function AdminDashboard() {
         </div>
       </div>
 
+      {/* Dashboard de métricas */}
+      {stats && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2">
+          {[
+            { label: "Nuevos", value: stats.nuevos, color: "text-[#D4AF37]" },
+            { label: "Contactados", value: stats.contactados, color: "text-blue-300" },
+            { label: "Calificados", value: stats.calificados, color: "text-purple-300" },
+            { label: "Reservados", value: stats.reservados, color: "text-green-300" },
+            { label: "Esta semana", value: stats.weekCount, color: "text-white" },
+            { label: "Este mes", value: stats.monthCount, color: "text-white/70" },
+            { label: "Total", value: stats.total, color: "text-white/40" },
+          ].map((s) => (
+            <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-center">
+              <p className={`font-display font-black text-2xl ${s.color}`}>{s.value}</p>
+              <p className="text-[10px] uppercase tracking-wider text-white/50">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Búsqueda */}
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") load(range, searchQuery); }}
+          placeholder="Buscar por nombre, email o teléfono..."
+          className="flex-1 max-w-md bg-white/10 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-[#D4AF37]/60"
+        />
+        <button
+          onClick={() => load(range, searchQuery)}
+          className="bg-[#D4AF37] text-deep-navy font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl"
+        >
+          Buscar
+        </button>
+        {searchQuery && (
+          <button
+            onClick={() => { setSearchQuery(""); load(range, ""); }}
+            className="bg-white/10 border border-white/15 text-white/60 font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl"
+          >
+            Limpiar
+          </button>
+        )}
+      </div>
+
       {/* Pestañas de rango */}
       <div className="flex gap-2 bg-white/5 border border-white/10 rounded-xl p-1.5 w-fit">
         {(Object.keys(RANGE_LABELS) as RangeKey[]).map((key) => (
@@ -279,20 +335,21 @@ export default function AdminDashboard() {
               <th className="px-4 py-3">Teléfono</th>
               <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Interés</th>
+              <th className="px-4 py-3">Estado</th>
               <th className="px-4 py-3">Sheets</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={9} className="px-4 py-12 text-center text-white/50">
+                <td colSpan={10} className="px-4 py-12 text-center text-white/50">
                   <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
                   Cargando leads...
                 </td>
               </tr>
             ) : leads.length === 0 ? (
               <tr>
-                <td colSpan={9} className="px-4 py-12 text-center text-white/50">
+                <td colSpan={10} className="px-4 py-12 text-center text-white/50">
                   No hay leads en este rango de fechas.
                 </td>
               </tr>
@@ -333,6 +390,45 @@ export default function AdminDashboard() {
                   <td className="px-4 py-3 text-white/70">{lead.email}</td>
                   <td className="px-4 py-3 text-white/70">
                     {lead.interest || "—"}
+                  </td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={lead.estado_lead || "nuevo"}
+                      onChange={async (e) => {
+                        const nuevo = e.target.value;
+                        setBusy(true);
+                        try {
+                          const res = await fetch("/api/admin/leads", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ action: "cambiar_estado", id: lead.id, estado: nuevo }),
+                          });
+                          const d = await res.json();
+                          if (!d.ok) throw new Error(d.error);
+                          setNotice("Estado de " + lead.name + " → " + nuevo);
+                          await load(range, searchQuery || undefined);
+                        } catch (err) {
+                          setError(err instanceof Error ? err.message : "Error");
+                        } finally { setBusy(false); }
+                      }}
+                      disabled={busy}
+                      className={`text-[11px] font-bold rounded-full px-2 py-1 border-0 outline-none cursor-pointer ${
+                        (lead.estado_lead === "nuevo" || !lead.estado_lead) ? "bg-amber-500/20 text-amber-300"
+                        : lead.estado_lead === "contactado" ? "bg-blue-500/20 text-blue-300"
+                        : lead.estado_lead === "calificado" ? "bg-purple-500/20 text-purple-300"
+                        : lead.estado_lead === "visita_agendada" ? "bg-cyan-500/20 text-cyan-300"
+                        : lead.estado_lead === "reservado" ? "bg-green-500/20 text-green-300"
+                        : lead.estado_lead === "descartado" ? "bg-white/10 text-white/40"
+                        : "bg-white/10 text-white/60"
+                      }`}
+                    >
+                      <option value="nuevo" className="text-black">Nuevo</option>
+                      <option value="contactado" className="text-black">Contactado</option>
+                      <option value="calificado" className="text-black">Calificado</option>
+                      <option value="visita_agendada" className="text-black">Visita agendada</option>
+                      <option value="reservado" className="text-black">Reservado</option>
+                      <option value="descartado" className="text-black">Descartado</option>
+                    </select>
                   </td>
                   <td className="px-4 py-3">
                     {lead.sheets_synced === 1 ? (
