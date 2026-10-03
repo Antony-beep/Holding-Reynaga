@@ -153,100 +153,107 @@ class DocWriter {
 
 export async function generateReclamoPdf(reclamo: ReclamoRow): Promise<Uint8Array> {
   const doc = await PDFDocument.create();
-  doc.setTitle(`Hoja de Reclamacion ${reclamo.codigo}`);
+  doc.setTitle("Hoja de Reclamacion " + reclamo.codigo);
   doc.setAuthor("Holding Inversiones Reynaga S.A.C.");
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
 
   const w = new DocWriter(doc, font, bold);
 
-  // Encabezado
+  // Encabezado oficial (formato del Anexo I, versión INDECOPI)
   w.page.drawRectangle({
     x: 0,
-    y: w.height - 110,
+    y: w.height - 130,
     width: w.width,
-    height: 110,
+    height: 130,
     color: NAVY,
   });
-  w.page.drawText("HOLDING INVERSIONES REYNAGA S.A.C.", {
-    x: 48, y: w.height - 48, size: 15, font: bold, color: rgb(1, 1, 1),
+  w.page.drawText("LIBRO DE RECLAMACIONES", {
+    x: 48, y: w.height - 42, size: 15, font: bold, color: rgb(1, 1, 1),
   });
-  w.page.drawText("Libro de Reclamaciones Virtual - Ley N° 29571 / D.S. N° 011-2011-PCM", {
-    x: 48, y: w.height - 66, size: 8.5, font, color: rgb(0.83, 0.686, 0.216),
+  w.page.drawText("HOJA DE RECLAMACIÓN", {
+    x: 48, y: w.height - 68, size: 17, font: bold, color: rgb(0.83, 0.686, 0.216),
   });
-  w.page.drawText(`HOJA DE RECLAMACION  ${reclamo.codigo}`, {
-    x: 48, y: w.height - 92, size: 13, font: bold, color: rgb(0.83, 0.686, 0.216),
+  w.page.drawText("N° " + reclamo.codigo, {
+    x: 48, y: w.height - 90, size: 11, font: bold, color: rgb(0.83, 0.686, 0.216),
   });
-  w.y = w.height - 130;
+  w.page.drawText("FECHA: " + reclamo.created_at + " (UTC)", {
+    x: 48, y: w.height - 106, size: 9, font, color: rgb(1, 1, 1),
+  });
+  w.y = w.height - 155;
 
-  w.field("Fecha de registro:", `${reclamo.created_at} (hora del servidor, UTC)`);
-  w.field("Tipo:", reclamo.tipo === "reclamo" ? "RECLAMO (disconformidad relacionada al producto o servicio)" : "QUEJA (disconformidad no relacionada al producto o servicio, e.j. atencion)");
+  // Datos del proveedor
+  w.field("PROVEEDOR:", "HOLDING INVERSIONES REYNAGA S.A.C.");
+  w.field("RUC:", "20614870959");
+  w.field("DOMICILIO FISCAL (RUC):", "Jr. Lino Nro. 132, Huancayo Cercado (Oficina 401, a 1 cuadra del Parque Grau), Huancayo, Junín - Perú");
+  w.field("SALA DE VENTAS:", "Av. San Agustín 154, San Carlos, Huancayo");
   w.line();
 
-  // A. Datos del proveedor
-  w.sectionTitle("A. DATOS GENERALES DEL PROVEEDOR");
-  w.field("Razón Social:", "HOLDING INVERSIONES REYNAGA S.A.C.");
-  w.field("RUC:", "20614870959");
-  w.field("Domicilio:", "Jr. Lino Nro. 132, Oficina 401, Huancayo Cercado, Huancayo, Junin - Peru");
-  w.field("Sala de Ventas:", "Av. San Agustin 154, San Carlos, Huancayo");
-  w.field("Libro:", "Reclamos (formato virtual) - Código correlativo propio, no requiere legalizacion ni registro ante INDECOPI.");
+  // 1. IDENTIFICACIÓN DEL CONSUMIDOR RECLAMANTE
+  w.sectionTitle("1. IDENTIFICACIÓN DEL CONSUMIDOR RECLAMANTE");
+  w.field("NOMBRE:", reclamo.nombre);
+  w.field("DNI / CE:", reclamo.documento);
+  w.field("DOMICILIO:", reclamo.domicilio);
+  w.field("TELÉFONO:", reclamo.telefono);
+  w.field("E-MAIL:", reclamo.email);
+  if (reclamo.representante) w.field("SI ES MENOR DE EDAD, NOMBRE DEL PADRE, MADRE O APODERADO:", reclamo.representante);
 
-  // B. Datos del consumidor
-  w.sectionTitle("B. DATOS GENERALES DEL CONSUMIDOR");
-  w.field("Nombre:", reclamo.nombre);
-  w.field("Documento (DNI/CE/Pasaporte):", reclamo.documento);
-  w.field("Domicilio:", reclamo.domicilio);
-  w.field("Teléfono:", reclamo.telefono);
-  w.field("Correo electrónico:", reclamo.email);
-  if (reclamo.representante) w.field("Padre/Madre/Representante (menor de edad):", reclamo.representante);
+  // 2. IDENTIFICACIÓN DEL BIEN CONTRATADO
+  w.sectionTitle("2. IDENTIFICACIÓN DEL BIEN CONTRATADO");
+  w.ensureSpace(30);
+  const checkP = (reclamo.bien_tipo || "") === "producto" ? "[X] PRODUCTO" : "[  ] PRODUCTO";
+  const checkS = (reclamo.bien_tipo || "") === "servicio" ? "[X] SERVICIO" : "[  ] SERVICIO";
+  w.page.drawText(checkP + "      " + checkS, {
+    x: w.margin, y: w.y, size: 11, font: bold, color: BLACK,
+  });
+  w.y -= 20;
+  w.field("MONTO RECLAMADO:", reclamo.monto || "N/A");
+  w.field("DESCRIPCIÓN:", labelBien(reclamo.bien_contratado) + (reclamo.bien_detalle ? " - " + reclamo.bien_detalle : ""));
 
-  // C. Bien contratado y monto
-  w.sectionTitle("C. descripción del bien O SERVICIO Y MONTO RECLAMADO");
-  const bien = labelBien(reclamo.bien_contratado) + (reclamo.bien_detalle ? ` - ${reclamo.bien_detalle}` : "");
-  w.field("Bien o servicio contratado:", bien);
-  w.field("Monto reclamado:", reclamo.monto || "N/A");
+  // 3. DETALLE DE LA RECLAMACIÓN Y PEDIDO DEL CONSUMIDOR
+  w.sectionTitle("3. DETALLE DE LA RECLAMACIÓN Y PEDIDO DEL CONSUMIDOR");
+  w.ensureSpace(30);
+  const checkR = reclamo.tipo === "reclamo" ? "[X] RECLAMO" : "[  ] RECLAMO";
+  const checkQ = reclamo.tipo === "queja" ? "[X] QUEJA" : "[  ] QUEJA";
+  w.page.drawText(checkR + "       " + checkQ, {
+    x: w.margin, y: w.y, size: 11, font: bold, color: BLACK,
+  });
+  w.y -= 20;
+  w.field("DETALLE:", reclamo.detalle);
+  w.field("PEDIDO:", reclamo.pedido);
+  w.field("FIRMA DEL CONSUMIDOR:", "Documento electrónico generado por el Libro de Reclamaciones Virtual (versión digital, no requiere firma física).");
 
-  // D. Detalle
-  w.sectionTitle("D. DETALLE DEL RECLAMO O QUEJA");
-  w.text(reclamo.detalle, { size: 10 });
-  w.y -= 6;
-
-  // E. Pedido
-  w.sectionTitle("E. PEDIDO CONCRETO DEL CONSUMIDOR");
-  w.text(reclamo.pedido, { size: 10 });
-  w.y -= 6;
-
-  // F. Acciones y observaciones del proveedor (en blanco en la copia del consumidor)
-  w.sectionTitle("F. ACCIONES Y/U OBSERVACIONES DEL PROVEEDOR");
+  // 4. OBSERVACIONES Y ACCIONES ADOPTADAS POR EL PROVEEDOR
+  w.sectionTitle("4. OBSERVACIONES Y ACCIONES ADOPTADAS POR EL PROVEEDOR");
   if (reclamo.estado === "atendido" && reclamo.respuesta) {
-    w.text(`Respuesta registrada por ${reclamo.respondido_por || "el proveedor"}:`, { size: 9.5, bold: true });
+    w.text("Respuesta registrada por " + (reclamo.respondido_por || "el proveedor") + ":", { size: 9.5, bold: true });
     w.text(reclamo.respuesta, { size: 10 });
-    if (reclamo.respuesta_enviada_en) {
-      w.field("Respuesta enviada al consumidor el:", reclamo.respuesta_enviada_en);
-    }
   } else {
     for (let i = 0; i < 4; i++) w.line();
   }
-  if (reclamo.estado === "anulado" && reclamo.anulado_motivo) {
-    w.field("Anulado con motivo:", reclamo.anulado_motivo);
+  if (reclamo.respuesta_enviada_en) {
+    w.field("FECHA DE COMUNICACIÓN DE LA RESPUESTA:", reclamo.respuesta_enviada_en);
+  } else {
+    w.ensureSpace(26);
+    w.page.drawText("FECHA DE COMUNICACIÓN DE LA RESPUESTA: ____________________", {
+      x: w.margin, y: w.y, size: 9, font: bold, color: GRAY,
+    });
+    w.y -= 18;
   }
+  if (reclamo.estado === "anulado" && reclamo.anulado_motivo) {
+    w.field("ANULADO CON MOTIVO (historial conservado):", reclamo.anulado_motivo);
+  }
+  w.field("FIRMA DEL PROVEEDOR:", "Documento electrónico generado por el Libro de Reclamaciones Virtual.");
 
-  // Pie legal
-  w.y -= 8;
-  w.ensureSpace(70);
+  // Notas legales oficiales (textos del formato INDECOPI)
+  w.y -= 10;
+  w.ensureSpace(130);
   w.line();
-  w.text(
-    "La atención de este reclamo se realizará en un plazo máximo de quince (15) días hábiles, improrrogables, conforme al artículo 146 del Código de Protección y Defensa del Consumidor.",
-    { size: 8, color: GRAY },
-  );
-  w.text(
-    "Copia de esta hoja fue remitida al correo electrónico declarado por el consumidor. El consumidor puede solicitar copia y/o registrar su reclamo ante INDECOPI en cualquier momento.",
-    { size: 8, color: GRAY },
-  );
-  w.text(
-    `Documento generado electrónicamente por el Libro de Reclamaciones Virtual - ${reclamo.codigo}`,
-    { size: 8, bold: true, color: NAVY },
-  );
+  w.text("RECLAMO: Disconformidad relacionada a los productos o servicios.", { size: 8, color: GRAY });
+  w.text("QUEJA: Disconformidad no relacionada a los productos o servicios; o, malestar o descontento respecto a la atención al público.", { size: 8, color: GRAY });
+  w.text("* La formulación del reclamo no impide acudir a otras vías de solución de controversias ni es requisito previo para interponer una denuncia ante el INDECOPI.", { size: 8, color: GRAY });
+  w.text("* El proveedor debe dar respuesta al reclamo o queja en un plazo no mayor a quince (15) días hábiles, el cual es improrrogable.", { size: 8, color: GRAY });
+  w.text("Formato del Anexo I del D.S. N° 011-2011-PCM - Ley N° 29571. Emitido electrónicamente: " + reclamo.codigo, { size: 8, bold: true, color: NAVY });
 
   return doc.save();
 }
@@ -290,7 +297,7 @@ export async function generateAvisoPdf(): Promise<Uint8Array> {
   const rows: [string, string][] = [
     ["Nombre / Razón Social:", "HOLDING INVERSIONES REYNAGA S.A.C."],
     ["RUC:", "20614870959"],
-    ["Dirección:", "Jr. Lino Nro. 132, Oficina 401, Huancayo Cercado, Huancayo, Junín - Perú"],
+    ["Domicilio fiscal (RUC):", "Jr. Lino Nro. 132, Huancayo Cercado (Oficina 401, a 1 cuadra del Parque Grau), Huancayo, Junín - Perú"],
     ["Sala de Ventas:", "Av. San Agustín 154, San Carlos, Huancayo"],
     ["Libro de Reclamaciones Virtual:", "https://inmobiliariaholdingreynaga.com/libro-de-reclamaciones"],
   ];

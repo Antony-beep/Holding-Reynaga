@@ -4,13 +4,22 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { trackLeadSubmitted } from "@/lib/analytics";
+import { useFormValidation } from "@/lib/form-validation";
+import { useFormMountTime } from "@/lib/form-mount-time";
+import { PRIVACY_POLICY_VERSION, type ConsentSubmission } from "@/lib/privacy";
+import { useDocumentActivated } from "@/components/global/useDocumentActivated";
+import ConsentFields from "@/components/forms/ConsentFields";
+import CharCount from "@/components/ui/CharCount";
 import { 
   Phone, Mail, ShieldCheck, Clock, Lock, 
-  User, CreditCard, Building2, MessageSquare, 
+  User, Building2, MessageSquare,
   Headphones, Calendar, MessageCircle, ArrowRight
 } from "lucide-react";
 
 export default function DossierForm() {
+  const fv = useFormValidation();
+  const mt = useFormMountTime();
+  const documentActivated = useDocumentActivated();
   const [submitted, setSubmitted] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -23,12 +32,12 @@ export default function DossierForm() {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
   const [formData, setFormData] = useState({
     name: "",
-    document: "",
     phone: "",
     email: "",
     interest: "",
     message: "",
-    privacy: false
+    privacy: false,
+    marketing: false,
   });
   
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, target?: string) => {
@@ -61,8 +70,13 @@ export default function DossierForm() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!documentActivated) return;
+    if (!fv.validate(e)) {
+      setError("Revise los campos marcados en rojo.");
+      return;
+    }
     setSubmitted(true);
     setError("");
     try {
@@ -71,14 +85,19 @@ export default function DossierForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: formData.name,
-          document: formData.document,
           phone: formData.phone,
           email: formData.email,
           interest: formData.interest,
           message: formData.message,
           company: honeypot,
+          formTime: mt.formTime(),
           turnstileToken,
           source: "dossier",
+          consent: {
+            policyVersion: PRIVACY_POLICY_VERSION,
+            requiredAccepted: formData.privacy,
+            marketingAccepted: formData.marketing,
+          } satisfies ConsentSubmission,
         }),
       });
       const data = await res.json();
@@ -87,6 +106,7 @@ export default function DossierForm() {
       }
       trackLeadSubmitted("dossier");
       setSuccess(true);
+      setFormData(prev => ({ ...prev, privacy: false, marketing: false }));
     } catch (err) {
       setError(
         err instanceof Error
@@ -184,7 +204,12 @@ export default function DossierForm() {
                 </button>
               </div>
             ) : (
-            <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+            <form noValidate method="post" action="/api/leads" className="flex flex-col gap-6" onSubmit={handleSubmit}>
+              <noscript>
+                <p className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-deep-navy">
+                  Activa JavaScript para enviar tu solicitud de cotización de forma segura. El envío está deshabilitado mientras JavaScript no esté activo.
+                </p>
+              </noscript>
 
               {/* Honeypot anti-spam: invisible para humanos, bots lo rellenan */}
               <input
@@ -199,7 +224,7 @@ export default function DossierForm() {
               />
 
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 text-sm font-medium rounded-xl px-4 py-3">
+                <div role="alert" className="bg-red-50 border border-red-200 text-red-700 text-sm font-medium rounded-xl px-4 py-3">
                   {error}
                 </div>
               )}
@@ -216,38 +241,20 @@ export default function DossierForm() {
                   <input
                     type="text" id="name" name="name" placeholder="Ej. Juan Pérez" required
                     value={formData.name}
-                    onChange={handleChange}
+                    onChange={(e) => { handleChange(e); fv.clearError(e); }}
                     minLength={3}
                     maxLength={80}
                     pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"
                     title="El nombre solo debe contener letras y espacios"
-                    className="w-full bg-surface-container-lowest border border-surface-container-highest text-deep-navy font-body font-medium rounded-xl pl-11 pr-5 py-3.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-deep-navy/30 shadow-sm text-sm"
+                    className={fv.inputCls("name", "w-full bg-surface-container-lowest border border-surface-container-highest text-deep-navy font-body font-medium rounded-xl pl-11 pr-5 py-3.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-deep-navy/30 shadow-sm text-sm")}
+                    data-error="El nombre solo debe contener letras y espacios."
                   />
+                  {fv.errorBox("name") && <p className="text-red-500 text-[11px] mt-1">{fv.errorBox("name")}</p>}
                 </div>
               </div>
 
-              {/* DNI & Phone */}
+              {/* Teléfono & Correo */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label htmlFor="document" className="font-display font-bold text-deep-navy/80 tracking-widest text-[10px] uppercase block mb-2">
-                    Documento (DNI/CE)
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <CreditCard className="h-[18px] w-[18px] text-deep-navy/40" />
-                    </div>
-                    <input
-                      type="text" id="document" name="document" placeholder="00000000" required
-                      value={formData.document}
-                      onChange={handleChange}
-                      minLength={8}
-                      maxLength={8}
-                      pattern="^[0-9]+$"
-                      title="El DNI debe contener exactamente 8 números"
-                      className="w-full bg-surface-container-lowest border border-surface-container-highest text-deep-navy font-body font-medium rounded-xl pl-11 pr-5 py-3.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-deep-navy/30 shadow-sm text-sm"
-                    />
-                  </div>
-                </div>
 
                 <div>
                   <label htmlFor="phone" className="font-display font-bold text-deep-navy/80 tracking-widest text-[10px] uppercase block mb-2">
@@ -260,33 +267,35 @@ export default function DossierForm() {
                     <input
                       type="tel" id="phone" name="phone" placeholder="+51 999 999 999" required
                       value={formData.phone}
-                      onChange={handleChange}
+                      onChange={(e) => { handleChange(e); fv.clearError(e); }}
                       minLength={9}
                       maxLength={15}
                       pattern="^\+?[0-9\s\-]{9,}$"
                       title="Ingresa un número de teléfono válido (mínimo 9 dígitos)"
-                      className="w-full bg-surface-container-lowest border border-surface-container-highest text-deep-navy font-body font-medium rounded-xl pl-11 pr-5 py-3.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-deep-navy/30 shadow-sm text-sm"
+                      className={fv.inputCls("phone", "w-full bg-surface-container-lowest border border-surface-container-highest text-deep-navy font-body font-medium rounded-xl pl-11 pr-5 py-3.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-deep-navy/30 shadow-sm text-sm")}
+                      data-error="Ingrese un teléfono válido (mínimo 9 dígitos)."
                     />
+                    {fv.errorBox("phone") && <p className="text-red-500 text-[11px] mt-1">{fv.errorBox("phone")}</p>}
                   </div>
                 </div>
-              </div>
-
-              {/* Email */}
-              <div>
-                <label htmlFor="email" className="font-display font-bold text-deep-navy/80 tracking-widest text-[10px] uppercase block mb-2">
-                  Correo Electrónico
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Mail className="h-[18px] w-[18px] text-deep-navy/40" />
+                <div>
+                  <label htmlFor="email" className="font-display font-bold text-deep-navy/80 tracking-widest text-[10px] uppercase block mb-2">
+                    Correo Electrónico
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Mail className="h-[18px] w-[18px] text-deep-navy/40" />
+                    </div>
+                    <input
+                      type="email" id="email" name="email" placeholder="juan@ejemplo.com" required
+                      value={formData.email}
+                      onChange={(e) => { handleChange(e); fv.clearError(e); }}
+                      maxLength={100}
+                      className={fv.inputCls("email", "w-full bg-surface-container-lowest border border-surface-container-highest text-deep-navy font-body font-medium rounded-xl pl-11 pr-5 py-3.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-deep-navy/30 shadow-sm text-sm")}
+                      data-error="Ingrese un correo electrónico válido."
+                    />
+                    {fv.errorBox("email") && <p className="text-red-500 text-[11px] mt-1">{fv.errorBox("email")}</p>}
                   </div>
-                  <input
-                    type="email" id="email" name="email" placeholder="juan@ejemplo.com" required
-                    value={formData.email}
-                    onChange={handleChange}
-                    maxLength={100}
-                    className="w-full bg-surface-container-lowest border border-surface-container-highest text-deep-navy font-body font-medium rounded-xl pl-11 pr-5 py-3.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-deep-navy/30 shadow-sm text-sm"
-                  />
                 </div>
               </div>
 
@@ -302,8 +311,9 @@ export default function DossierForm() {
                   <select
                     id="interest" name="interest" required
                     value={formData.interest}
-                    onChange={handleChange}
-                    className="w-full bg-surface-container-lowest border border-surface-container-highest text-deep-navy font-body font-medium rounded-xl pl-11 pr-5 py-3.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none shadow-sm text-sm"
+                    onChange={(e) => { handleChange(e); fv.clearError(e); }}
+                    className={fv.inputCls("interest", "w-full bg-surface-container-lowest border border-surface-container-highest text-deep-navy font-body font-medium rounded-xl pl-11 pr-5 py-3.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none shadow-sm text-sm")}
+                    data-error="Seleccione el tipo de interés."
                   >
                     <option value="" disabled className="text-deep-navy/40">Selecciona una opción</option>
                     <option value="1">1 Dormitorio</option>
@@ -331,12 +341,12 @@ export default function DossierForm() {
                   <textarea
                     id="message" name="message" placeholder="Cuéntanos más sobre tu proyecto..."
                     value={formData.message}
-                    onChange={handleChange}
+                    onChange={(e) => { handleChange(e); fv.clearError(e); }}
                     maxLength={300}
                     className="w-full bg-surface-container-lowest border border-surface-container-highest text-deep-navy font-body font-medium rounded-xl pl-11 pr-5 py-3.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-deep-navy/30 shadow-sm min-h-[90px] resize-none text-sm"
                   ></textarea>
                   <div className="absolute bottom-3 right-4">
-                    <span className="text-[10px] text-deep-navy/30">{formData.message.length}/300</span>
+                    <CharCount value={formData.message} max={300} />
                   </div>
                 </div>
               </div>
@@ -349,29 +359,29 @@ export default function DossierForm() {
                     siteKey={siteKey}
                     onSuccess={(token) => setTurnstileToken(token)}
                     onExpire={() => setTurnstileToken("")}
-                    onError={() => setTurnstileToken("")}
-                    options={{ theme: "light", language: "es" }}
+                    onError={() => {
+                      setTurnstileToken("");
+                      setTimeout(() => setTsKey((k) => k + 1), 3000);
+                    }}
+                    options={{ theme: "light", language: "es", retry: "auto", retryInterval: 3000 }}
                   />
                 </div>
               )}
 
-              {/* Checkbox */}
-              <div className="flex items-start gap-3 mt-1">
-                <input 
-                  type="checkbox" id="privacy" name="privacy" required 
-                  checked={formData.privacy}
-                  onChange={handleChange}
-                  className="mt-0.5 w-4 h-4 rounded border-surface-container-highest text-[#B8860B] focus:ring-[#B8860B]/20" 
-                />
-                <label htmlFor="privacy" className="text-xs text-deep-navy/60 leading-relaxed font-medium">
-                  Acepto los <Link href="/terminos-y-condiciones" className="text-[#B8860B] hover:underline font-bold">Términos y Condiciones</Link> y la <Link href="/terminos-y-condiciones#privacidad" className="text-[#B8860B] hover:underline font-bold">Política de Privacidad</Link>.
-                </label>
-              </div>
+              <ConsentFields
+                kind="lead"
+                requiredName="privacy"
+                requiredAccepted={formData.privacy}
+                marketingAccepted={formData.marketing}
+                onRequiredChange={(e) => { handleChange(e); fv.clearError(e); }}
+                onMarketingChange={handleChange}
+                requiredError={fv.errorBox("privacy")}
+              />
 
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={submitted || (siteKey !== "" && turnstileToken === "")}
+                disabled={!documentActivated || submitted || (siteKey !== "" && turnstileToken === "")}
                 className="w-full bg-[#B8860B] hover:bg-[#996515] text-white font-display font-bold tracking-widest text-xs uppercase px-6 py-4 rounded-xl shadow-md transition-all duration-300 flex items-center justify-center gap-3 mt-1 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {submitted ? "Enviando..." : "Enviar Solicitud"}

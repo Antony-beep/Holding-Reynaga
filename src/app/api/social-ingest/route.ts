@@ -10,6 +10,7 @@ import {
   upsertSocialPost,
   upsertSocialSync,
 } from "@/lib/db";
+import { checkBodySize, MAX_BODY_BYTES } from "@/lib/body-guard";
 
 export const runtime = "nodejs";
 
@@ -107,6 +108,9 @@ function pruneOrphanThumbs(): number {
 }
 
 export async function POST(request: NextRequest) {
+  const sizeError = checkBodySize(request, MAX_BODY_BYTES.ingest);
+  if (sizeError) return sizeError;
+
   if (!process.env.SOCIAL_INGEST_SECRET) {
     return NextResponse.json(
       { ok: false, error: "Endpoint no configurado (SOCIAL_INGEST_SECRET)." },

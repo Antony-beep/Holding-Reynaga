@@ -1,54 +1,81 @@
-import { APARTMENTS } from "@/data/apartments";
+import type { Metadata } from "next";
+import { APARTMENTS, buildApartmentSlug, getApartmentBySlug } from "@/data/apartments";
+import { SITE_URL } from "@/lib/site";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, ChevronRight, Play } from "lucide-react";
-import DossierForm from "@/components/home/DossierForm";
+import { ArrowLeft, CheckCircle2, ChevronRight } from "lucide-react";
+import { ApartmentJsonLd } from "@/components/seo/JsonLd";
 
 export async function generateStaticParams() {
-  return APARTMENTS.filter((a) => !a.isComingSoon).map((apt) => ({
-    tipo: apt.type.toLowerCase().replace(" ", "-"),
+  return APARTMENTS.filter((apartment) => !apartment.isComingSoon).map((apartment) => ({
+    tipo: buildApartmentSlug(apartment),
   }));
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: { tipo: string };
-}) {
+  params: Promise<{ tipo: string }>;
+}): Promise<Metadata> {
   const { tipo } = await params;
-  const aptType = tipo.replace("-", " ");
-  const apt = APARTMENTS.find(
-    (a) => a.type.toLowerCase() === aptType.toLowerCase(),
-  );
+  const apartment = getApartmentBySlug(tipo);
 
-  if (!apt) {
-    return { title: "Departamento No Encontrado" };
+  if (!apartment || apartment.isComingSoon) {
+    return { title: "Departamento no encontrado" };
   }
 
+  const slug = buildApartmentSlug(apartment);
+  const title = `${apartment.type}: ${apartment.bedrooms} dormitorios en Huancayo`;
+  const description = `Departamento en preventa en San Carlos, Huancayo: ${apartment.type}, ${apartment.bedrooms} dormitorios, ${apartment.baths} baños, ${apartment.sqm} m² y precio publicado de ${apartment.price}.`;
+
   return {
-    title: `Departamento en Venta ${apt.type} | Torres Titanium Huancayo`,
-    description: `Descubre los detalles del Departamento ${apt.type} de ${apt.bedrooms} dormitorios en Torres Titanium, San Carlos, Huancayo. Vive con elegancia y confort.`,
+    title,
+    description,
+    alternates: { canonical: `/departamentos/${slug}` },
+    openGraph: {
+      type: "website",
+      locale: "es_PE",
+      url: `/departamentos/${slug}`,
+      siteName: "Holding Reynaga | Torres Titanium",
+      title,
+      description,
+      images: [
+        {
+          url: new URL(
+            `${apartment.basePath}/${encodeURIComponent(apartment.images[0])}`,
+            SITE_URL,
+          ).toString(),
+          alt: `Departamento ${apartment.type} en San Carlos, Huancayo`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og.jpg"],
+    },
   };
 }
 
 export default async function DepartmentPage({
   params,
 }: {
-  params: { tipo: string };
+  params: Promise<{ tipo: string }>;
 }) {
   const { tipo } = await params;
-  const aptType = tipo.replace("-", " ");
-  const apt = APARTMENTS.find(
-    (a) => a.type.toLowerCase() === aptType.toLowerCase(),
-  );
+  const apt = getApartmentBySlug(tipo);
 
   if (!apt || apt.isComingSoon) {
     notFound();
   }
 
+  const slug = buildApartmentSlug(apt);
+
   return (
     <div className="flex flex-col w-full min-h-screen bg-surface pb-20">
+      <ApartmentJsonLd apartment={apt} slug={slug} />
       {/* Breadcrumb & Navigation */}
       <div className="bg-deep-navy py-6 pt-32">
         <div className="container mx-auto px-6 max-w-7xl">
@@ -64,7 +91,9 @@ export default async function DepartmentPage({
               Inicio
             </Link>
             <ChevronRight className="w-3 h-3" />
-            <span className="">Departamentos</span>
+            <Link href="/#departamentos" className="hover:text-white transition-colors">
+              Departamentos
+            </Link>
             <ChevronRight className="w-3 h-3" />
             <span className="text-white font-semibold">{apt.type}</span>
           </div>
@@ -124,15 +153,12 @@ export default async function DepartmentPage({
               <div className="inline-block px-4 py-1.5 bg-primary/10 rounded-full text-xs font-bold text-primary mb-6 tracking-widest uppercase border border-primary/20">
                 Línea {apt.area}
               </div>
-              <h1 className="text-display font-black text-4xl md:text-5xl lg:text-6xl text-deep-navy mb-6 tracking-tight">
-                {apt.type}
+              <h1 className="text-display font-black text-3xl md:text-4xl lg:text-5xl text-deep-navy mb-6 tracking-tight">
+                Departamento {apt.type} de {apt.bedrooms} dormitorios en San Carlos, Huancayo
               </h1>
 
               <p className="font-body text-deep-navy/70 text-base md:text-lg mb-8 leading-relaxed">
-                Descubre un diseño pensado para maximizar cada espacio. El
-                departamento <strong>{apt.type}</strong> ofrece una experiencia
-                residencial superior con acabados de primera y excelente
-                iluminación natural.
+                El <strong>{apt.type}</strong> es un departamento en preventa de {apt.bedrooms} dormitorios y {apt.baths} baños, con {apt.sqm} m², en Torres Titanium, San Carlos, Huancayo. Consulta el precio publicado, la disponibilidad y las condiciones vigentes con nuestro equipo de ventas.
               </p>
 
               {/* Precio y métricas clave */}
@@ -190,15 +216,15 @@ export default async function DepartmentPage({
                 Asegura este departamento
               </h4>
               <p className="text-sm text-deep-navy/60 mb-6">
-                Congela el precio de preventa con S/ 1,000 hoy mismo.
+                Consulta con ventas el precio, la disponibilidad y las condiciones vigentes de separación.
               </p>
               <a
-                href={`https://wa.me/51981407634?text=Hola, estoy muy interesado en el ${apt.type} y quiero agendar una visita/reserva.`}
+                href={`https://wa.me/51981407634?text=Hola, quiero recibir información sobre el departamento ${apt.type} y agendar una visita.`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center w-full bg-deep-navy hover:bg-primary text-white py-4 rounded-xl font-bold uppercase text-sm tracking-widest transition-all duration-300 shadow-lg hover:shadow-primary/40 transform hover:-translate-y-1"
               >
-                Reservar por WhatsApp
+                Consultar por WhatsApp
               </a>
             </div>
           </div>

@@ -1,35 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useId, useState } from "react";
+import { motion } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
-
-const faqs = [
-  {
-    question: "¿Dónde está ubicado el proyecto Torres Titanium?",
-    answer: "Torres Titanium está estratégicamente ubicado en San Carlos, Huancayo. Una zona de alta plusvalía que brinda una conexión inigualable a instituciones de mayor prestigio como la Universidad Continental y la UPLA (a solo 7 minutos).",
-  },
-  {
-    question: "¿Cuáles son los precios de preventa y cómo puedo separar mi departamento?",
-    answer: "Actualmente contamos con precios exclusivos de preventa desde S/ 163,332.50 hasta S/ 361,741.00, según el tipo y tamaño del departamento. Además, contamos con bonos de preventa de S/ 24,900 a S/ 47,850. Puedes asegurar el tuyo y congelar el precio separándolo con solo S/ 1,000.",
-  },
-  {
-    question: "¿Qué tipos de departamentos ofrecen y de cuántos dormitorios?",
-    answer: "Ofrecemos exactamente 7 tipos de departamentos (Tipo A, B, C, D, F, G y H) en formatos flat y dúplex, diseñados para brindar la máxima comodidad y elegancia. Contamos con distribuciones optimizadas que incluyen opciones de 1, 2 y 3 dormitorios, ideales tanto para familias como para inversión.",
-  },
-  {
-    question: "¿Cuándo es la fecha de entrega del proyecto?",
-    answer: "La entrega de los departamentos de Torres Titanium está programada para el año 2027. Actualmente nos encontramos en fase de preventa, lo que representa la mejor oportunidad de inversión por la alta plusvalía asegurada.",
-  },
-  {
-    question: "¿Cómo puedo contactarme para recibir más información o agendar una cita?",
-    answer: "Puedes comunicarte directamente con nosotros llamando o escribiendo al WhatsApp al 981407634. Nuestro equipo de asesores de Holding Reynaga estará encantado de brindarte toda la información detallada y acompañarte en el proceso.",
-  }
-];
+import { FAQS } from "@/data/faqs";
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-  const [isPending, startTransition] = useTransition();
+  const componentId = useId();
 
   return (
     <section id="faq" className="py-20 md:py-32 bg-surface relative z-10">
@@ -51,41 +29,57 @@ export default function FAQ() {
         </div>
 
         <div className="space-y-4">
-          {faqs.map((faq, index) => (
-            <div 
-              key={index}
-              className="bg-white rounded-2xl shadow-sm border border-black/5 overflow-hidden transition-all duration-300 hover:shadow-md"
-            >
-              <button
-                className="w-full px-6 md:px-8 py-6 flex items-center justify-between text-left focus:outline-none"
-                onClick={() => startTransition(() => setOpenIndex(openIndex === index ? null : index))}
+          {FAQS.map((faq, index) => {
+            const isOpen = openIndex === index;
+            const questionId = `${componentId}-faq-question-${index}`;
+            const answerId = `${componentId}-faq-answer-${index}`;
+
+            return (
+              <div
+                key={faq.question}
+                className="bg-white rounded-2xl shadow-sm border border-black/5 overflow-hidden transition-all duration-300 hover:shadow-md"
               >
-                <span className="font-display font-bold text-deep-navy text-lg md:text-xl pr-8">
-                  {faq.question}
-                </span>
-                <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300 ${openIndex === index ? 'bg-primary text-white' : 'bg-surface-container-low text-primary'}`}>
-                  {openIndex === index ? <Minus size={20} /> : <Plus size={20} />}
-                </div>
-              </button>
-              
-              <AnimatePresence>
-                {openIndex === index && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                <h3 className="m-0">
+                  <button
+                    id={questionId}
+                    type="button"
+                    aria-expanded={isOpen}
+                    aria-controls={answerId}
+                    className="w-full px-6 md:px-8 py-6 flex items-center justify-between text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+                    onClick={() => setOpenIndex(isOpen ? null : index)}
                   >
-                    <div className="px-6 md:px-8 pb-6 pt-2 border-t border-black/5">
-                      <p className="font-body text-deep-navy/70 leading-relaxed text-base md:text-lg">
-                        {faq.answer}
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          ))}
+                    <span className="font-display font-bold text-deep-navy text-lg md:text-xl pr-8">
+                      {faq.question}
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300 ${isOpen ? 'bg-primary text-white' : 'bg-surface-container-low text-primary'}`}
+                    >
+                      {isOpen ? <Minus size={20} /> : <Plus size={20} />}
+                    </span>
+                  </button>
+                </h3>
+
+                <motion.div
+                  id={answerId}
+                  role="region"
+                  aria-labelledby={questionId}
+                  aria-hidden={!isOpen}
+                  inert={!isOpen}
+                  initial={false}
+                  animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-6 md:px-8 pb-6 pt-2 border-t border-black/5">
+                    <p className="font-body text-deep-navy/70 leading-relaxed text-base md:text-lg">
+                      {faq.answer}
+                    </p>
+                  </div>
+                </motion.div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

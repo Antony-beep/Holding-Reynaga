@@ -4,6 +4,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { isAuthorized } from "@/lib/auth";
+import { checkBodySize, MAX_BODY_BYTES } from "@/lib/body-guard";
 import {
   deleteSocialPostsByIds,
   getSocialPosts,
@@ -78,6 +79,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const sizeError = checkBodySize(request, MAX_BODY_BYTES.admin);
+  if (sizeError) return sizeError;
+
   if (!isAuthorized(request.headers.get("cookie"))) return unauthorized();
 
   let body: {

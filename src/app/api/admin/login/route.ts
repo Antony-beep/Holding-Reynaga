@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { checkBodySize, MAX_BODY_BYTES } from "@/lib/body-guard";
 import {
   ADMIN_COOKIE,
   SESSION_COOKIE_OPTIONS,
@@ -19,6 +20,9 @@ function getClientIp(req: NextRequest): string {
 }
 
 export async function POST(request: NextRequest) {
+  const sizeError = checkBodySize(request, MAX_BODY_BYTES.revalidate);
+  if (sizeError) return sizeError;
+
   if (!isAdminConfigured()) {
     return NextResponse.json(
       { ok: false, error: "Panel de administración no configurado (falta ADMIN_PASSWORD)." },

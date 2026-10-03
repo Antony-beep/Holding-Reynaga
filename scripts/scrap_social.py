@@ -90,12 +90,46 @@ def db_connect() -> sqlite3.Connection:
     return conn
 
 
+MAX_THUMB_WIDTH = 600  # el reel muestra max 300px; 600px cubre retina 2x
+THUMB_JPEG_QUALITY = 80
+
+
+def compress_thumb(image_bytes: bytes) -> tuple:
+    """Comprime el thumbnail antes de guardarlo/push:
+    - Redimensiona a max 600px (el reel muestra a 300px, 2x para retina)
+    - Convierte PNG/WebP a JPEG q=80 (reduce 2MB PNG → ~40KB JPEG)
+    Devuelve (bytes_comprimidos, content_type)."""
+    try:
+        from io import BytesIO
+
+        from PIL import Image
+
+        img = Image.open(BytesIO(image_bytes))
+        # Redimensionar si excede el máximo
+        if img.width > MAX_THUMB_WIDTH:
+            ratio = MAX_THUMB_WIDTH / img.width
+            new_size = (MAX_THUMB_WIDTH, int(img.height * ratio))
+            img = img.resize(new_size, Image.LANCZOS)
+        # Convertir a RGB (JPEG no soporta alpha de PNG)
+        if img.mode in ("RGBA", "P", "LA"):
+            img = img.convert("RGB")
+        # Guardar como JPEG comprimido
+        buf = BytesIO()
+        img.save(buf, format="JPEG", quality=THUMB_JPEG_QUALITY, optimize=True)
+        return buf.getvalue(), "image/jpeg"
+    except Exception:
+        # Si Pillow falla, devolver el original sin comprimir
+        return image_bytes, ""
+
+
 def save_thumb(network: str, post_url: str, image_bytes: bytes, content_type: str) -> str:
-    """Guarda el thumb con el MISMO naming que la API admin de Next (sha1 de la URL)."""
-    ext = "png" if "png" in content_type else "webp" if "webp" in content_type else "jpg"
+    """Comprime y guarda el thumb con el MISMO naming que la API admin
+    de Next (sha1 de la URL). Todos los thumbs se convierten a JPEG
+    comprimido para minimizar disco del VPS y payload del push."""
+    compressed, _ = compress_thumb(image_bytes)
     digest = hashlib.sha1(post_url.encode()).hexdigest()[:12]
-    name = f"{network}-{digest}.{ext}"
-    (THUMB_DIR / name).write_bytes(image_bytes)
+    name = f"{network}-{digest}.jpg"
+    (THUMB_DIR / name).write_bytes(compressed)
     return f"/social/{name}"
 
 
@@ -145,18 +179,30 @@ def record_sync(conn: sqlite3.Connection, network: str, ok: bool, error: str, fo
     conn.commit()
 
 
-def download_image(url: str):
+def download_image(url: str, retries: int = 2):
+    """Descarga un thumbnail con reintentos (los CDN de TikTok/IG
+    a veces fallan por rate limit o URLs firmadas que expiran)."""
+    import time as _time
+
     from curl_cffi import requests as creq
 
-    r = creq.get(url, impersonate="chrome", timeout=30)
-    if r.status_code != 200:
-        raise RuntimeError(f"thumb HTTP {r.status_code}")
-    ctype = r.headers.get("content-type", "image/jpeg")
-    if not ctype.startswith("image/"):
-        raise RuntimeError(f"no es imagen ({ctype})")
-    if len(r.content) > 8 * 1024 * 1024:
-        raise RuntimeError("thumb > 8MB")
-    return r.content, ctype
+    last_err = None
+    for attempt in range(retries):
+        try:
+            r = creq.get(url, impersonate="chrome", timeout=30)
+            if r.status_code != 200:
+                raise RuntimeError(f"thumb HTTP {r.status_code}")
+            ctype = r.headers.get("content-type", "image/jpeg")
+            if not ctype.startswith("image/"):
+                raise RuntimeError(f"no es imagen ({ctype})")
+            if len(r.content) > 8 * 1024 * 1024:
+                raise RuntimeError("thumb > 8MB")
+            return r.content, ctype
+        except Exception as e:
+            last_err = e
+            if attempt < retries - 1:
+                _time.sleep(2)
+    raise last_err
 
 
 # ---------------------------------------------------------------- TikTok

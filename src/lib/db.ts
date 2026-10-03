@@ -1,13 +1,73 @@
 import Database from "better-sqlite3";
 import fs from "node:fs";
 import path from "node:path";
+import type { ConsentEvidence, ConsentPurpose } from "./privacy";
 
-const DATA_DIR = path.join(process.cwd(), "data");
+const DATA_DIR = process.env.HOLDING_DATA_DIR || path.join(process.cwd(), "data");
 const DB_PATH = path.join(DATA_DIR, "leads.db");
 
 declare global {
   // eslint-disable-next-line no-var
   var __leadsDb: Database.Database | undefined;
+}
+
+const CONSENT_COLUMNS = {
+  consent_recorded_at: "TEXT",
+  policy_version: "TEXT",
+  required_consent_text: "TEXT",
+  required_consent_accepted: "INTEGER",
+  marketing_consent_text: "TEXT",
+  marketing_consent_accepted: "INTEGER",
+  consent_purpose: "TEXT",
+} as const;
+
+function migrateLeadDocument(db: Database.Database): void {
+  const { sql } = db.prepare(
+    "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'leads'",
+  ).get() as { sql: string };
+  const nullableSql = sql.replace(
+    /([,(]\s*(?:"document"|`document`|\[document\]|document)\s+TEXT)\s+NOT\s+NULL\b/i,
+    "$1",
+  );
+  const createSql = nullableSql.replace(
+    /^CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:"leads"|`leads`|\[leads\]|leads)(?=\s|\()/i,
+    "CREATE TABLE leads_document_nullable",
+  );
+  if (nullableSql === sql || createSql === nullableSql) {
+    throw new Error("No se pudo migrar el documento de leads a nullable.");
+  }
+
+  const objects = db.prepare(
+    "SELECT sql FROM sqlite_master WHERE tbl_name = 'leads' AND type IN ('index', 'trigger') AND sql IS NOT NULL ORDER BY type, name",
+  ).all() as { sql: string }[];
+  const sequence = db.prepare(
+    "SELECT seq FROM sqlite_sequence WHERE name = 'leads'",
+  ).get() as { seq: number } | undefined;
+  const columns = (db.prepare("PRAGMA table_info(leads)").all() as { name: string }[])
+    .map((c) => `"${c.name.replace(/"/g, '""')}"`).join(", ");
+
+  // Se conserva el DDL original, incluidos campos adicionales, índices y triggers.
+  db.exec(createSql);
+  db.exec(`INSERT INTO leads_document_nullable (${columns}) SELECT ${columns} FROM leads`);
+  db.exec("DROP TABLE leads");
+  db.exec("ALTER TABLE leads_document_nullable RENAME TO leads");
+  for (const object of objects) db.exec(object.sql);
+  if (sequence) {
+    db.prepare("DELETE FROM sqlite_sequence WHERE name = 'leads'").run();
+    db.prepare("INSERT INTO sqlite_sequence (name, seq) VALUES ('leads', ?)").run(sequence.seq);
+  }
+}
+
+function consentParams(consent: ConsentEvidence) {
+  return {
+    consent_recorded_at: consent.recordedAt,
+    policy_version: consent.policyVersion,
+    required_consent_text: consent.requiredText,
+    required_consent_accepted: consent.requiredAccepted ? 1 : 0,
+    marketing_consent_text: consent.marketingText,
+    marketing_consent_accepted: consent.marketingAccepted ? 1 : 0,
+    consent_purpose: consent.purpose,
+  };
 }
 
 export function getDb(): Database.Database {
@@ -23,7 +83,7 @@ export function getDb(): Database.Database {
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       source TEXT NOT NULL,
       name TEXT NOT NULL,
-      document TEXT NOT NULL,
+      document TEXT,
       phone TEXT NOT NULL,
       email TEXT NOT NULL,
       interest TEXT NOT NULL DEFAULT '',
@@ -62,6 +122,7 @@ export function getDb(): Database.Database {
       tipo TEXT NOT NULL CHECK (tipo IN ('reclamo','queja')),
       bien_contratado TEXT NOT NULL,
       bien_detalle TEXT NOT NULL DEFAULT '',
+      bien_tipo TEXT NOT NULL DEFAULT '',
       monto TEXT NOT NULL DEFAULT '',
       detalle TEXT NOT NULL,
       pedido TEXT NOT NULL,
@@ -96,16 +157,67 @@ export function getDb(): Database.Database {
     );
   `);
 
+  const leadCols = db.prepare("PRAGMA table_info(leads)").all() as {
+    name: string;
+    notnull: number;
+  }[];
+  const needsDocumentMigration = leadCols.some((c) => c.name === "document" && c.notnull === 1);
+  const foreignKeys = db.pragma("foreign_keys", { simple: true });
+  const legacyAlterTable = db.pragma("legacy_alter_table", { simple: true });
+  if (needsDocumentMigration) {
+    // Evita cascadas y reescrituras de referencias durante la reconstrucción.
+    db.pragma("foreign_keys = OFF");
+    db.pragma("legacy_alter_table = ON");
+  }
+  try {
+    db.transaction(() => {
+      if (needsDocumentMigration) migrateLeadDocument(db);
+
+      const reclamoCols = db.prepare("PRAGMA table_info(reclamos)").all() as { name: string }[];
+      if (!reclamoCols.some((c) => c.name === "bien_tipo")) {
+        db.exec("ALTER TABLE reclamos ADD COLUMN bien_tipo TEXT NOT NULL DEFAULT ''");
+      }
+      // Sin DEFAULT ni backfill: NULL significa que no se capturó evidencia histórica.
+      for (const table of ["leads", "reclamos"]) {
+        const columns = db.prepare(`PRAGMA table_info(${table})`).all() as { name: string }[];
+        for (const [name, type] of Object.entries(CONSENT_COLUMNS)) {
+          if (!columns.some((c) => c.name === name)) {
+            db.exec(`ALTER TABLE ${table} ADD COLUMN ${name} ${type}`);
+          }
+        }
+      }
+    }).immediate();
+  } catch (error) {
+    db.close();
+    throw error;
+  } finally {
+    if (db.open && needsDocumentMigration) {
+      db.pragma(`foreign_keys = ${foreignKeys ? "ON" : "OFF"}`);
+      db.pragma(`legacy_alter_table = ${legacyAlterTable ? "ON" : "OFF"}`);
+    }
+  }
+
   global.__leadsDb = db;
   return db;
 }
 
-export interface LeadRow {
+/** NULL identifica registros históricos sin evidencia capturada, no una negativa. */
+export interface ConsentEvidenceRow {
+  consent_recorded_at: string | null;
+  policy_version: string | null;
+  required_consent_text: string | null;
+  required_consent_accepted: number | null;
+  marketing_consent_text: string | null;
+  marketing_consent_accepted: number | null;
+  consent_purpose: ConsentPurpose | null;
+}
+
+export interface LeadRow extends ConsentEvidenceRow {
   id: number;
   created_at: string;
   source: string;
   name: string;
-  document: string;
+  document: string | null;
   phone: string;
   email: string;
   interest: string;
@@ -119,29 +231,35 @@ export interface LeadRow {
 export function insertLead(lead: {
   source: string;
   name: string;
-  document: string;
+  document: string | null;
   phone: string;
   email: string;
   interest: string;
   message: string;
   ip: string;
   userAgent: string;
+  consent: ConsentEvidence;
 }): number {
   const db = getDb();
   const stmt = db.prepare(`
-    INSERT INTO leads (source, name, document, phone, email, interest, message, ip, user_agent)
-    VALUES (@source, @name, @document, @phone, @email, @interest, @message, @ip, @userAgent)
+    INSERT INTO leads (source, name, document, phone, email, interest, message, ip, user_agent,
+      consent_recorded_at, policy_version, required_consent_text, required_consent_accepted,
+      marketing_consent_text, marketing_consent_accepted, consent_purpose)
+    VALUES (@source, @name, @document, @phone, @email, @interest, @message, @ip, @userAgent,
+      @consent_recorded_at, @policy_version, @required_consent_text, @required_consent_accepted,
+      @marketing_consent_text, @marketing_consent_accepted, @consent_purpose)
   `);
   const info = stmt.run({
     source: lead.source,
     name: lead.name,
-    document: lead.document,
+    document: lead.source === "dossier" ? null : lead.document,
     phone: lead.phone,
     email: lead.email,
     interest: lead.interest,
     message: lead.message,
     ip: lead.ip,
     userAgent: lead.userAgent,
+    ...consentParams(lead.consent),
   });
   return Number(info.lastInsertRowid);
 }
@@ -259,7 +377,13 @@ export function upsertSocialPost(post: {
        VALUES (@network, @post_url, @caption, @thumb_path, @posted_at, @source)
        ON CONFLICT(post_url) DO UPDATE SET
          caption = excluded.caption,
-         thumb_path = excluded.thumb_path,
+         -- Si el thumb nuevo es vacío, preservar el existente (evita borrar
+         -- miniaturas cuando el scraper no logra descargar del CDN)
+         thumb_path = CASE
+           WHEN excluded.thumb_path = '' AND social_posts.thumb_path != ''
+           THEN social_posts.thumb_path
+           ELSE excluded.thumb_path
+         END,
          posted_at = excluded.posted_at,
          source = excluded.source`,
     )
@@ -387,13 +511,14 @@ export function getSocialSync(): SocialSyncRow[] {
 
 // ---- Libro de Reclamaciones (D.S. 011-2011-PCM / Ley 29571) ----
 
-export interface ReclamoRow {
+export interface ReclamoRow extends ConsentEvidenceRow {
   id: number;
   codigo: string;
   created_at: string;
   tipo: "reclamo" | "queja";
   bien_contratado: string;
   bien_detalle: string;
+  bien_tipo: string; // "producto" | "servicio"
   monto: string;
   detalle: string;
   pedido: string;
@@ -434,6 +559,7 @@ export function insertReclamo(data: {
   tipo: string;
   bien_contratado: string;
   bien_detalle: string;
+  bien_tipo: string;
   monto: string;
   detalle: string;
   pedido: string;
@@ -445,18 +571,25 @@ export function insertReclamo(data: {
   representante: string;
   ip: string;
   userAgent: string;
+  consent: ConsentEvidence;
 }): number {
   const info = getDb()
     .prepare(
-      `INSERT INTO reclamos (codigo, tipo, bien_contratado, bien_detalle, monto, detalle, pedido,
-         nombre, documento, domicilio, telefono, email, representante, ip, user_agent)
-       VALUES (@codigo, @tipo, @bien_contratado, @bien_detalle, @monto, @detalle, @pedido,
-         @nombre, @documento, @domicilio, @telefono, @email, @representante, @ip, @userAgent)`,
+      `INSERT INTO reclamos (codigo, tipo, bien_contratado, bien_detalle, bien_tipo, monto, detalle, pedido,
+         nombre, documento, domicilio, telefono, email, representante, ip, user_agent,
+         consent_recorded_at, policy_version, required_consent_text, required_consent_accepted,
+         marketing_consent_text, marketing_consent_accepted, consent_purpose)
+       VALUES (@codigo, @tipo, @bien_contratado, @bien_detalle, @bien_tipo, @monto, @detalle, @pedido,
+         @nombre, @documento, @domicilio, @telefono, @email, @representante, @ip, @userAgent,
+         @consent_recorded_at, @policy_version, @required_consent_text, @required_consent_accepted,
+         @marketing_consent_text, @marketing_consent_accepted, @consent_purpose)`,
     )
     .run({
       ...data,
       bien_detalle: data.bien_detalle ?? "",
+      bien_tipo: data.bien_tipo ?? "",
       representante: data.representante ?? "",
+      ...consentParams(data.consent),
     });
   return Number(info.lastInsertRowid);
 }

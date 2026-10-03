@@ -12,7 +12,43 @@ const fs = require("node:fs");
 const Database = require("better-sqlite3");
 const { google } = require("googleapis");
 
-const DB_PATH = path.join(__dirname, "..", "data", "leads.db");
+const DATA_DIR = process.env.HOLDING_DATA_DIR || path.join(__dirname, "..", "data");
+const DB_PATH = path.join(DATA_DIR, "leads.db");
+
+const CONSENT_SHEET_HEADERS = [
+  "consent_recorded_at", "policy_version", "required_consent_text",
+  "required_consent_accepted", "marketing_consent_text",
+  "marketing_consent_accepted", "consent_purpose",
+];
+
+function consentToSheetRow(record) {
+  return CONSENT_SHEET_HEADERS.map((key) => record[key] ?? "");
+}
+
+async function ensureConsentHeaders(sheets, firstColumn, sheetPrefix = "") {
+  const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+  const start = firstColumn.charCodeAt(0);
+  const range = `${sheetPrefix}${firstColumn}1:${String.fromCharCode(start + 6)}1`;
+  const current = await sheets.spreadsheets.values.get({
+    spreadsheetId, range, valueRenderOption: "FORMULA",
+  });
+  const headers = current.data.values?.[0] ?? [];
+  const missing = CONSENT_SHEET_HEADERS.flatMap((header, index) =>
+    headers[index] == null || headers[index] === ""
+      ? [{ range: `${sheetPrefix}${String.fromCharCode(start + index)}1`, values: [[header]] }]
+      : [],
+  );
+  if (missing.length === 0) return;
+  await sheets.spreadsheets.values.batchUpdate({
+    spreadsheetId,
+    requestBody: {
+      valueInputOption: "USER_ENTERED",
+      data: missing.length === CONSENT_SHEET_HEADERS.length
+        ? [{ range, values: [[...CONSENT_SHEET_HEADERS]] }]
+        : missing,
+    },
+  });
+}
 
 if (!fs.existsSync(DB_PATH)) {
   console.log("sync-sheets: no hay base de datos aún, nada que hacer.");
@@ -48,8 +84,13 @@ async function main() {
     .prepare("SELECT * FROM leads WHERE sheets_synced = 0 ORDER BY id ASC LIMIT 100")
     .all();
 
+  let leadHeadersReady = false;
   for (const lead of pending) {
     try {
+      if (!leadHeadersReady) {
+        await ensureConsentHeaders(sheets, "J");
+        leadHeadersReady = true;
+      }
       await sheets.spreadsheets.values.append({
         spreadsheetId: process.env.GOOGLE_SHEET_ID,
         range: "A1",
@@ -62,11 +103,12 @@ async function main() {
               lead.created_at,
               lead.source,
               lead.name,
-              lead.document,
+              lead.document ?? "",
               lead.phone,
               lead.email,
               lead.interest,
               lead.message,
+              ...consentToSheetRow(lead),
             ],
           ],
         },
@@ -96,9 +138,11 @@ async function main() {
         range: "Reclamos!A1",
         valueInputOption: "USER_ENTERED",
         requestBody: {
-          values: [["Código", "Fecha (UTC)", "Tipo", "Bien/Servicio", "Monto", "Nombre", "Documento", "Domicilio", "Teléfono", "Email", "Detalle", "Pedido", "Estado", "Respuesta", "Respuesta enviada"]],
+          values: [["Código", "Fecha (UTC)", "Tipo", "Bien/Servicio", "Monto", "Nombre", "Documento", "Domicilio", "Teléfono", "Email", "Detalle", "Pedido", "Estado", "Respuesta", "Respuesta enviada", ...CONSENT_SHEET_HEADERS]],
         },
       });
+    } else {
+      await ensureConsentHeaders(sheets, "P", "Reclamos!");
     }
   } catch (err) {
     console.error("sync-sheets: no se pudo preparar la hoja Reclamos:", err.message);
@@ -118,9 +162,10 @@ async function main() {
         requestBody: {
           values: [[
             r.codigo, r.created_at, r.tipo,
-            r.bien_contratado + (r.bien_detalle ? ` — ${r.bien_detalle}` : ""),
+            (r.bien_tipo === "producto" ? "PRODUCTO — " : r.bien_tipo === "servicio" ? "SERVICIO — " : "") + r.bien_contratado + (r.bien_detalle ? ` — ${r.bien_detalle}` : ""),
             r.monto, r.nombre, r.documento, r.domicilio, r.telefono, r.email,
             r.detalle, r.pedido, r.estado, r.respuesta, r.respuesta_enviada_en ?? "",
+            ...consentToSheetRow(r),
           ]],
         },
       });

@@ -4,11 +4,19 @@ import Script from "next/script";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { readConsent } from "@/lib/consent";
+import { useDocumentActivated } from "@/components/global/useDocumentActivated";
+
+declare global {
+  interface Window {
+    fbq?: (...args: unknown[]) => void;
+  }
+}
 
 const PIXEL_ID = "1385005433052216";
 
 export default function MetaPixel() {
   const pathname = usePathname();
+  const isDocumentActivated = useDocumentActivated();
   const [marketingAllowed, setMarketingAllowed] = useState(false);
 
   useEffect(() => {
@@ -20,13 +28,17 @@ export default function MetaPixel() {
 
   // Registrar vistas de página en cada navegación, solo con consentimiento.
   useEffect(() => {
-    if (marketingAllowed && typeof window !== "undefined" && (window as any).fbq) {
-      (window as any).fbq("track", "PageView");
+    if (
+      isDocumentActivated &&
+      marketingAllowed &&
+      typeof window.fbq === "function"
+    ) {
+      window.fbq("track", "PageView");
     }
-  }, [pathname, marketingAllowed]);
+  }, [pathname, isDocumentActivated, marketingAllowed]);
 
   // Sin consentimiento de marketing, el pixel NUNCA se carga: ni el script ni el pixel de imagen.
-  if (!marketingAllowed) return null;
+  if (!isDocumentActivated || !marketingAllowed) return null;
 
   return (
     <>

@@ -4,6 +4,7 @@ import Script from "next/script";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { readConsent } from "@/lib/consent";
+import { useDocumentActivated } from "@/components/global/useDocumentActivated";
 
 declare global {
   interface Window {
@@ -21,6 +22,7 @@ declare global {
  */
 export default function GoogleAnalytics() {
   const pathname = usePathname();
+  const isDocumentActivated = useDocumentActivated();
   const [analyticsAllowed, setAnalyticsAllowed] = useState(false);
 
   const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "";
@@ -33,15 +35,17 @@ export default function GoogleAnalytics() {
   }, []);
 
   // Registrar cada navegación como page_view (SPA)
+  // FIX: solo pathname, sin query string — evita enviar datos personales
+  // que pudieran estar en la URL (nombre, email, DNI en parámetros)
   useEffect(() => {
-    if (!analyticsAllowed || !measurementId) return;
+    if (!isDocumentActivated || !analyticsAllowed || !measurementId) return;
     if (typeof window.gtag !== "function") return;
     window.gtag("event", "page_view", {
-      page_path: pathname + window.location.search,
+      page_path: pathname,
     });
-  }, [pathname, analyticsAllowed, measurementId]);
+  }, [pathname, isDocumentActivated, analyticsAllowed, measurementId]);
 
-  if (!analyticsAllowed || !measurementId) return null;
+  if (!isDocumentActivated || !analyticsAllowed || !measurementId) return null;
 
   return (
     <>

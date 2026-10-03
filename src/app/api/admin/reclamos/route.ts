@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { revalidatePath } from "next/cache";
 import { isAuthorized } from "@/lib/auth";
+import { checkBodySize, MAX_BODY_BYTES } from "@/lib/body-guard";
 import {
   addHoliday,
   deleteHoliday,
@@ -46,6 +47,8 @@ export async function GET(request: NextRequest) {
       "codigo", "fecha_registro_utc", "deadline_habil", "tipo", "bien", "monto",
       "detalle", "pedido", "nombre", "documento", "domicilio", "telefono", "email",
       "representante", "estado", "respuesta", "respuesta_enviada", "anulado_motivo",
+      "consent_recorded_at", "policy_version", "required_consent_text", "required_consent_accepted",
+      "marketing_consent_text", "marketing_consent_accepted", "consent_purpose",
     ];
     const esc = (v: string) => `"${(v ?? "").replace(/"/g, '""').replace(/\r?\n/g, " ")}"`;
     const lines = [header.join(",")];
@@ -56,6 +59,9 @@ export async function GET(request: NextRequest) {
         r.monto, r.detalle, r.pedido, r.nombre, r.documento, r.domicilio,
         r.telefono, r.email, r.representante, r.estado, r.respuesta,
         r.respuesta_enviada_en ?? "", r.anulado_motivo,
+        r.consent_recorded_at ?? "", r.policy_version ?? "", r.required_consent_text ?? "",
+        r.required_consent_accepted ?? "", r.marketing_consent_text ?? "",
+        r.marketing_consent_accepted ?? "", r.consent_purpose ?? "",
       ].map((v) => esc(String(v))).join(","));
     }
     const csv = "\uFEFF" + lines.join("\r\n"); // BOM para Excel en Windows
@@ -71,7 +77,9 @@ export async function GET(request: NextRequest) {
     const deadline = deadlineHabil(r.created_at, 15);
     return {
       ...r,
-      bien_label: labelBien(r.bien_contratado) + (r.bien_detalle ? ` — ${r.bien_detalle}` : ""),
+      bien_label:
+      (r.bien_tipo === "producto" ? "PRODUCTO — " : r.bien_tipo === "servicio" ? "SERVICIO — " : "") +
+      labelBien(r.bien_contratado) + (r.bien_detalle ? ` — ${r.bien_detalle}` : ""),
       deadline,
       daysLeft: businessDaysLeft(deadline),
       vencido: limaToday() > deadline,
@@ -89,6 +97,9 @@ export async function GET(request: NextRequest) {
 
 /** POST: acciones sobre reclamos, feriados y configuración. */
 export async function POST(request: NextRequest) {
+  const sizeError = checkBodySize(request, MAX_BODY_BYTES.admin);
+  if (sizeError) return sizeError;
+
   if (!isAuthorized(request.headers.get("cookie"))) return unauthorized();
 
   let body: Record<string, unknown>;

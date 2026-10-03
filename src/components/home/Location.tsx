@@ -49,18 +49,23 @@ export default function Location() {
                 Ubicación <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#BF953F] via-[#F3E5AB] to-[#D4AF37]">Estratégica</span>
               </h2>
               
-              <p className="font-body text-white/70 text-base md:text-lg mb-8 leading-relaxed font-light">
-                Ubicados en <strong className="text-white font-semibold">Av. San Agustín 154, San Carlos</strong>. El epicentro del desarrollo residencial en Huancayo, brindando conexión inigualable a las instituciones de mayor prestigio.
+              <p className="font-body text-white/70 text-base md:text-lg mb-6 leading-relaxed font-light">
+                Torres Titanium está ubicado en <strong className="text-white font-semibold">Av. San Agustín 154, San Carlos, Huancayo</strong>, cerca de universidades, parques y centros comerciales.
               </p>
 
-              {/* Semantic SEO Distances (Visually Hidden) */}
-              <div className="sr-only">
-                <h3>Distancias clave desde Torres Titanium:</h3>
-                <ul>
-                  {pointsOfInterest.map((poi) => (
-                    <li key={poi.id}>A {poi.time} de {poi.name}</li>
-                  ))}
-                </ul>
+              <div className="mb-8 rounded-2xl border border-white/10 bg-white/5 p-5">
+                <h3 className="font-display text-sm md:text-base text-white font-bold mb-2">Atención presencial</h3>
+                <p className="font-body text-white/75 text-sm md:text-base leading-relaxed">
+                  Av. San Agustín 154, San Carlos, Huancayo<br />
+                  Lunes a viernes: 8:30 a. m.–6:00 p. m.<br />
+                  Sábados: 9:00 a. m.–2:00 p. m.
+                </p>
+                <a
+                  href="tel:+51981407634"
+                  className="inline-block mt-3 font-body text-sm font-semibold text-[#F3E5AB] underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  Llamar al 981 407 634
+                </a>
               </div>
 
               <div className="flex flex-col gap-4">

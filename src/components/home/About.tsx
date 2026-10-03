@@ -27,7 +27,7 @@ export default function About() {
               className="flex items-center gap-4 mb-8"
             >
               <div className="w-1.5 h-6 bg-primary"></div>
-              <span className="font-display font-semibold text-primary tracking-[0.15em] text-sm md:text-base uppercase">Arquitectura Monumental</span>
+              <span className="font-display font-semibold text-primary tracking-[0.15em] text-sm md:text-base uppercase">Holding Reynaga · Huancayo</span>
             </motion.div>
             
             <motion.h2 
@@ -40,13 +40,16 @@ export default function About() {
               urbana.
             </motion.h2>
             
-            <motion.p 
-              variants={fadeUpVariant} 
-              transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }} 
-              className="font-body text-on-surface/80 text-xl mb-12 leading-relaxed max-w-lg"
+
+            <motion.p
+              variants={fadeUpVariant}
+              transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+              className="font-body text-on-surface/90 text-base mb-6 leading-relaxed max-w-lg border-l-4 border-primary/30 pl-4"
             >
-              Inspirados en la solidez del concreto y la alta duración del titanium, Holding Reynaga redefine el horizonte urbano con una propuesta que equilibra la estética minimalista y el confort absoluto. Cada ángulo ha sido diseñado para maximizar la luz natural y ofrecer espacios que respiran.
+              <strong>HOLDING INVERSIONES REYNAGA S.A.C.</strong> (Holding Reynaga) es una inmobiliaria y constructora de Huancayo. <strong>Torres Titanium</strong> es su proyecto residencial en San Carlos, con una propuesta de diseño contemporáneo, luz natural y comodidad.
             </motion.p>
+
+
 
             {/* Stats row */}
             <motion.div 
@@ -63,6 +66,8 @@ export default function About() {
                 <div className="text-deep-navy font-display font-bold text-xs md:text-sm tracking-widest uppercase">Amenidades Exclusivas</div>
               </div>
             </motion.div>
+
+
           </motion.div>
 
           {/* Right Image Block with floating Quote */}
@@ -103,7 +108,7 @@ export default function About() {
             >
               <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#BF953F] via-[#D4AF37] to-[#B38728] rounded-t-3xl" />
               <p className="text-deep-navy font-body italic text-lg md:text-xl font-medium leading-relaxed mb-6">
-                "Buscamos que cada residente sienta que su hogar es una pieza de arte habitable."
+                &ldquo;Buscamos que cada residente sienta que su hogar es una pieza de arte habitable.&rdquo;
               </p>
               <div className="flex items-center gap-3">
                 <span className="w-8 h-0.5 bg-[#D4AF37]"></span>

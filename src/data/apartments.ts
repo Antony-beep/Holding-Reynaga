@@ -1,4 +1,18 @@
-export const APARTMENTS = [
+export type Apartment = {
+  type: string;
+  bedrooms: string;
+  baths: string;
+  sqm: string;
+  price: string;
+  area: string;
+  features: string[];
+  images: string[];
+  basePath: string;
+  video: string;
+  isComingSoon?: boolean;
+};
+
+export const APARTMENTS: Apartment[] = [
   {
     type: "Tipo A",
     bedrooms: "3",
@@ -116,3 +130,11 @@ export const APARTMENTS = [
     isComingSoon: true
   }
 ];
+
+export function buildApartmentSlug(apartment: Pick<Apartment, "type">) {
+  return apartment.type.toLowerCase().replace(/ /g, "-");
+}
+
+export function getApartmentBySlug(slug: string) {
+  return APARTMENTS.find((apartment) => buildApartmentSlug(apartment) === slug);
+}

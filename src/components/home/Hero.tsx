@@ -364,8 +364,8 @@ export default function Hero() {
             </motion.p>
 
             {/* Main Title Stacked */}
-            <h1 className="text-display font-display text-5xl sm:text-6xl md:text-7xl lg:text-[4.5rem] xl:text-[4.8rem] 2xl:text-[7.5rem] leading-[0.9] drop-shadow-2xl mb-3 lg:mb-4 xl:mb-6 2xl:mb-8 flex flex-col">
-              <motion.div
+            <h1 className="text-display font-display text-5xl sm:text-6xl md:text-7xl lg:text-[4.5rem] xl:text-[4.8rem] 2xl:text-[7.5rem] leading-[0.9] drop-shadow-2xl mb-3 lg:mb-4 xl:mb-6 2xl:mb-8 flex flex-col" aria-label="Torres Titanium">
+              <motion.span
                 className="flex overflow-hidden mb-1 sm:mb-2 pb-1"
                 variants={{
                   hidden: { opacity: 1 },
@@ -397,17 +397,12 @@ export default function Hero() {
                     {char}
                   </motion.span>
                 ))}
-              </motion.div>
+              </motion.span>
+              {" "}
               <span className="text-outline-to-fill block font-black">
                 TITANIUM
               </span>
             </h1>
-
-            {/* Semantic SEO Transaccional (Visually Hidden) */}
-            <div className="sr-only">
-              <h2>Preventa Exclusiva de Departamentos en Huancayo</h2>
-              <p>Adquiere tu departamento de lujo en San Carlos desde S/ 163,332.50 hasta S/ 361,741.00. Bonos de preventa de S/ 24,900 a S/ 47,850. Reserva con S/ 1,000 y congela el precio hoy mismo.</p>
-            </div>
 
             {/* Description */}
             <motion.p
@@ -421,8 +416,8 @@ export default function Hero() {
               }}
               className="font-body text-surface/90 text-sm sm:text-base lg:text-base xl:text-base 2xl:text-2xl max-w-xl mb-4 lg:mb-5 xl:mb-8 2xl:mb-12 leading-relaxed font-light drop-shadow"
             >
-              Elegancia Urbana en el Corazón de Huancayo.
-              <br className="hidden md:block" /> Vive cerca de TODO.
+              Elegancia Urbana en el Corazón de Huancayo.<br />
+              Vive cerca de TODO.
             </motion.p>
 
             {/* Inline Features Tags */}
@@ -455,10 +450,10 @@ export default function Hero() {
                 </div>
                 <div className="flex flex-col justify-center text-left">
                   <p className="text-surface text-[0.55rem] sm:text-[0.65rem] opacity-70 uppercase tracking-wider font-semibold leading-tight">
-                    Congela el precio
+                    Departamentos en preventa
                   </p>
                   <p className="text-surface font-bold text-xs sm:text-sm lg:text-xs xl:text-sm leading-tight">
-                    Desde tu reserva
+                    San Carlos, Huancayo
                   </p>
                 </div>
               </div>
@@ -486,7 +481,7 @@ export default function Hero() {
                 </div>
                 <div className="flex flex-col justify-center">
                   <p className="text-surface text-[0.55rem] sm:text-[0.65rem] opacity-70 uppercase tracking-wider font-semibold leading-tight">
-                    Descubre más
+                    1, 2 y 3 dormitorios
                   </p>
                   <p className="text-surface font-bold text-xs sm:text-sm lg:text-xs xl:text-sm leading-tight">
                     Conoce 7 modelos de departamentos
@@ -512,7 +507,7 @@ export default function Hero() {
                 onClick={(e) => scrollToSection(e, "reserva")}
                 className="bg-gold-metallic text-black px-4 sm:px-6 xl:px-6 2xl:px-8 py-3.5 sm:py-4 xl:py-3 2xl:py-4 rounded-lg font-body font-black tracking-[0.15em] sm:tracking-widest transition-all duration-300 hover:scale-105 hover:brightness-110 uppercase text-[0.65rem] sm:text-sm lg:text-xs xl:text-xs 2xl:text-sm shadow-[0_0_20px_rgba(212,175,55,0.4)] min-h-[48px] sm:min-h-[56px] xl:min-h-[48px] 2xl:min-h-[60px] flex items-center justify-center gap-2 sm:gap-3 w-full sm:w-auto border border-[#FFE896]/50 cursor-pointer"
               >
-                Separa con S/.1000
+                Separa con S/ 1,000
                 <svg
                   className="w-3.5 h-3.5 sm:w-5 sm:h-5"
                   fill="none"
@@ -582,7 +577,7 @@ export default function Hero() {
               }}
             >
               <a
-                href="https://wa.me/51981407634?text=Hola,%20quiero%20reservar%20mi%20departamento%20con%20S/1,000"
+                href="https://wa.me/51981407634?text=Hola,%20quiero%20separar%20un%20departamento%20en%20Torres%20Titanium%20con%20S/%201,000"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="cursor-pointer"
@@ -609,7 +604,7 @@ export default function Hero() {
       >
         <div className="scale-75 xl:scale-80 2xl:scale-100 transition-transform duration-300 origin-right">
           <a
-            href="https://wa.me/51981407634?text=Hola,%20quiero%20reservar%20mi%20departamento%20con%20S/1,000"
+            href="https://wa.me/51981407634?text=Hola,%20quiero%20separar%20un%20departamento%20en%20Torres%20Titanium%20con%20S/%201,000"
             target="_blank"
             rel="noopener noreferrer"
             className="cursor-pointer block"

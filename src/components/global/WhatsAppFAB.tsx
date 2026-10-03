@@ -1,11 +1,22 @@
 "use client";
 
 import Link from 'next/link';
-import { useState, useEffect, useTransition } from 'react';
+import { useState, useEffect, useTransition, useId } from 'react';
 import { Turnstile } from "@marsidev/react-turnstile";
 import { trackLeadSubmitted } from "@/lib/analytics";
+import { useFormValidation } from "@/lib/form-validation";
+import { useFormMountTime } from "@/lib/form-mount-time";
+import { PRIVACY_POLICY_VERSION, type ConsentSubmission } from "@/lib/privacy";
+import { useDocumentActivated } from "@/components/global/useDocumentActivated";
+import ConsentFields from "@/components/forms/ConsentFields";
 
 export default function WhatsAppFAB() {
+  const fv = useFormValidation();
+  const mt = useFormMountTime();
+  const documentActivated = useDocumentActivated();
+  const fieldId = useId();
+  const [requiredAccepted, setRequiredAccepted] = useState(false);
+  const [marketingAccepted, setMarketingAccepted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -45,8 +56,13 @@ export default function WhatsAppFAB() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (!documentActivated) return;
     setError("");
+    if (!fv.validate(e)) {
+      setError("Revise los campos marcados en rojo.");
+      return;
+    }
+    setSubmitted(true);
     const form = e.currentTarget;
     const data = new FormData(form);
     try {
@@ -59,8 +75,14 @@ export default function WhatsAppFAB() {
           phone: data.get("phone"),
           email: data.get("email"),
           company: honeypot,
+          formTime: mt.formTime(),
           turnstileToken,
           source: "fab",
+          consent: {
+            policyVersion: PRIVACY_POLICY_VERSION,
+            requiredAccepted,
+            marketingAccepted,
+          } satisfies ConsentSubmission,
         }),
       });
       const result = await res.json();
@@ -70,6 +92,8 @@ export default function WhatsAppFAB() {
       trackLeadSubmitted("fab");
       setSuccess(true);
       form.reset();
+      setRequiredAccepted(false);
+      setMarketingAccepted(false);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Ocurrió un error. Intente nuevamente.",
@@ -82,6 +106,12 @@ export default function WhatsAppFAB() {
   };
 
   return (
+    <>
+      <noscript>
+        <p className="fixed bottom-6 right-6 z-40 max-w-xs rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-deep-navy shadow-lg">
+          Activa JavaScript para enviar una solicitud de reserva de forma segura. El envío está deshabilitado mientras JavaScript no esté activo.
+        </p>
+      </noscript>
     <div className={`fixed bottom-6 right-6 z-40 flex items-end gap-3 transition-all duration-1000 ${
       isPreloading 
         ? "opacity-0 translate-y-8 pointer-events-none invisible" 
@@ -92,7 +122,7 @@ export default function WhatsAppFAB() {
       <div className="relative flex flex-col items-end">
         
         {/* The Form */}
-        <div className={`fixed sm:absolute bottom-[100px] sm:bottom-full left-1/2 sm:left-auto right-1/2 sm:right-0 -translate-x-1/2 sm:translate-x-0 mb-4 w-[90vw] max-w-[380px] sm:w-[380px] bg-white/95 backdrop-blur-xl rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] border border-white p-7 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] origin-bottom sm:origin-bottom-right overflow-hidden ${
+        <div className={`fixed sm:absolute bottom-[100px] sm:bottom-full left-1/2 sm:left-auto right-1/2 sm:right-0 -translate-x-1/2 sm:translate-x-0 mb-4 w-[90vw] max-w-[380px] sm:w-[380px] bg-white/95 backdrop-blur-xl rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] border border-white p-7 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] origin-bottom sm:origin-bottom-right max-h-[calc(100dvh-8rem)] overflow-y-auto ${
           isFormOpen 
             ? "opacity-100 scale-100 translate-y-0 pointer-events-auto" 
             : "opacity-0 scale-95 translate-y-4 pointer-events-none"
@@ -106,7 +136,7 @@ export default function WhatsAppFAB() {
           
           <div className="relative z-10">
             <div className="mb-6">
-              <h3 className="font-display font-black text-deep-navy text-2xl mb-1.5 tracking-tight">Reserva Ahora</h3>
+              <h3 className="font-display font-black text-deep-navy text-2xl mb-1.5 tracking-tight">Solicitud de reserva</h3>
               <p className="font-body text-sm text-deep-navy/60 leading-relaxed">Déjanos tus datos y un asesor se comunicará contigo rápidamente.</p>
             </div>
 
@@ -117,7 +147,7 @@ export default function WhatsAppFAB() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h4 className="font-display font-black text-xl text-deep-navy">¡Reserva recibida!</h4>
+                <h4 className="font-display font-black text-xl text-deep-navy">¡Solicitud recibida!</h4>
                 <p className="font-body text-sm text-deep-navy/60 leading-relaxed">Un asesor se comunicará contigo en breve.</p>
                 <button
                   type="button"
@@ -128,7 +158,7 @@ export default function WhatsAppFAB() {
                 </button>
               </div>
             ) : (
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+            <form noValidate method="post" action="/api/leads" className="flex flex-col gap-4" onSubmit={handleSubmit}>
               <input
                 type="text"
                 name="company"
@@ -141,75 +171,102 @@ export default function WhatsAppFAB() {
               />
 
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 text-xs font-medium rounded-xl px-3 py-2.5">
+                <div role="alert" className="bg-red-50 border border-red-200 text-red-700 text-xs font-medium rounded-xl px-3 py-2.5">
                   {error}
                 </div>
               )}
 
               <div>
-                <label className="block text-[11px] font-bold text-deep-navy/70 uppercase tracking-wider mb-1.5 ml-1">Nombre Completo</label>
+                <label htmlFor={`${fieldId}-name`} className="block text-[11px] font-bold text-deep-navy/70 uppercase tracking-wider mb-1.5 ml-1">Nombre Completo</label>
                 <input
                   type="text"
                   name="name"
+                  id={`${fieldId}-name`}
+                  aria-invalid={Boolean(fv.errorBox("name"))}
+                  aria-describedby={fv.errorBox("name") ? `${fieldId}-name-error` : undefined}
                   placeholder="Ej. Juan Pérez"
                   maxLength={100}
-                  className="w-full bg-gray-50/50 text-deep-navy font-body rounded-xl px-4 py-3 outline-none focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/40 border border-gray-200 focus:border-[#D4AF37]/50 transition-all placeholder:text-gray-400 text-sm shadow-sm"
+                  className={fv.inputCls("name", "w-full bg-gray-50/50 text-deep-navy font-body rounded-xl px-4 py-3 outline-none focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/40 border border-gray-200 focus:border-[#D4AF37]/50 transition-all placeholder:text-gray-400 text-sm shadow-sm")}
+                  onChange={fv.clearError}
+                  data-error="Ingrese su nombre completo."
                   required
                 />
+                {fv.errorBox("name") && <p id={`${fieldId}-name-error`} className="text-red-700 text-[11px] mt-1">{fv.errorBox("name")}</p>}
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[11px] font-bold text-deep-navy/70 uppercase tracking-wider mb-1.5 ml-1">DNI / CE</label>
+                  <label htmlFor={`${fieldId}-document`} className="block text-[11px] font-bold text-deep-navy/70 uppercase tracking-wider mb-1.5 ml-1">DNI / CE</label>
                   <input
                     type="text"
                     name="document"
+                    id={`${fieldId}-document`}
+                    aria-invalid={Boolean(fv.errorBox("document"))}
+                    aria-describedby={fv.errorBox("document") ? `${fieldId}-document-note ${fieldId}-document-error` : `${fieldId}-document-note`}
                     placeholder="00000000"
-                    maxLength={8}
-                    pattern="[A-Za-z0-9]+"
-                    className="w-full bg-gray-50/50 text-deep-navy font-body rounded-xl px-4 py-3 outline-none focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/40 border border-gray-200 focus:border-[#D4AF37]/50 transition-all placeholder:text-gray-400 text-sm shadow-sm"
+                    minLength={8}
+                    maxLength={12}
+                    pattern="[A-Za-z0-9]{8,12}"
+                    title="DNI o CE de 8 a 12 caracteres alfanuméricos"
+                    className={fv.inputCls("document", "w-full bg-gray-50/50 text-deep-navy font-body rounded-xl px-4 py-3 outline-none focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/40 border border-gray-200 focus:border-[#D4AF37]/50 transition-all placeholder:text-gray-400 text-sm shadow-sm")}
+                    onChange={fv.clearError}
+                    data-error="Ingrese un DNI o CE de 8 a 12 caracteres alfanuméricos."
                     required
                   />
+                  {fv.errorBox("document") && <p id={`${fieldId}-document-error`} className="text-red-700 text-[11px] mt-1">{fv.errorBox("document")}</p>}
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-deep-navy/70 uppercase tracking-wider mb-1.5 ml-1">Teléfono</label>
+                  <label htmlFor={`${fieldId}-phone`} className="block text-[11px] font-bold text-deep-navy/70 uppercase tracking-wider mb-1.5 ml-1">Teléfono</label>
                   <input
                     type="tel"
                     name="phone"
+                    id={`${fieldId}-phone`}
+                    aria-invalid={Boolean(fv.errorBox("phone"))}
+                    aria-describedby={fv.errorBox("phone") ? `${fieldId}-phone-error` : undefined}
                     placeholder="+51 999 999 999"
                     minLength={9}
                     maxLength={15}
                     pattern="^\+?[0-9\s\-]{9,}$"
                     title="Ingresa un número de teléfono válido (mínimo 9 dígitos)"
-                    className="w-full bg-gray-50/50 text-deep-navy font-body rounded-xl px-4 py-3 outline-none focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/40 border border-gray-200 focus:border-[#D4AF37]/50 transition-all placeholder:text-gray-400 text-sm shadow-sm"
+                    className={fv.inputCls("phone", "w-full bg-gray-50/50 text-deep-navy font-body rounded-xl px-4 py-3 outline-none focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/40 border border-gray-200 focus:border-[#D4AF37]/50 transition-all placeholder:text-gray-400 text-sm shadow-sm")}
+                    onChange={fv.clearError}
+                    data-error="Ingrese un teléfono válido (mínimo 9 dígitos)."
                     required
                   />
+                  {fv.errorBox("phone") && <p id={`${fieldId}-phone-error`} className="text-red-700 text-[11px] mt-1">{fv.errorBox("phone")}</p>}
                 </div>
               </div>
+              <p id={`${fieldId}-document-note`} className="text-[11px] text-deep-navy/70 leading-relaxed">
+                El DNI/CE identifica al solicitante al gestionar la separación de S/ 1,000. El envío no cobra el monto ni firma la Constancia de Separación; el equipo de ventas coordina esos pasos.
+              </p>
 
               <div>
-                <label className="block text-[11px] font-bold text-deep-navy/70 uppercase tracking-wider mb-1.5 ml-1">Correo Electrónico</label>
+                <label htmlFor={`${fieldId}-email`} className="block text-[11px] font-bold text-deep-navy/70 uppercase tracking-wider mb-1.5 ml-1">Correo Electrónico</label>
                 <input
                   type="email"
                   name="email"
+                  id={`${fieldId}-email`}
+                  aria-invalid={Boolean(fv.errorBox("email"))}
+                  aria-describedby={fv.errorBox("email") ? `${fieldId}-email-error` : undefined}
                   placeholder="correo@ejemplo.com"
                   maxLength={100}
-                  className="w-full bg-gray-50/50 text-deep-navy font-body rounded-xl px-4 py-3 outline-none focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/40 border border-gray-200 focus:border-[#D4AF37]/50 transition-all placeholder:text-gray-400 text-sm shadow-sm"
+                  className={fv.inputCls("email", "w-full bg-gray-50/50 text-deep-navy font-body rounded-xl px-4 py-3 outline-none focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/40 border border-gray-200 focus:border-[#D4AF37]/50 transition-all placeholder:text-gray-400 text-sm shadow-sm")}
+                  onChange={fv.clearError}
+                  data-error="Ingrese un correo electrónico válido."
                   required
                 />
+                {fv.errorBox("email") && <p id={`${fieldId}-email-error`} className="text-red-700 text-[11px] mt-1">{fv.errorBox("email")}</p>}
               </div>
               
-              <label className="flex items-start gap-2.5 mt-2 cursor-pointer group/check">
-                <div className="relative flex items-center justify-center mt-0.5 shrink-0">
-                  <input type="checkbox" className="peer appearance-none w-4 h-4 border border-gray-300 rounded bg-white checked:bg-deep-navy checked:border-deep-navy transition-all cursor-pointer shadow-sm" required />
-                  <svg className="absolute w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <span className="font-body text-[11px] text-deep-navy/60 leading-tight group-hover/check:text-deep-navy/90 transition-colors">
-                  Acepto los <Link href="/terminos-y-condiciones" className="text-deep-navy font-bold hover:underline">Términos y Condiciones</Link> y la <Link href="/terminos-y-condiciones#privacidad" className="text-deep-navy font-bold hover:underline">Política de Privacidad</Link>
-                </span>
-              </label>
+              <ConsentFields
+                kind="lead"
+                requiredName="privacy"
+                requiredAccepted={requiredAccepted}
+                marketingAccepted={marketingAccepted}
+                onRequiredChange={(e) => { setRequiredAccepted(e.currentTarget.checked); fv.clearError(e); }}
+                onMarketingChange={(e) => setMarketingAccepted(e.currentTarget.checked)}
+                requiredError={fv.errorBox("privacy")}
+              />
 
               {siteKey && (
                 <div className="flex justify-center mt-2">
@@ -218,21 +275,24 @@ export default function WhatsAppFAB() {
                     siteKey={siteKey}
                     onSuccess={(token) => setTurnstileToken(token)}
                     onExpire={() => setTurnstileToken("")}
-                    onError={() => setTurnstileToken("")}
-                    options={{ theme: "light", language: "es", size: "flexible" }}
+                    onError={() => {
+                      setTurnstileToken("");
+                      setTimeout(() => setTsKey((k) => k + 1), 3000);
+                    }}
+                    options={{ theme: "light", language: "es", size: "flexible", retry: "auto", retryInterval: 3000 }}
                   />
                 </div>
               )}
 
               <button
                 type="submit"
-                disabled={submitted || (siteKey !== "" && turnstileToken === "")}
+                disabled={!documentActivated || submitted || (siteKey !== "" && turnstileToken === "")}
                 className="w-full bg-deep-navy hover:bg-[#1a2942] text-white font-display font-bold tracking-widest text-sm uppercase px-6 py-4 rounded-xl mt-3 transition-all shadow-[0_8px_20px_rgba(10,25,47,0.2)] hover:shadow-[0_12px_25px_rgba(10,25,47,0.3)] hover:-translate-y-0.5 disabled:opacity-70 disabled:hover:translate-y-0 disabled:cursor-not-allowed flex justify-center items-center"
               >
                 {submitted ? (
                   <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                 ) : (
-                  "Enviar Reserva"
+                  "Enviar solicitud"
                 )}
               </button>
             </form>
@@ -249,8 +309,8 @@ export default function WhatsAppFAB() {
           <div className="absolute inset-0 z-0 pointer-events-none w-1/3 bg-gradient-to-r from-transparent via-white/70 to-transparent animate-gold-shine mix-blend-overlay" />
           
           <span className="relative z-10 tracking-wide uppercase text-[10px] sm:text-xs md:text-sm font-black whitespace-nowrap">
-            <span className="hidden sm:inline">Reserva tu futuro ahora</span>
-            <span className="inline sm:hidden">Reserva ahora</span>
+            <span className="hidden sm:inline">Solicita una reserva</span>
+            <span className="inline sm:hidden">Solicita reserva</span>
           </span>
           <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-300 relative z-10 ${isFormOpen ? "rotate-90" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
         </button>
@@ -269,5 +329,6 @@ export default function WhatsAppFAB() {
         </svg>
       </Link>
     </div>
+    </>
   );
 }

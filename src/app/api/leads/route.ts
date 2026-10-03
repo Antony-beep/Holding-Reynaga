@@ -1,13 +1,21 @@
 import { after, type NextRequest, NextResponse } from "next/server";
 import { leadSchema } from "@/lib/schemas/lead";
+import { CONSENT_FIELD_ERRORS_ES } from "@/lib/schemas/consent";
+import { createConsentEvidence } from "@/lib/privacy";
 import { getLeadById, insertLead, markLeadSynced } from "@/lib/db";
 import { appendLeadToSheet } from "@/lib/sheets";
 import { verifyTurnstile } from "@/lib/turnstile";
+import { checkBodySize, MAX_BODY_BYTES } from "@/lib/body-guard";
+import {
+  isContentRateLimited,
+  CONTENT_RATE_LIMIT_MESSAGE,
+} from "@/lib/content-rate-limit";
 
 export const runtime = "nodejs";
 
 // Mensajes de validación en español (por campo) para la API pública.
 const FIELD_ERRORS_ES: Record<string, string> = {
+  ...CONSENT_FIELD_ERRORS_ES,
   name: "Ingrese su nombre completo (solo letras, 3 a 80 caracteres).",
   document: "El documento debe tener 8 dígitos (DNI) o hasta 12 caracteres (CE).",
   phone: "Ingrese un teléfono válido (mínimo 9 dígitos).",
@@ -51,6 +59,9 @@ function getClientIp(req: NextRequest): string {
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
 
+  const sizeError = checkBodySize(request, MAX_BODY_BYTES.leads);
+  if (sizeError) return sizeError;
+
   if (isRateLimited(ip)) {
     return NextResponse.json(
       { ok: false, error: "Demasiados intentos. Espere 5 minutos e intente nuevamente." },
@@ -83,6 +94,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
+  // Time-trap: si el formulario se envió en menos de 2 segundos, es un bot.
+  // Éxito falso igual que el honeypot — el bot no sabe que fue rechazado.
+  if (parsed.data.formTime !== undefined && parsed.data.formTime < 2000) {
+    return NextResponse.json({ ok: true });
+  }
+
   // Captcha Turnstile: si no valida, rechazamos (a los bots les devolvemos
   // éxito falso después de un pequeño retraso para no confirmar el rechazo).
   const captchaOk = await verifyTurnstile(parsed.data.turnstileToken, ip);
@@ -90,6 +107,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { ok: false, error: "No se pudo verificar el captcha. Actualice la página e intente de nuevo." },
       { status: 400 },
+    );
+  }
+
+  // Rate limit por contenido: mismo DNI/email no puede enviar 3+ veces en 10 min
+  const contentLimit = isContentRateLimited(parsed.data.document || "", parsed.data.email);
+  if (contentLimit.limited) {
+    return NextResponse.json(
+      { ok: false, error: CONTENT_RATE_LIMIT_MESSAGE },
+      { status: 429 },
     );
   }
 
@@ -103,6 +129,10 @@ export async function POST(request: NextRequest) {
     message: parsed.data.message,
     ip,
     userAgent: request.headers.get("user-agent")?.slice(0, 300) ?? "",
+    consent: createConsentEvidence(
+      parsed.data.consent,
+      parsed.data.source === "fab" ? "reservation_request" : "quotation",
+    ),
   });
 
   // El lead ya está a salvo en SQLite. El envío a Google Sheets

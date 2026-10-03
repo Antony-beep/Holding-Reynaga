@@ -7,11 +7,17 @@ import {
   updateReclamo,
 } from "@/lib/db";
 import { reclamoSchema, RECLAMO_FIELD_ERRORS_ES } from "@/lib/schemas/reclamo";
+import { createConsentEvidence } from "@/lib/privacy";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { generateReclamoPdf } from "@/lib/reclamos-pdf";
 import { sendMail, getNotifyEmail } from "@/lib/mailer";
 import { appendReclamoToSheet } from "@/lib/sheets";
 import { deadlineHabil } from "@/lib/holidays";
+import { checkBodySize, MAX_BODY_BYTES } from "@/lib/body-guard";
+import {
+  isContentRateLimited,
+  CONTENT_RATE_LIMIT_MESSAGE,
+} from "@/lib/content-rate-limit";
 
 export const runtime = "nodejs";
 
@@ -28,6 +34,9 @@ function getClientIp(req: NextRequest): string {
 
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
+
+  const sizeError = checkBodySize(request, MAX_BODY_BYTES.reclamos);
+  if (sizeError) return sizeError;
 
   const entry = rateLimit.get(ip);
   if (entry && entry.resetAt > Date.now() && entry.count >= MAX_REQUESTS) {
@@ -71,6 +80,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
+  // Time-trap: menos de 2 segundos para llenar el formulario = bot.
+  if (data.formTime !== undefined && data.formTime < 2000) {
+    return NextResponse.json({ ok: true });
+  }
+
   const captchaOk = await verifyTurnstile(data.turnstileToken, ip);
   if (!captchaOk) {
     return NextResponse.json(
@@ -82,12 +96,22 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Rate limit por contenido: mismo DNI/email no puede enviar 3+ en 10 min
+  const contentLimit = isContentRateLimited(data.documento, data.email);
+  if (contentLimit.limited) {
+    return NextResponse.json(
+      { ok: false, error: CONTENT_RATE_LIMIT_MESSAGE },
+      { status: 429 },
+    );
+  }
+
   const codigo = nextReclamoCodigo();
   const id = insertReclamo({
     codigo,
     tipo: data.tipo,
     bien_contratado: data.bienContratado,
     bien_detalle: data.bienDetalle ?? "",
+    bien_tipo: data.bienTipo,
     monto: data.monto ?? "",
     detalle: data.detalle,
     pedido: data.pedido,
@@ -99,6 +123,7 @@ export async function POST(request: NextRequest) {
     representante: data.representante ?? "",
     ip,
     userAgent: request.headers.get("user-agent")?.slice(0, 300) ?? "",
+    consent: createConsentEvidence(data.consent, "complaint"),
   });
 
   const reclamo = getReclamoById(id);

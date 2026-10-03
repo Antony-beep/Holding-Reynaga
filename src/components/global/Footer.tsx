@@ -1,8 +1,8 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import Link from "next/link";
 import { Mail, Phone, MapPin } from "lucide-react";
 import CookieSettingsLink from "./CookieSettingsLink";
-
+import { LEGAL_REVIEW_MARKER } from "@/lib/privacy";
 const InstagramIcon = ({ size = 24, className = "" }) => (
   <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -40,6 +40,9 @@ export default function Footer() {
             />
             <p className="text-surface/80 max-w-sm font-body leading-relaxed text-sm sm:text-base">
               Desarrollando espacios urbanos de alto valor, diseño excepcional y exclusividad en el corazón de Huancayo.
+            </p>
+            <p className="text-surface/55 max-w-sm font-body text-xs leading-relaxed">
+              HOLDING INVERSIONES REYNAGA S.A.C. · RUC 20614870959
             </p>
             
             {/* Social Links */}
@@ -80,10 +83,16 @@ export default function Footer() {
                   <MapPin size={18} className="text-primary" />
                 </div>
                 <span className="font-medium max-w-[220px] text-sm sm:text-base leading-relaxed">
-                  Jr. Lino 132, Oficina 401<br/>
-                  <span className="text-xs text-surface/60 font-light block mt-0.5">A una cuadra del parque Grau</span>
+                  Av. San Agustín 154, San Carlos<br/>
+                  <span className="text-xs text-surface/60 font-light block mt-0.5">Punto de atención · Huancayo, Junín</span>
                 </span>
               </div>
+              <p className="ml-14 max-w-[260px] text-xs leading-relaxed text-surface/65">
+                Atención: lunes a viernes, 8:30 a. m.–6:00 p. m.; sábados, 9:00 a. m.–2:00 p. m.
+              </p>
+              <p className="ml-14 max-w-[260px] text-xs leading-relaxed text-surface/50">
+                Domicilio legal: [[DOMICILIO LEGAL COMPLETO]]. {LEGAL_REVIEW_MARKER}.
+              </p>
             </div>
           </div>
 
@@ -94,27 +103,27 @@ export default function Footer() {
               <h3 className="font-display text-xs md:text-sm text-primary font-bold uppercase tracking-[0.2em]">Enlaces Rápidos</h3>
             </div>
             <div className="flex flex-col gap-3 mt-2 text-center md:text-left">
-              <Link href="#nosotros" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Nosotros</Link>
-              <Link href="#ubicacion" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Ubicación</Link>
-              <Link href="#galeria" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Áreas Comunes</Link>
-              <Link href="#recorrido" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Tour 360°</Link>
-              <Link href="#departamentos" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Departamentos</Link>
-              <Link href="#titanium" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block mb-2">Dossier Informativo</Link>
+              <Link href="/nosotros" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Nosotros</Link><Link href="/guias" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Guías y Recursos</Link>
+              <Link href="/#ubicacion" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Ubicación</Link>
+              <Link href="/#galeria" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Áreas Comunes</Link>
+              <Link href="/#recorrido" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Tour 360°</Link>
+              <Link href="/#departamentos" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Departamentos</Link>
+              <Link href="/#titanium" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block mb-2">Dossier Informativo</Link>
               
-              <Link href="#reserva" className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#BF953F] via-[#F3E5AB] to-[#D4AF37] bg-[length:200%_auto] hover:bg-[position:right_center] text-deep-navy font-bold px-6 py-3 rounded-xl transition-all duration-500 hover:-translate-y-1 shadow-[0_10px_20px_rgba(212,175,55,0.2)] hover:shadow-[0_15px_30px_rgba(212,175,55,0.3)] mt-2 w-fit mx-auto md:mx-0 text-xs sm:text-sm uppercase tracking-widest border border-white/40">
-                Reservar Unidad
+              <Link href="/#reserva" className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#BF953F] via-[#F3E5AB] to-[#D4AF37] bg-[length:200%_auto] hover:bg-[position:right_center] text-deep-navy font-bold px-6 py-3 rounded-xl transition-all duration-500 hover:-translate-y-1 shadow-[0_10px_20px_rgba(212,175,55,0.2)] hover:shadow-[0_15px_30px_rgba(212,175,55,0.3)] mt-2 w-fit mx-auto md:mx-0 text-xs sm:text-sm uppercase tracking-widest border border-white/40">
+                Solicitar Reserva
               </Link>
             </div>
           </div>
         </div>
         
         {/* Bottom Bar */}
-        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs sm:text-sm text-surface/50 font-body">
-          <p className="order-2 md:order-1 text-center md:text-left">&copy; {new Date().getFullYear()} Holding Reynaga. Todos los derechos reservados.</p>
+        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 text-xs sm:text-sm text-surface/50 font-body">
+          <p className="order-3 md:order-1 text-center md:text-left">&copy; {new Date().getFullYear()} Holding Reynaga. Todos los derechos reservados.</p>
           <div className="flex items-center justify-center gap-4 sm:gap-6 order-1 md:order-2 flex-wrap">
             <Link href="/terminos-y-condiciones" className="hover:text-white transition-colors">Términos y Condiciones</Link>
             <span className="w-1 h-1 rounded-full bg-surface/30"></span>
-            <Link href="/terminos-y-condiciones#privacidad" className="hover:text-white transition-colors">Políticas de Privacidad</Link>
+            <Link href="/politica-de-privacidad" className="hover:text-white transition-colors">Política de Privacidad</Link>
             <span className="w-1 h-1 rounded-full bg-surface/30"></span>
             <Link href="/libro-de-reclamaciones" className="hover:text-white transition-colors inline-flex items-center gap-1.5">
               <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -126,6 +135,21 @@ export default function Footer() {
             <span className="w-1 h-1 rounded-full bg-surface/30"></span>
             <CookieSettingsLink />
           </div>
+          {/* Aviso oficial del Libro de Reclamaciones (Anexo II) */}
+          <Link
+            href="/libro-de-reclamaciones"
+            aria-label="Libro de Reclamaciones — Ley N° 29571"
+            className="order-2 md:order-3 group shrink-0"
+          >
+            <Image
+              src="/docs/libro_reclamaciones/AvisoFisico_Virtual.webp"
+              alt="Aviso: este establecimiento cuenta con Libro de Reclamaciones (Ley N° 29571)"
+              width={200}
+              height={134}
+              priority={false}
+              className="rounded-lg shadow-md border border-white/20 transition-all duration-300 group-hover:shadow-[0_10px_25px_rgba(212,175,55,0.25)] group-hover:-translate-y-1 group-hover:border-[#D4AF37]/50"
+            />
+          </Link>
         </div>
       </div>
     </footer>

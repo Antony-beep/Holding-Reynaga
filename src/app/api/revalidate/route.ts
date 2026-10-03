@@ -1,5 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
+import { checkBodySize, MAX_BODY_BYTES } from "@/lib/body-guard";
 
 export const runtime = "nodejs";
 
@@ -9,6 +10,9 @@ export const runtime = "nodejs";
  * Protegido con token en el header x-revalidate-secret o en el body.
  */
 export async function POST(request: Request) {
+  const sizeError = checkBodySize(request as never, MAX_BODY_BYTES.revalidate);
+  if (sizeError) return sizeError;
+
   const secret = process.env.REVALIDATE_SECRET;
   if (!secret) {
     return Response.json(

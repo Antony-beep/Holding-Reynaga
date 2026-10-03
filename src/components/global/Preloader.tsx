@@ -52,7 +52,7 @@ export default function Preloader() {
           >
             <Image
               src="/images/logo.webp"
-              alt="Logo"
+              alt="Torres Titanium — Holding Reynaga"
               width={400}
               height={180}
               className="w-auto h-32 md:h-48 object-contain"

@@ -107,7 +107,7 @@ export default function Header() {
               </Link>
             ))}
             <a
-              href="https://wa.me/51981407634?text=Hola,%20quiero%20reservar%20mi%20departamento%20con%20S/1,000"
+              href="https://wa.me/51981407634?text=Hola,%20quiero%20separar%20un%20departamento%20en%20Torres%20Titanium%20con%20S/%201,000"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-gold-metallic text-[#1a1a1a] text-[11px] 2xl:text-sm tracking-wider uppercase font-bold px-4 py-2 2xl:px-7 2xl:py-3 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-transform hover:scale-105 hover:brightness-110 border border-[#FFE896]/50 cursor-pointer"
@@ -174,7 +174,7 @@ export default function Header() {
             </Link>
           ))}
           <a
-            href="https://wa.me/51981407634?text=Hola,%20quiero%20reservar%20mi%20departamento%20con%20S/1,000"
+            href="https://wa.me/51981407634?text=Hola,%20quiero%20separar%20un%20departamento%20en%20Torres%20Titanium%20con%20S/%201,000"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-gold-metallic text-[#1a1a1a] mt-8 text-sm tracking-wider uppercase font-bold px-8 py-4 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.4)] border border-[#FFE896]/50 cursor-pointer"

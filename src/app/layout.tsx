@@ -21,28 +21,29 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://inmobiliariaholdingreynaga.com"),
   title: {
-    default: "Torres Titanium | Holding Reynaga",
+    default: "Proyectos inmobiliarios | Holding Reynaga",
     template: "%s | Holding Reynaga",
   },
   description:
-    "Una obra maestra arquitectónica en Huancayo. Departamentos de 1, 2 y 3 dormitorios con acabados premium. Vive con elegancia y exclusividad.",
+    "Conoce los proyectos inmobiliarios de Holding Reynaga, sus características, ubicación y canales de atención.",
   keywords: [
     "Torres Titanium",
     "Holding Reynaga",
     "departamentos Huancayo",
     "departamentos en San Carlos",
     "departamentos en venta Huancayo",
-    "preventa inmobiliaria",
-    "real estate Peru",
+    "departamentos en preventa Huancayo",
+    "departamentos San Carlos Huancayo",
+    "proyecto inmobiliario Junín",
   ],
   openGraph: {
     type: "website",
     locale: "es_PE",
     url: "https://inmobiliariaholdingreynaga.com/",
-    siteName: "Inmobiliaria Holding Reynaga",
-    title: "Torres Titanium | Elegancia urbana en San Carlos, Huancayo",
+    siteName: "Holding Reynaga | Torres Titanium",
+    title: "Proyectos inmobiliarios | Holding Reynaga",
     description:
-      "Una obra maestra arquitectónica en el corazón de Huancayo. Departamentos de 1 a 3 dormitorios con bonos de preventa de S/ 24,900 a S/ 47,850.",
+      "Conoce los proyectos inmobiliarios de Holding Reynaga, sus características, ubicación y canales de atención.",
     images: [
       {
         url: "/og.jpg",
@@ -54,9 +55,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Torres Titanium | Elegancia urbana en San Carlos, Huancayo",
+    title: "Departamentos en venta en Huancayo | Torres Titanium",
     description:
-      "Departamentos de 1 a 3 dormitorios en preventa. Rooftop, seguridad 24/7 y diseño de altura. Bonos de hasta S/ 47,850.",
+      "Preventa en San Carlos, Huancayo: departamentos de 1 a 3 dormitorios, bonos de S/ 24,900 a S/ 47,850. Separa con S/ 1,000. Entrega 2027.",
     images: ["/og.jpg"],
   },
   robots: {
@@ -76,6 +77,25 @@ export default function RootLayout({
       className={`${jakarta.variable} ${inter.variable} h-full antialiased scroll-smooth`}
     >
       <head>
+        <script
+          type="speculationrules"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              prerender: [
+                {
+                  where: {
+                    and: [
+                      { href_matches: "/departamentos/*" },
+                      { not: { selector_matches: "[rel~=nofollow]" } },
+                      { not: { selector_matches: "[data-no-prerender]" } },
+                    ],
+                  },
+                  eagerness: "moderate",
+                },
+              ],
+            }),
+          }}
+        />
         <StructuredData />
       </head>
       <body className="min-h-full flex flex-col font-body bg-background text-foreground overflow-x-hidden text-lg">

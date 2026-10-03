@@ -59,7 +59,7 @@ export default function ProjectOverview() {
             <div className="flex items-center gap-4 mb-6">
               <div className="w-1.5 h-6 bg-gradient-to-b from-[#BF953F] to-[#B38728] rounded-full"></div>
               <span className="font-display font-bold text-primary tracking-[0.15em] text-xs md:text-sm uppercase bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
-                Material Exclusivo
+                PDF Público
               </span>
             </div>
 
@@ -71,10 +71,9 @@ export default function ProjectOverview() {
             </h2>
 
             <p className="font-body text-white/70 text-base md:text-lg mb-10 leading-relaxed font-light">
-              Accede a los detalles técnicos, planos exclusivos y la memoria
-              descriptiva completa de Torres Titanium. Al registrar tus datos,
-              recibirás acceso inmediato para descargar el dossier comercial en
-              formato digital de alta resolución.
+              Consulta los detalles técnicos, planos y la memoria descriptiva
+              de Torres Titanium. El dossier es un PDF público de descarga
+              directa, sin completar un formulario.
             </p>
 
             {/* Feature Cards */}
@@ -110,7 +109,7 @@ export default function ProjectOverview() {
               >
                 <div className="absolute inset-0 z-0 pointer-events-none w-1/3 bg-gradient-to-r from-transparent via-white/70 to-transparent animate-gold-shine mix-blend-overlay" />
                 <span className="relative z-10 flex items-center gap-3 font-black">
-                  DESCARGA Y OBTÉN MÁS DETALLES
+                  DESCARGAR DOSSIER PDF
                   <Download className="w-[18px] h-[18px] group-hover/btn:translate-y-1 transition-transform" />
                 </span>
               </a>
@@ -118,7 +117,7 @@ export default function ProjectOverview() {
               <div className="flex items-center justify-center gap-2">
                 <Lock className="w-3 h-3 text-white/40" />
                 <p className="text-[10px] text-white/50 font-medium">
-                  Tus datos están protegidos bajo nuestra <span className="text-[#D4AF37] font-bold">política de privacidad</span>.
+                  <span className="text-[#D4AF37] font-bold">PDF público</span>: descarga directa, sin completar formulario.
                 </p>
               </div>
             </div>
@@ -197,7 +196,7 @@ export default function ProjectOverview() {
                   </div>
                   <div>
                     <h4 className="text-deep-navy font-bold text-sm">Descarga</h4>
-                    <p className="text-deep-navy/50 text-[11px] mt-0.5">Inmediata y segura</p>
+                    <p className="text-deep-navy/50 text-[11px] mt-0.5">Directa, sin formulario</p>
                   </div>
                 </div>
 

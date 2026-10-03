@@ -1,7 +1,47 @@
 import { google } from "googleapis";
-import type { LeadRow } from "./db";
+import type { ConsentEvidenceRow, LeadRow } from "./db";
 
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
+
+export const CONSENT_SHEET_HEADERS = [
+  "consent_recorded_at", "policy_version", "required_consent_text",
+  "required_consent_accepted", "marketing_consent_text",
+  "marketing_consent_accepted", "consent_purpose",
+] as const;
+
+function consentToSheetRow(consent: ConsentEvidenceRow): (string | number)[] {
+  return CONSENT_SHEET_HEADERS.map((key) => consent[key] ?? "");
+}
+
+async function ensureConsentHeaders(
+  sheets: ReturnType<typeof google.sheets>,
+  spreadsheetId: string,
+  firstColumn: "J" | "P",
+  sheetPrefix = "",
+): Promise<void> {
+  const start = firstColumn.charCodeAt(0);
+  const range = `${sheetPrefix}${firstColumn}1:${String.fromCharCode(start + 6)}1`;
+  const current = await sheets.spreadsheets.values.get({
+    spreadsheetId, range, valueRenderOption: "FORMULA",
+  });
+  const headers = current.data.values?.[0] ?? [];
+  // Solo completa celdas vacías; no reescribe encabezados personales ni fórmulas.
+  const missing = CONSENT_SHEET_HEADERS.flatMap((header, index) =>
+    headers[index] == null || headers[index] === ""
+      ? [{ range: `${sheetPrefix}${String.fromCharCode(start + index)}1`, values: [[header]] }]
+      : [],
+  );
+  if (missing.length === 0) return;
+  await sheets.spreadsheets.values.batchUpdate({
+    spreadsheetId,
+    requestBody: {
+      valueInputOption: "USER_ENTERED",
+      data: missing.length === CONSENT_SHEET_HEADERS.length
+        ? [{ range, values: [[...CONSENT_SHEET_HEADERS]] }]
+        : missing,
+    },
+  });
+}
 
 function getAuth() {
   const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
@@ -27,11 +67,12 @@ export function leadToSheetRow(lead: LeadRow): (string | number)[] {
     lead.created_at,
     lead.source,
     lead.name,
-    lead.document,
+    lead.document ?? "",
     lead.phone,
     lead.email,
     lead.interest,
     lead.message,
+    ...consentToSheetRow(lead),
   ];
 }
 
@@ -48,6 +89,7 @@ export async function appendLeadToSheet(lead: LeadRow): Promise<void> {
   const auth = getAuth();
   const sheets = google.sheets({ version: "v4", auth });
 
+  await ensureConsentHeaders(sheets, spreadsheetId, "J");
   await sheets.spreadsheets.values.append({
     spreadsheetId,
     range: "A1",
@@ -73,7 +115,10 @@ export async function ensureReclamosSheet(): Promise<void> {
   const exists = (meta.data.sheets ?? []).some(
     (s) => s.properties?.title === "Reclamos",
   );
-  if (exists) return;
+  if (exists) {
+    await ensureConsentHeaders(sheets, spreadsheetId, "P", "Reclamos!");
+    return;
+  }
 
   await sheets.spreadsheets.batchUpdate({
     spreadsheetId,
@@ -91,6 +136,7 @@ export async function ensureReclamosSheet(): Promise<void> {
         "Código", "Fecha (UTC)", "Tipo", "Bien/Servicio", "Monto",
         "Nombre", "Documento", "Domicilio", "Teléfono", "Email",
         "Detalle", "Pedido", "Estado", "Respuesta", "Respuesta enviada",
+        ...CONSENT_SHEET_HEADERS,
       ]],
     },
   });
@@ -102,6 +148,7 @@ export async function appendReclamoToSheet(reclamo: {
   tipo: string;
   bien_contratado: string;
   bien_detalle: string;
+  bien_tipo: string;
   monto: string;
   nombre: string;
   documento: string;
@@ -113,7 +160,7 @@ export async function appendReclamoToSheet(reclamo: {
   estado: string;
   respuesta: string;
   respuesta_enviada_en: string | null;
-}): Promise<void> {
+} & ConsentEvidenceRow): Promise<void> {
   const spreadsheetId = process.env.GOOGLE_SHEET_ID;
   if (!spreadsheetId) {
     throw new Error("Falta GOOGLE_SHEET_ID en las variables de entorno.");
@@ -123,7 +170,9 @@ export async function appendReclamoToSheet(reclamo: {
 
   await ensureReclamosSheet();
 
-  const bien = reclamo.bien_contratado + (reclamo.bien_detalle ? ` — ${reclamo.bien_detalle}` : "");
+  const bien =
+    (reclamo.bien_tipo === "producto" ? "PRODUCTO — " : reclamo.bien_tipo === "servicio" ? "SERVICIO — " : "") +
+    reclamo.bien_contratado + (reclamo.bien_detalle ? ` — ${reclamo.bien_detalle}` : "");
   await sheets.spreadsheets.values.append({
     spreadsheetId,
     range: "Reclamos!A1",
@@ -146,6 +195,7 @@ export async function appendReclamoToSheet(reclamo: {
         reclamo.estado,
         reclamo.respuesta,
         reclamo.respuesta_enviada_en ?? "",
+        ...consentToSheetRow(reclamo),
       ]],
     },
   });

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { consentSchema, CONSENT_FIELD_ERRORS_ES } from "./consent";
 
 export const BIENES_CONTRATADOS = [
   { value: "departamento-a", label: "Departamento Tipo A" },
@@ -6,7 +7,7 @@ export const BIENES_CONTRATADOS = [
   { value: "departamento-c", label: "Departamento Tipo C" },
   { value: "departamento-d", label: "Departamento Tipo D" },
   { value: "departamento-g", label: "Departamento Tipo G" },
-  { value: "reserva", label: "Reserva / Separación (S/ 1,000)" },
+  { value: "reserva", label: "Reserva / Separación" },
   { value: "atencion-comercial", label: "Atención comercial en sala de ventas" },
   { value: "informacion-web", label: "Información de la web / publicidad" },
   { value: "brochure", label: "Brochure / dossier del proyecto" },
@@ -15,6 +16,9 @@ export const BIENES_CONTRATADOS = [
 
 export const reclamoSchema = z.object({
   tipo: z.enum(["reclamo", "queja"]),
+  bienTipo: z.enum(["producto", "servicio"], {
+    error: "Indique si contrató un producto o un servicio.",
+  }),
   bienContratado: z.enum([
     "departamento-a", "departamento-b", "departamento-c", "departamento-d",
     "departamento-g", "reserva", "atencion-comercial", "informacion-web",
@@ -56,8 +60,11 @@ export const reclamoSchema = z.object({
   veracidad: z.literal(true, {
     error: "Debe aceptar la declaratoria de veracidad de la información.",
   }),
+  consent: consentSchema,
   // Honeypot (debe venir vacío)
   company: z.string().max(200).optional(),
+  // Time-trap: milisegundos desde que el usuario abrió el formulario.
+  formTime: z.number().int().min(0).max(600_000).optional(),
   turnstileToken: z.string().max(2048).optional(),
 });
 
@@ -65,7 +72,9 @@ export type ReclamoInput = z.infer<typeof reclamoSchema>;
 
 /** Mensajes de validación en español por campo (API pública). */
 export const RECLAMO_FIELD_ERRORS_ES: Record<string, string> = {
+  ...CONSENT_FIELD_ERRORS_ES,
   tipo: "Seleccione si presenta un reclamo o una queja.",
+  bienTipo: "Indique si contrató un producto o un servicio.",
   bienContratado: "Seleccione el bien o servicio contratado.",
   bienDetalle: "Describa el bien o servicio.",
   monto: "Indique el monto reclamado o marque 'No aplica'.",

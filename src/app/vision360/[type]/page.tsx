@@ -1,12 +1,28 @@
+import type { Metadata } from "next";
 import PannellumViewer from "@/components/vision360/PannellumViewer";
 import { notFound } from "next/navigation";
 
 export function generateStaticParams() {
-  return [
-    { type: 'a' },
-    { type: 'b' },
-    { type: 'g' },
-  ];
+  return [{ type: "a" }, { type: "b" }, { type: "g" }];
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ type: string }>;
+}): Promise<Metadata> {
+  const { type } = await params;
+  const normalizedType = type.toUpperCase();
+
+  if (!["A", "B", "G"].includes(normalizedType)) {
+    return { title: "Tour virtual 360°" };
+  }
+
+  return {
+    title: `Tour 360° del departamento Tipo ${normalizedType} en Huancayo`,
+    description: `Recorre el departamento Tipo ${normalizedType} de Torres Titanium en San Carlos, Huancayo, con el visor virtual 360°.`,
+    robots: { index: false, follow: true },
+  };
 }
 
 export default async function Vision360Page({ params }: { params: Promise<{ type: string }> }) {

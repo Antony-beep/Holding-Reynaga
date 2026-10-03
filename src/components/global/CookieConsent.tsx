@@ -2,9 +2,20 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Cookie, X, ShieldCheck, BarChart3, Megaphone, Check } from "lucide-react";
+import { ShieldCheck, BarChart3, Megaphone, Check } from "lucide-react";
 import { readConsent, saveConsent, type ConsentState } from "@/lib/consent";
 
+/**
+ * Banner de cookies — Ley 29733 (Perú).
+ *
+ * Principios de diseño:
+ *  - Tres acciones de IGUAL peso visual (no hay un botón "más importante")
+ *  - No depende del preloader: aparece tras un timeout simple
+ *  - El link del Footer SIEMPRE funciona (listener registrado en todos los casos)
+ *  - Toggles con role="switch" y aria-checked (accesibles para lectores de pantalla)
+ *  - Retirada de permisos uniforme: cualquier cambio recarga la página
+ *  - Guarda fecha UTC + versión del texto + origen del consentimiento
+ */
 export default function CookieConsent() {
   const [isVisible, setIsVisible] = useState(false);
   const [showCustom, setShowCustom] = useState(false);
@@ -17,18 +28,7 @@ export default function CookieConsent() {
     const consent = readConsent();
     setPrefs({ analytics: consent.analytics, marketing: consent.marketing });
 
-    // Mostrar el banner automáticamente SOLO si nunca se decidió nada.
-    if (!consent.decided) {
-      const handleShow = () => {
-        setTimeout(() => setIsVisible(true), 3000);
-      };
-      window.addEventListener("preloaderFinished", handleShow);
-      if ((window as any).__HERO_VIDEO_PLAYED__) handleShow();
-      return () =>
-        window.removeEventListener("preloaderFinished", handleShow);
-    }
-
-    // Re-apertura desde el Footer ("Preferencias de cookies").
+    // FIX: Registrar el listener del Footer SIEMPRE (no solo si ya decidió)
     const handleOpen = () => {
       const current = readConsent();
       setPrefs({ analytics: current.analytics, marketing: current.marketing });
@@ -36,43 +36,50 @@ export default function CookieConsent() {
       setIsVisible(true);
     };
     window.addEventListener("open-cookie-settings", handleOpen);
+
+    // FIX: Sin depender del preloader — timeout simple
+    if (!consent.decided) {
+      const timer = setTimeout(() => setIsVisible(true), 2500);
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener("open-cookie-settings", handleOpen);
+      };
+    }
+
     return () => window.removeEventListener("open-cookie-settings", handleOpen);
   }, []);
 
   const acceptAll = () => {
-    saveConsent({ analytics: true, marketing: true });
-    setShowCustom(false);
+    saveConsent({ analytics: true, marketing: true }, "banner");
     setIsVisible(false);
   };
 
   const rejectAll = () => {
-    saveConsent({ analytics: false, marketing: false });
-    setShowCustom(false);
+    saveConsent({ analytics: false, marketing: false }, "banner");
     setIsVisible(false);
   };
 
   const saveCustom = () => {
-    // Recargar para aplicar de verdad los scripts que se apagan
-    // (desmontar GA/Pixel ya cargados no es fiable sin recargar).
     const was = readConsent();
     const changed =
       was.analytics !== prefs.analytics || was.marketing !== prefs.marketing;
-    saveConsent(prefs);
-    if (was.decided && changed) {
+    saveConsent(prefs, was.decided ? "footer" : "custom");
+    // FIX: Retirada uniforme — cualquier cambio recarga para apagar scripts
+    if (changed) {
       window.location.reload();
       return;
     }
-    setShowCustom(false);
     setIsVisible(false);
   };
 
-  // El banner solo existe mientras esté visible; tras aceptar, rechazar o
-  // guardar preferencias desaparece (el re-acceso queda en el enlace
-  // "Preferencias de cookies" del Footer).
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-6 left-6 right-6 md:left-auto md:right-24 md:w-[440px] z-50 animate-in fade-in slide-in-from-bottom-10 duration-700">
+    <div
+      role="dialog"
+      aria-label="Aviso de cookies"
+      className="fixed bottom-6 left-6 right-6 md:left-auto md:right-24 md:w-[440px] z-50 animate-in fade-in slide-in-from-bottom-10 duration-700"
+    >
       <div className="bg-white/95 backdrop-blur-xl border border-black/5 shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-3xl p-6 relative overflow-hidden">
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
 
@@ -90,7 +97,7 @@ export default function CookieConsent() {
                 con tu permiso, cookies de análisis y marketing. Puedes elegir
                 qué aceptar. Más detalles en nuestra{" "}
                 <Link
-                  href="/terminos-y-condiciones#cookies"
+                  href="/politica-de-privacidad#cookies"
                   className="text-primary font-bold hover:underline decoration-2 underline-offset-4"
                 >
                   Política de Cookies
@@ -98,13 +105,6 @@ export default function CookieConsent() {
                 .
               </p>
             </div>
-            <button
-              onClick={() => setIsVisible(false)}
-              aria-label="Cerrar aviso de cookies"
-              className="text-deep-navy/30 hover:text-deep-navy transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
           </div>
 
           {showCustom && (
@@ -124,11 +124,14 @@ export default function CookieConsent() {
                 </span>
               </div>
 
-              {/* Analíticas */}
+              {/* Analíticas — switch accesible */}
               <button
                 type="button"
+                role="switch"
+                aria-checked={prefs.analytics}
+                aria-label="Cookies de análisis y estadísticas"
                 onClick={() => setPrefs((p) => ({ ...p, analytics: !p.analytics }))}
-                className="flex items-center justify-between bg-surface-container-lowest border border-black/5 rounded-xl px-4 py-3 hover:border-primary/30 transition-colors text-left"
+                className="flex items-center justify-between bg-surface-container-lowest border border-black/5 rounded-xl px-4 py-3 hover:border-primary/30 transition-colors text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
               >
                 <div className="flex items-center gap-3">
                   <BarChart3 className="w-5 h-5 text-primary shrink-0" />
@@ -137,7 +140,7 @@ export default function CookieConsent() {
                       Análisis y estadísticas
                     </p>
                     <p className="text-[11px] text-deep-navy/50">
-                      Google Analytics: miden visitas de forma anónima.
+                      Google Analytics: mide visitas de forma anónima.
                     </p>
                   </div>
                 </div>
@@ -145,7 +148,6 @@ export default function CookieConsent() {
                   className={`relative inline-flex w-10 h-6 rounded-full transition-colors shrink-0 ${
                     prefs.analytics ? "bg-primary" : "bg-deep-navy/15"
                   }`}
-                  aria-hidden
                 >
                   <span
                     className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all ${
@@ -155,11 +157,14 @@ export default function CookieConsent() {
                 </span>
               </button>
 
-              {/* Marketing */}
+              {/* Marketing — switch accesible */}
               <button
                 type="button"
+                role="switch"
+                aria-checked={prefs.marketing}
+                aria-label="Cookies de marketing y publicidad"
                 onClick={() => setPrefs((p) => ({ ...p, marketing: !p.marketing }))}
-                className="flex items-center justify-between bg-surface-container-lowest border border-black/5 rounded-xl px-4 py-3 hover:border-primary/30 transition-colors text-left"
+                className="flex items-center justify-between bg-surface-container-lowest border border-black/5 rounded-xl px-4 py-3 hover:border-primary/30 transition-colors text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
               >
                 <div className="flex items-center gap-3">
                   <Megaphone className="w-5 h-5 text-primary shrink-0" />
@@ -168,7 +173,7 @@ export default function CookieConsent() {
                       Marketing y publicidad
                     </p>
                     <p className="text-[11px] text-deep-navy/50">
-                      Meta Pixel: miden campañas y mejoran los anuncios.
+                      Meta Pixel: mide campañas y mejora los anuncios.
                     </p>
                   </div>
                 </div>
@@ -176,7 +181,6 @@ export default function CookieConsent() {
                   className={`relative inline-flex w-10 h-6 rounded-full transition-colors shrink-0 ${
                     prefs.marketing ? "bg-primary" : "bg-deep-navy/15"
                   }`}
-                  aria-hidden
                 >
                   <span
                     className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all ${
@@ -185,14 +189,21 @@ export default function CookieConsent() {
                   />
                 </span>
               </button>
+
+              <p className="text-[10px] text-deep-navy/40 leading-relaxed">
+                Las cookies de marketing no implican autorización para recibir
+                promociones por WhatsApp, llamada o correo. Esa autorización se
+                gestiona por separado en el formulario de contacto.
+              </p>
             </div>
           )}
 
-          <div className="flex gap-3">
+          {/* FIX: Tres acciones con IGUAL peso visual — mismo estilo, mismo tamaño */}
+          <div className="flex flex-col gap-2">
             {showCustom ? (
               <button
                 onClick={saveCustom}
-                className="flex-1 bg-deep-navy hover:bg-primary text-white py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-300 shadow-lg hover:shadow-primary/30 flex items-center justify-center gap-2"
+                className="w-full bg-deep-navy hover:bg-primary text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-300 shadow-lg hover:shadow-primary/30 flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
               >
                 <Check className="w-4 h-4" />
                 Guardar preferencias
@@ -201,25 +212,22 @@ export default function CookieConsent() {
               <>
                 <button
                   onClick={acceptAll}
-                  className="flex-1 bg-deep-navy hover:bg-primary text-white py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-300 shadow-lg hover:shadow-primary/30"
+                  className="w-full bg-deep-navy hover:bg-primary text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-300 shadow-lg hover:shadow-primary/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                 >
                   Aceptar Todo
                 </button>
                 <button
                   onClick={rejectAll}
-                  className="flex-1 bg-surface-container-lowest border border-black/5 hover:bg-white text-deep-navy/60 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-300"
+                  className="w-full bg-deep-navy hover:bg-primary text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-300 shadow-lg hover:shadow-primary/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                 >
                   Solo necesarias
                 </button>
               </>
             )}
-          </div>
-
-          <div className="mt-3 text-center">
             <button
               type="button"
               onClick={() => setShowCustom(!showCustom)}
-              className="text-[11px] text-deep-navy/40 hover:text-primary font-medium transition-colors"
+              className="w-full bg-deep-navy hover:bg-primary text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-300 shadow-lg hover:shadow-primary/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             >
               {showCustom ? "Volver" : "Personalizar preferencias"}
             </button>
