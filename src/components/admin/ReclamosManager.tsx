@@ -190,7 +190,7 @@ export default function ReclamosManager() {
                       <td className="px-4 py-3 text-white/60 whitespace-nowrap text-xs">{r.deadline}</td>
                       <td className="px-4 py-3">
                         {r.estado !== "pendiente" ? (
-                          <span className="text-white/30 text-xs">â€”</span>
+                          <span className="text-white/30 text-xs">—</span>
                         ) : (
                           <span className={`text-xs font-bold px-2 py-1 rounded-full ${r.vencido ? "bg-red-500/20 text-red-300" : r.daysLeft <= 5 ? "bg-amber-500/20 text-amber-300" : "bg-green-500/20 text-green-300"}`}>
                             {r.vencido ? "VENCIDO" : `${r.daysLeft} días háb.`}
@@ -238,12 +238,12 @@ export default function ReclamosManager() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div className="space-y-2">
                   <p className="text-white/50 font-bold text-[10px] uppercase tracking-widest">Consumidor</p>
-                  <p className="text-white/85">{selected.nombre} â€” Doc: {selected.documento}</p>
+                  <p className="text-white/85">{selected.nombre} — Doc: {selected.documento}</p>
                   <p className="text-white/60 text-xs">{selected.domicilio}</p>
-                  <p className="text-white/60 text-xs">ðŸ“ž {selected.telefono} · âœ‰ {selected.email}</p>
+                  <p className="text-white/60 text-xs">📞 {selected.telefono} · ✉ {selected.email}</p>
                   {selected.representante && <p className="text-white/60 text-xs">Representante: {selected.representante}</p>}
                   <p className="text-white/40 text-[11px]">
-                    Emails del sistema: consumidor {selected.email_cliente_enviado ? "âœ“ enviado" : "âœ— pendiente"} · ventas {selected.email_ventas_enviado ? "âœ“" : "âœ—"}
+                    Emails del sistema: consumidor {selected.email_cliente_enviado ? "✓ enviado" : "✗ pendiente"} · ventas {selected.email_ventas_enviado ? "✓" : "✗"}
                   </p>
                 </div>
                 <div className="space-y-2">
@@ -317,7 +317,7 @@ export default function ReclamosManager() {
                 </div>
                 {selected.respuesta && (
                   <p className="text-[11px] text-white/40">
-                    Respuesta registrada por <strong>{selected.respondido_por || "â€”"}</strong>
+                    Respuesta registrada por <strong>{selected.respondido_por || "—"}</strong>
                     {selected.respuesta_enviada_en ? ` · enviada al consumidor el ${selected.respuesta_enviada_en}` : " · aún no marcada como enviada"}
                   </p>
                 )}
