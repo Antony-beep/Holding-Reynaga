@@ -170,6 +170,7 @@ export async function POST(request: NextRequest) {
               <p><strong>Teléfono:</strong> ${lead.phone}${lead.document ? " | <strong>Doc:</strong> " + lead.document : ""}</p>
               <p><strong>Email:</strong> ${lead.email}</p>
               <p><strong>Interés:</strong> ${interestLabel[lead.interest] ?? lead.interest ?? "—"} | <strong>Origen:</strong> ${lead.source === "fab" ? "Reserva WhatsApp" : "Cotización"}</p>
+              <p><strong>Promociones:</strong> ${lead.marketing_consent_accepted === 1 ? "✔ Aceptó recibir promociones (puede agregarlo a listas de difusión)" : lead.marketing_consent_accepted === 0 ? "No aceptó promociones — solo contacto 1-a-1, sin difusiones" : "Sin registro (lead histórico)"}</p>
               ${lead.message ? `<p style="background:#f9f9f9;padding:10px;border-left:3px solid #D4AF37;"><strong>Mensaje:</strong><br>${lead.message.replace(/</g, "<").replace(/\n/g, "<br>")}</p>` : ""}
               <p><strong>Registrado:</strong> ${lead.created_at}</p>
               <p style="margin-top:20px;">

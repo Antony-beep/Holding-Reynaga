@@ -5,9 +5,11 @@ import {
   countLeadsOlderThan,
   deleteLeadsByIds,
   deleteLeadsOlderThan,
+  getLeadById,
   getLeadsRange,
   getLeadStats,
   searchLeads,
+  setLeadMarketingConsent,
   updateLeadEstado,
   updateLeadNotes,
   LEAD_ESTADOS,
@@ -60,7 +62,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   if (!isAuthorized(request.headers.get("cookie"))) return unauthorized();
 
-  let body: { action?: string; id?: number; estado?: string; notes?: string };
+  let body: { action?: string; id?: number; estado?: string; notes?: string; acepta?: boolean };
   try {
     body = await request.json();
   } catch {
@@ -77,6 +79,23 @@ export async function POST(request: NextRequest) {
       case "guardar_notas": {
         updateLeadNotes(id, String(body.notes ?? ""));
         return NextResponse.json({ ok: true, message: "Notas guardadas." });
+      }
+      case "cambiar_promos": {
+        const acepta = body.acepta === true;
+        if (!setLeadMarketingConsent(id, acepta)) {
+          return NextResponse.json({ ok: false, error: "Lead no encontrado." }, { status: 404 });
+        }
+        // Rastro de auditoría en lead_notes con fecha.
+        const lead = getLeadById(id);
+        if (lead) {
+          const stamp = new Date().toISOString().slice(0, 16).replace("T", " ");
+          const nota = `[${stamp}] Promociones ${acepta ? "autorizadas" : "revocadas"} — registrado desde el panel.`;
+          updateLeadNotes(id, `${lead.lead_notes ? lead.lead_notes + "\n" : ""}${nota}`.slice(0, 2000));
+        }
+        return NextResponse.json({
+          ok: true,
+          message: acepta ? "Promociones autorizadas." : "Promociones revocadas.",
+        });
       }
       default:
         return NextResponse.json({ ok: false, error: "Acción desconocida." }, { status: 400 });

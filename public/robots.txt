@@ -1,0 +1,19 @@
+# Bots de búsqueda e IA — permitidos explícitamente
+# (GPTBot y ChatGPT-User: ChatGPT; PerplexityBot: Perplexity;
+#  ClaudeBot y anthropic-ai: Claude; Google-Extended: Gemini/AI Overviews;
+#  Bingbot: Copilot; CCBot: Common Crawl — formación, no búsqueda)
+
+User-agent: *
+Allow: /
+Allow: /api/apartments
+Disallow: /api/
+Disallow: /admin
+
+# Content Signals (https://contentsignals.org/)
+# ai-train: no entrenar modelos con este contenido
+# search: permitido en resultados de búsqueda y respuestas de IA
+# ai-input: permitido usar el contenido como contexto/entrada de agentes de IA
+Content-Signal: ai-train=no, search=yes, ai-input=yes
+
+Sitemap: https://inmobiliariaholdingreynaga.com/sitemap.xml
+Host: https://inmobiliariaholdingreynaga.com

@@ -1,4 +1,12 @@
-# Torres Titanium — Holding Inversiones Reynaga S.A.C.
+import type { Apartment } from "@/data/apartments";
+import { buildApartmentSlug } from "@/data/apartments";
+import { SITE_URL } from "@/lib/site";
+
+/**
+ * Contenido servido a agentes de IA.
+ * Fuente única para /llms.txt y para la negociación Accept: text/markdown.
+ */
+export const LLMS_MARKDOWN = `# Torres Titanium — Holding Inversiones Reynaga S.A.C.
 
 > Proyecto residencial en preventa en San Carlos, Huancayo, Junín, Perú.
 > Departamentos de 1, 2 y 3 dormitorios con entrega prevista para 2027.
@@ -20,6 +28,12 @@ Holding Inversiones Reynaga S.A.C. (RUC 20614870959) es una inmobiliaria y const
 - Rooftop con parrillas, área de fogata, mirador, juegos para niños
 - Recorridos virtuales 360° de los departamentos
 
+## Datos para agentes (machine-readable)
+
+- Catálogo JSON de departamentos (solo lectura): ${SITE_URL}/api/apartments
+- Este mismo contenido: ${SITE_URL}/llms.txt (Content-Type: text/markdown)
+- Cualquier página de departamento admite Accept: text/markdown
+
 ## Precios (actualizado setiembre 2026)
 
 Ver /pricing.md para precios publicados estructurados y condiciones de reserva.
@@ -36,7 +50,7 @@ El dossier PDF se descarga directamente, sin completar un formulario. La descarg
 
 ## Ubicación
 
-- Dirección del proyecto: Av. San Agustín 154, San Carlos, Huancayo, Junín, Perú
+- Dirección del proyecto: Av. San Agustín 154, San Carlos, Huancayo, Perú
 - Domicilio legal: [[DOMICILIO LEGAL COMPLETO]] [[REVISAR CON ABOGADO]]. Las direcciones comerciales publicadas no acreditan el domicilio legal.
 - Coordenadas: -12.047615, -75.200334
 
@@ -73,3 +87,30 @@ El dossier PDF se descarga directamente, sin completar un formulario. La descarg
 - **¿Dónde está ubicado?** Av. San Agustín 154, San Carlos, Huancayo
 - **¿Cuántos dormitorios tienen?** 1, 2 o 3 dormitorios según el tipo
 - **¿Tienen estacionamiento?** Sí, 2 sótanos de estacionamiento
+`;
+
+export function apartmentMarkdown(apartment: Apartment): string {
+  const slug = buildApartmentSlug(apartment);
+  const tourId = apartment.type.replace("Tipo ", "").toLowerCase();
+  const features = apartment.features.length
+    ? `\n${apartment.features.map((f) => `- ${f}`).join("\n")}`
+    : "";
+
+  return `# ${apartment.type} — Torres Titanium
+
+- **Dormitorios:** ${apartment.bedrooms}
+- **Baños:** ${apartment.baths}
+- **Área:** ${apartment.sqm} m²
+- **Precio de preventa:** ${apartment.price}
+- **Estilo:** ${apartment.area}
+${features ? `\n## Características\n${features}\n` : ""}
+## Enlaces
+
+- Página del departamento: ${SITE_URL}/departamentos/${slug}
+- Tour virtual 360°: ${SITE_URL}/vision360/${tourId}
+
+> Precio referencial de preventa, sujeto a disponibilidad de la unidad. Enviar el
+> formulario web no formaliza una reserva ni realiza un cobro: solo solicita
+> atención, cotización o información. Contacto: +51 981 407 634.
+`;
+}

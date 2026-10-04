@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/cloudflare/agent-skills-discovery-rfc/main/schema.json",
+  "skills": [
+    {
+      "name": "torres-titanium",
+      "type": "skill",
+      "description": "Responde preguntas sobre el proyecto residencial Torres Titanium en Huancayo, Perú: tipos de departamento, áreas, precios de preventa, bonos, reserva, ubicación y contacto con ventas.",
+      "url": "https://inmobiliariaholdingreynaga.com/.well-known/agent-skills/torres-titanium/SKILL.md",
+      "sha256": "79e25db19c3bcb1f499e4b36f2e0e05e4966777004abdfd29c9db63aec6d43e7"
+    }
+  ]
+}

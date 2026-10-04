@@ -10,6 +10,7 @@ import {
   Clock3,
   AlertTriangle,
   Database,
+  Megaphone,
 } from "lucide-react";
 import SocialManager from "./SocialManager";
 import ReclamosManager from "./ReclamosManager";
@@ -26,6 +27,8 @@ interface Lead {
   message: string;
   estado_lead: string;
   lead_notes: string;
+  marketing_consent_accepted: number | null;
+  marketing_revoked_at: string | null;
   sheets_synced: number;
 }
 
@@ -52,6 +55,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<{
     total: number; nuevos: number; contactados: number;
     calificados: number; reservados: number; weekCount: number; monthCount: number;
+    promoCount: number;
   } | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -110,6 +114,28 @@ export default function AdminDashboard() {
       else next.add(id);
       return next;
     });
+  };
+
+  const togglePromos = async (lead: Lead) => {
+    const acepta = lead.marketing_consent_accepted !== 1;
+    const msg = acepta
+      ? `¿El cliente ${lead.name} autorizó recibir promociones?\n\nRegistre esto solo si el cliente lo confirmó por algún canal (WhatsApp, llamada o correo).`
+      : `¿Revocar las promociones de ${lead.name}?\n\nSe guardará la fecha de revocación como evidencia (Ley 29733).`;
+    if (!window.confirm(msg)) return;
+    setBusy(true);
+    try {
+      const res = await fetch("/api/admin/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "cambiar_promos", id: lead.id, acepta }),
+      });
+      const d = await res.json();
+      if (!d.ok) throw new Error(d.error);
+      setNotice(acepta ? `Promos de ${lead.name}: autorizadas.` : `Promos de ${lead.name}: revocadas.`);
+      await load(range, searchQuery || undefined);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error");
+    } finally { setBusy(false); }
   };
 
   const deleteSelected = async () => {
@@ -240,12 +266,13 @@ export default function AdminDashboard() {
 
       {/* Dashboard de métricas */}
       {stats && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
           {[
             { label: "Nuevos", value: stats.nuevos, color: "text-[#D4AF37]" },
             { label: "Contactados", value: stats.contactados, color: "text-blue-300" },
             { label: "Calificados", value: stats.calificados, color: "text-purple-300" },
             { label: "Reservados", value: stats.reservados, color: "text-green-300" },
+            { label: "Con promos", value: stats.promoCount, color: "text-teal-300" },
             { label: "Esta semana", value: stats.weekCount, color: "text-white" },
             { label: "Este mes", value: stats.monthCount, color: "text-white/70" },
             { label: "Total", value: stats.total, color: "text-white/40" },
@@ -316,7 +343,7 @@ export default function AdminDashboard() {
 
       {/* Tabla */}
       <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden overflow-x-auto">
-        <table className="w-full text-sm min-w-[900px]">
+        <table className="w-full text-sm min-w-[1000px]">
           <thead>
             <tr className="text-left text-white/50 border-b border-white/10 bg-white/5">
               <th className="px-4 py-3 w-10">
@@ -336,20 +363,21 @@ export default function AdminDashboard() {
               <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Interés</th>
               <th className="px-4 py-3">Estado</th>
+              <th className="px-4 py-3" title="Permiso de promociones (Ley 29733)">Promos</th>
               <th className="px-4 py-3">Sheets</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={10} className="px-4 py-12 text-center text-white/50">
+                <td colSpan={11} className="px-4 py-12 text-center text-white/50">
                   <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
                   Cargando leads...
                 </td>
               </tr>
             ) : leads.length === 0 ? (
               <tr>
-                <td colSpan={10} className="px-4 py-12 text-center text-white/50">
+                <td colSpan={11} className="px-4 py-12 text-center text-white/50">
                   No hay leads en este rango de fechas.
                 </td>
               </tr>
@@ -429,6 +457,35 @@ export default function AdminDashboard() {
                       <option value="reservado" className="text-black">Reservado</option>
                       <option value="descartado" className="text-black">Descartado</option>
                     </select>
+                  </td>
+                  <td className="px-4 py-3">
+                    <button
+                      onClick={() => togglePromos(lead)}
+                      disabled={busy}
+                      title={
+                        lead.marketing_consent_accepted === null
+                          ? "Registro histórico sin evidencia de consentimiento"
+                          : lead.marketing_revoked_at
+                            ? `Revocadas: ${lead.marketing_revoked_at}`
+                            : lead.marketing_consent_accepted === 1
+                              ? "Aceptó promociones — clic para revocar"
+                              : "Sin promociones — clic si el cliente autorizó"
+                      }
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border-0 outline-none cursor-pointer disabled:opacity-40 flex items-center gap-1 ${
+                        lead.marketing_consent_accepted === 1
+                          ? "bg-teal-500/20 text-teal-300"
+                          : lead.marketing_consent_accepted === 0
+                            ? "bg-white/10 text-white/40"
+                            : "bg-white/5 text-white/30"
+                      }`}
+                    >
+                      <Megaphone className="w-3 h-3" aria-hidden="true" />
+                      {lead.marketing_consent_accepted === 1
+                        ? "Sí"
+                        : lead.marketing_consent_accepted === 0
+                          ? "No"
+                          : "—"}
+                    </button>
                   </td>
                   <td className="px-4 py-3">
                     {lead.sheets_synced === 1 ? (

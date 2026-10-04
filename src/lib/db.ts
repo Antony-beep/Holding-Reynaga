@@ -189,6 +189,11 @@ export function getDb(): Database.Database {
   if (!leadCols.some((c) => c.name === "lead_notes")) {
         db.exec("ALTER TABLE leads ADD COLUMN lead_notes TEXT NOT NULL DEFAULT ''");
       }
+  // Evidencia de revocación de promociones registrada desde el panel.
+  // NULL = vigente o revocación no registrada; ISO UTC = fecha de revocación.
+  if (!leadCols.some((c) => c.name === "marketing_revoked_at")) {
+        db.exec("ALTER TABLE leads ADD COLUMN marketing_revoked_at TEXT");
+      }
       // Sin DEFAULT ni backfill: NULL significa que no se capturó evidencia histórica.
       for (const table of ["leads", "reclamos"]) {
         const columns = db.prepare(`PRAGMA table_info(${table})`).all() as { name: string }[];
@@ -238,6 +243,7 @@ export interface LeadRow extends ConsentEvidenceRow {
   user_agent: string;
   estado_lead: string;
   lead_notes: string;
+  marketing_revoked_at: string | null;
   sheets_synced: number;
   sheets_synced_at: string | null;
 }
@@ -373,6 +379,18 @@ export function updateLeadNotes(id: number, notes: string): void {
     .run(notes.slice(0, 2000), id);
 }
 
+/** Registra autorización o revocación de promociones desde el panel.
+ *  Revocar guarda la fecha exacta en marketing_revoked_at (evidencia);
+ *  re-autorizar limpia ese campo. Devuelve false si el lead no existe. */
+export function setLeadMarketingConsent(id: number, accepted: boolean): boolean {
+  const info = getDb()
+    .prepare(
+      "UPDATE leads SET marketing_consent_accepted = ?, marketing_revoked_at = ? WHERE id = ?",
+    )
+    .run(accepted ? 1 : 0, accepted ? null : new Date().toISOString(), id);
+  return info.changes > 0;
+}
+
 export function searchLeads(query: string, range: number | null): LeadRow[] {
   const db = getDb();
   const q = `%${query.toLowerCase()}%`;
@@ -397,6 +415,7 @@ export function getLeadStats(): {
   reservados: number;
   weekCount: number;
   monthCount: number;
+  promoCount: number;
 } {
   const db = getDb();
   const total = (db.prepare("SELECT COUNT(*) c FROM leads").get() as { c: number }).c;
@@ -406,7 +425,8 @@ export function getLeadStats(): {
   const reservados = (db.prepare("SELECT COUNT(*) c FROM leads WHERE estado_lead = 'reservado'").get() as { c: number }).c;
   const weekCount = (db.prepare("SELECT COUNT(*) c FROM leads WHERE created_at >= datetime('now','-7 days')").get() as { c: number }).c;
   const monthCount = (db.prepare("SELECT COUNT(*) c FROM leads WHERE created_at >= datetime('now','-30 days')").get() as { c: number }).c;
-  return { total, nuevos, contactados, calificados, reservados, weekCount, monthCount };
+  const promoCount = (db.prepare("SELECT COUNT(*) c FROM leads WHERE marketing_consent_accepted = 1").get() as { c: number }).c;
+  return { total, nuevos, contactados, calificados, reservados, weekCount, monthCount, promoCount };
 }
 
 export function deleteLeadsByIds(ids: number[]): number {

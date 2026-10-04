@@ -1,0 +1,64 @@
+{
+  "specVersion": "0.4",
+  "host": {
+    "name": "Torres Titanium — Holding Inversiones Reynaga S.A.C.",
+    "url": "https://inmobiliariaholdingreynaga.com",
+    "description": "Proyecto residencial en preventa en San Carlos, Huancayo, Junín, Perú. Departamentos de 1, 2 y 3 dormitorios con entrega prevista para 2027.",
+    "languages": ["es"],
+    "country": "PE"
+  },
+  "entries": [
+    {
+      "urn": "urn:air:inmobiliariaholdingreynaga.com:content:llms",
+      "displayName": "Resumen del proyecto para agentes de IA (llms.txt)",
+      "type": "text/markdown",
+      "url": "https://inmobiliariaholdingreynaga.com/llms.txt",
+      "representativeQueries": [
+        "¿Cuánto cuestan los departamentos de Torres Titanium en Huancayo?",
+        "¿Dónde está ubicado el proyecto Torres Titanium?",
+        "¿Cómo separo un departamento en Torres Titanium?"
+      ]
+    },
+    {
+      "urn": "urn:air:inmobiliariaholdingreynaga.com:api:apartments",
+      "displayName": "API pública de departamentos (JSON, solo lectura)",
+      "type": "application/json",
+      "url": "https://inmobiliariaholdingreynaga.com/api/apartments",
+      "representativeQueries": [
+        "Lista de tipos de departamento con área y precio",
+        "Departamentos de 3 dormitorios en Torres Titanium",
+        "¿Qué tipos de departamento hay en preventa?"
+      ]
+    },
+    {
+      "urn": "urn:air:inmobiliariaholdingreynaga.com:content:pricing",
+      "displayName": "Precios publicados estructurados (markdown)",
+      "type": "text/markdown",
+      "url": "https://inmobiliariaholdingreynaga.com/pricing.md",
+      "representativeQueries": [
+        "Precios de preventa de los departamentos Torres Titanium",
+        "Bonos de descuento de preventa Torres Titanium"
+      ]
+    },
+    {
+      "urn": "urn:air:inmobiliariaholdingreynaga.com:docs:dossier",
+      "displayName": "Dossier del proyecto en PDF (descarga directa, sin formulario)",
+      "type": "application/pdf",
+      "url": "https://inmobiliariaholdingreynaga.com/docs/BROUCHURE_Setiembre.pdf",
+      "representativeQueries": [
+        "Dossier o brochure de Torres Titanium",
+        "Plano y características del proyecto Torres Titanium"
+      ]
+    },
+    {
+      "urn": "urn:air:inmobiliariaholdingreynaga.com:content:tour360",
+      "displayName": "Recorrido virtual 360° de los departamentos",
+      "type": "text/html",
+      "url": "https://inmobiliariaholdingreynaga.com/#recorrido",
+      "representativeQueries": [
+        "Tour virtual de los departamentos Torres Titanium",
+        "Ver departamentos en 3D o 360 grados"
+      ]
+    }
+  ]
+}

@@ -99,7 +99,9 @@ export default function ConsentFields({
         </span>
       </label>
       <p id={cookiesNoteId} className="ml-7 text-[11px] text-deep-navy/70 leading-relaxed">
-        Los permisos de cookies se gestionan por separado.
+        {kind === "complaint"
+          ? "De marcarla o no, siempre atenderemos tu reclamo o queja. Los permisos de cookies se gestionan por separado."
+          : "De marcarla o no, siempre atenderemos tu solicitud. Los permisos de cookies se gestionan por separado."}
       </p>
     </fieldset>
   );
