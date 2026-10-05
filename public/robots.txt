@@ -15,5 +15,8 @@ Disallow: /admin
 # ai-input: permitido usar el contenido como contexto/entrada de agentes de IA
 Content-Signal: ai-train=no, search=yes, ai-input=yes
 
+# Manifesto de capacidades para agentes de IA (ARD)
+Agentmap: https://inmobiliariaholdingreynaga.com/.well-known/ai-catalog.json
+
 Sitemap: https://inmobiliariaholdingreynaga.com/sitemap.xml
 Host: https://inmobiliariaholdingreynaga.com

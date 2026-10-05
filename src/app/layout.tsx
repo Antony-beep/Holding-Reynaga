@@ -97,6 +97,7 @@ export default function RootLayout({
           }}
         />
         <StructuredData />
+        <link rel="ai-catalog" href="/.well-known/ai-catalog.json" />
       </head>
       <body className="min-h-full flex flex-col font-body bg-background text-foreground overflow-x-hidden text-lg">
         <GoogleAnalytics />

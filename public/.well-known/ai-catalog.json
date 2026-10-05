@@ -1,7 +1,8 @@
 {
-  "specVersion": "0.4",
+  "specVersion": "1.0",
   "host": {
-    "name": "Torres Titanium — Holding Inversiones Reynaga S.A.C.",
+    "displayName": "Torres Titanium — Holding Inversiones Reynaga S.A.C.",
+    "identifier": "did:web:inmobiliariaholdingreynaga.com",
     "url": "https://inmobiliariaholdingreynaga.com",
     "description": "Proyecto residencial en preventa en San Carlos, Huancayo, Junín, Perú. Departamentos de 1, 2 y 3 dormitorios con entrega prevista para 2027.",
     "languages": ["es"],
@@ -9,7 +10,7 @@
   },
   "entries": [
     {
-      "urn": "urn:air:inmobiliariaholdingreynaga.com:content:llms",
+      "identifier": "urn:air:inmobiliariaholdingreynaga.com:content:llms",
       "displayName": "Resumen del proyecto para agentes de IA (llms.txt)",
       "type": "text/markdown",
       "url": "https://inmobiliariaholdingreynaga.com/llms.txt",
@@ -20,7 +21,7 @@
       ]
     },
     {
-      "urn": "urn:air:inmobiliariaholdingreynaga.com:api:apartments",
+      "identifier": "urn:air:inmobiliariaholdingreynaga.com:api:apartments",
       "displayName": "API pública de departamentos (JSON, solo lectura)",
       "type": "application/json",
       "url": "https://inmobiliariaholdingreynaga.com/api/apartments",
@@ -31,7 +32,7 @@
       ]
     },
     {
-      "urn": "urn:air:inmobiliariaholdingreynaga.com:content:pricing",
+      "identifier": "urn:air:inmobiliariaholdingreynaga.com:content:pricing",
       "displayName": "Precios publicados estructurados (markdown)",
       "type": "text/markdown",
       "url": "https://inmobiliariaholdingreynaga.com/pricing.md",
@@ -41,7 +42,7 @@
       ]
     },
     {
-      "urn": "urn:air:inmobiliariaholdingreynaga.com:docs:dossier",
+      "identifier": "urn:air:inmobiliariaholdingreynaga.com:docs:dossier",
       "displayName": "Dossier del proyecto en PDF (descarga directa, sin formulario)",
       "type": "application/pdf",
       "url": "https://inmobiliariaholdingreynaga.com/docs/BROUCHURE_Setiembre.pdf",
@@ -51,7 +52,7 @@
       ]
     },
     {
-      "urn": "urn:air:inmobiliariaholdingreynaga.com:content:tour360",
+      "identifier": "urn:air:inmobiliariaholdingreynaga.com:content:tour360",
       "displayName": "Recorrido virtual 360° de los departamentos",
       "type": "text/html",
       "url": "https://inmobiliariaholdingreynaga.com/#recorrido",

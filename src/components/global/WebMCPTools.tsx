@@ -26,6 +26,17 @@ type WebMCPModelContext = {
   ) => Promise<unknown>;
 };
 
+/**
+ * Feature-detect: las builds actuales exponen la API en document.modelContext;
+ * las builds antiguas de Chrome la exponen en navigator.modelContext.
+ */
+function getModelContext(): WebMCPModelContext | undefined {
+  const doc = document as Document & { modelContext?: WebMCPModelContext };
+  if (doc.modelContext) return doc.modelContext;
+  const nav = navigator as Navigator & { modelContext?: WebMCPModelContext };
+  return nav.modelContext;
+}
+
 function publicApartments() {
   return APARTMENTS.filter((a) => !a.isComingSoon).map((a) => {
     const slug = buildApartmentSlug(a);
@@ -46,9 +57,7 @@ function publicApartments() {
 
 export default function WebMCPTools() {
   useEffect(() => {
-    const modelContext = (document as Document & {
-      modelContext?: WebMCPModelContext;
-    }).modelContext;
+    const modelContext = getModelContext();
     if (!modelContext) return;
 
     const controller = new AbortController();
