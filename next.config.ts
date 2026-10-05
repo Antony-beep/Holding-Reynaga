@@ -2,6 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["better-sqlite3"],
+  typescript: {
+    // El VPS de producción no tiene RAM suficiente para el type-check del build
+    // (OOM en "Running TypeScript"). La verificación de tipos se realiza en
+    // desarrollo con tsc --noEmit.
+    ignoreBuildErrors: true,
+  },
   async headers() {
     return [
       {
