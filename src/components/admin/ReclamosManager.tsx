@@ -343,9 +343,18 @@ export default function ReclamosManager() {
       {/* ===== TAB: FERIADOS ===== */}
       {tab === "feriados" && (
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col gap-4">
+          <div className="bg-amber-500/10 border border-amber-400/30 text-amber-100 text-sm rounded-xl px-4 py-3 leading-relaxed">
+            <strong>¿Por qué importa esta lista?</strong> La ley obliga a responder
+            cada reclamo en un máximo de <strong>15 días hábiles</strong> (Ley 29571),
+            y los feriados no cuentan como hábiles. Si un feriado falta, el sistema
+            le avisará del vencimiento <em>antes</em> de la fecha legal real — y el
+            plazo se incumple sin que nadie se entere. Verifique cada año contra el
+            calendario oficial publicado en El Peruano: la Semana Santa cambia de
+            fecha cada año y los decretos de puente se publican sin aviso.
+          </div>
           <p className="text-white/60 text-sm leading-relaxed">
-            Los feriados se excluyen del cómputo de los <strong>15 días hábiles</strong>.
-            Feriados nacionales 2026 precargados; agregue decretos de puente o nuevos años.
+            Feriados nacionales 2026 y 2027 precargados; agregue decretos de puente
+            o nuevos años.
           </p>
           <div className="flex gap-2 flex-wrap">
             <input type="date" id="nuevo-feriado" className="bg-white/10 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-[#D4AF37]/60" />

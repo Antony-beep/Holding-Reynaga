@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { GraduationCap, TreePine, ShoppingBag, ShoppingCart, Activity } from "lucide-react";
 
 const LocationMap = dynamic(() => import("./LocationMap"), { 
@@ -49,8 +50,20 @@ export default function Location() {
                 Ubicación <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#BF953F] via-[#F3E5AB] to-[#D4AF37]">Estratégica</span>
               </h2>
               
-              <p className="font-body text-white/70 text-base md:text-lg mb-6 leading-relaxed font-light">
+              <p className="font-body text-white/70 text-base md:text-lg mb-4 leading-relaxed font-light">
                 Torres Titanium está ubicado en <strong className="text-white font-semibold">Av. San Agustín 154, San Carlos, Huancayo</strong>, cerca de universidades, parques y centros comerciales.
+              </p>
+
+              <p className="font-body text-white/60 text-sm md:text-base mb-6 leading-relaxed font-light">
+                ¿Quieres saber más de la zona? Lee sobre los{" "}
+                <Link href="/departamentos-en-san-carlos-huancayo" className="text-[#F3E5AB] font-semibold underline underline-offset-4 hover:text-white transition-colors">
+                  departamentos en San Carlos, Huancayo
+                </Link>{" "}
+                y las opciones de{" "}
+                <Link href="/departamentos-en-huancayo" className="text-[#F3E5AB] font-semibold underline underline-offset-4 hover:text-white transition-colors">
+                  departamentos en venta en Huancayo
+                </Link>
+                .
               </p>
 
               <div className="mb-8 rounded-2xl border border-white/10 bg-white/5 p-5">

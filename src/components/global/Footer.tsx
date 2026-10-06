@@ -103,11 +103,16 @@ export default function Footer() {
               <h3 className="font-display text-xs md:text-sm text-primary font-bold uppercase tracking-[0.2em]">Enlaces Rápidos</h3>
             </div>
             <div className="flex flex-col gap-3 mt-2 text-center md:text-left">
-              <Link href="/nosotros" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Nosotros</Link><Link href="/guias" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Guías y Recursos</Link>
-              <Link href="/#ubicacion" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Ubicación</Link>
-              <Link href="/#galeria" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Áreas Comunes</Link>
+              <Link href="/departamentos-en-huancayo" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Departamentos en Huancayo</Link>
+              <Link href="/departamentos-en-san-carlos-huancayo" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Departamentos en San Carlos</Link>
+              <Link href="/departamentos-1-dormitorio-huancayo" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Departamentos de 1 dormitorio</Link>
+              <Link href="/departamentos-2-dormitorios-huancayo" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Departamentos de 2 dormitorios</Link>
+              <Link href="/departamentos-3-dormitorios-huancayo" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Departamentos de 3 dormitorios</Link>
+              <Link href="/#departamentos" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Catálogo de Tipologías</Link>
+              <Link href="/nosotros" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Nosotros</Link>
+              <Link href="/guias" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Guías y Recursos</Link>
+              <Link href="/contacto" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Contacto</Link>
               <Link href="/#recorrido" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Tour 360°</Link>
-              <Link href="/#departamentos" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block">Departamentos</Link>
               <Link href="/#titanium" className="text-surface/70 hover:text-primary transition-all duration-300 hover:translate-x-1 text-sm sm:text-base inline-block mb-2">Dossier Informativo</Link>
               
               <Link href="/#reserva" className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#BF953F] via-[#F3E5AB] to-[#D4AF37] bg-[length:200%_auto] hover:bg-[position:right_center] text-deep-navy font-bold px-6 py-3 rounded-xl transition-all duration-500 hover:-translate-y-1 shadow-[0_10px_20px_rgba(212,175,55,0.2)] hover:shadow-[0_15px_30px_rgba(212,175,55,0.3)] mt-2 w-fit mx-auto md:mx-0 text-xs sm:text-sm uppercase tracking-widest border border-white/40">

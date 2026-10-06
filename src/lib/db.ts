@@ -758,7 +758,7 @@ export function setReclamosConfig(key: string, value: string): void {
 
 // Feriados (para el cálculo de los 15 días hábiles)
 
-/** Feriados nacionales del Perú — precargados al crear la tabla. */
+/** Feriados nacionales del Perú - precargados al crear la tabla. */
 const SEED_HOLIDAYS_2026 = [
   "2026-01-01", // Año Nuevo
   "2026-04-02", // Jueves Santo
@@ -774,17 +774,48 @@ const SEED_HOLIDAYS_2026 = [
   "2026-12-25", // Navidad
 ];
 
-export function getHolidays(): string[] {
+/** Feriados nacionales del Perú 2027 (Semana Santa: Pascua 28 de marzo). */
+const SEED_HOLIDAYS_2027 = [
+  "2027-01-01", // Año Nuevo
+  "2027-03-25", // Jueves Santo
+  "2027-03-26", // Viernes Santo
+  "2027-05-01", // Día del Trabajo
+  "2027-06-29", // San Pedro y San Pablo
+  "2027-07-28", // Fiestas Patrias
+  "2027-07-29", // Fiestas Patrias
+  "2027-08-30", // Santa Rosa de Lima
+  "2027-10-08", // Combate de Angamos
+  "2027-11-01", // Todos los Santos
+  "2027-12-08", // Inmaculada Concepción
+  "2027-12-25", // Navidad
+];
+
+/** Semillas por año: agregar el año siguiente aquí y el panel lo precarga solo. */
+const HOLIDAY_SEEDS: Record<string, string[]> = {
+  "2026": SEED_HOLIDAYS_2026,
+  "2027": SEED_HOLIDAYS_2027,
+};
+
+/** Siembra los feriados de cada año de HOLIDAY_SEEDS si el año no tiene filas.
+ *  Idempotente por año: respeta feriados agregados o borrados a mano. */
+function ensureHolidaySeeds(): void {
   const db = getDb();
-  const seed = db.prepare(
-    "SELECT COUNT(*) AS c FROM holidays WHERE fecha LIKE '2026%'",
-  ).get() as { c: number };
-  if (seed.c === 0) {
-    const ins = db.prepare("INSERT OR IGNORE INTO holidays (fecha) VALUES (?)");
-    for (const f of SEED_HOLIDAYS_2026) ins.run(f);
+  const count = db.prepare(
+    "SELECT COUNT(*) AS c FROM holidays WHERE fecha LIKE ?",
+  );
+  const ins = db.prepare("INSERT OR IGNORE INTO holidays (fecha) VALUES (?)");
+  for (const [year, dates] of Object.entries(HOLIDAY_SEEDS)) {
+    const row = count.get(`${year}%`) as { c: number };
+    if (row.c === 0) {
+      for (const f of dates) ins.run(f);
+    }
   }
+}
+
+export function getHolidays(): string[] {
+  ensureHolidaySeeds();
   return (
-    db.prepare("SELECT fecha FROM holidays ORDER BY fecha ASC").all() as {
+    getDb().prepare("SELECT fecha FROM holidays ORDER BY fecha ASC").all() as {
       fecha: string;
     }[]
   ).map((r) => r.fecha);
@@ -802,6 +833,7 @@ export function deleteHoliday(id: number): void {
 }
 
 export function getHolidayRows(): { id: number; fecha: string }[] {
+  ensureHolidaySeeds();
   return getDb()
     .prepare("SELECT id, fecha FROM holidays ORDER BY fecha ASC")
     .all() as { id: number; fecha: string }[];

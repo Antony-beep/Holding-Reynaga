@@ -14,6 +14,7 @@ import {
   updateLeadNotes,
   LEAD_ESTADOS,
 } from "@/lib/db";
+import { deleteLeadRowsFromSheet, findLeadRowsInSheet } from "@/lib/sheets";
 
 export const runtime = "nodejs";
 
@@ -62,7 +63,15 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   if (!isAuthorized(request.headers.get("cookie"))) return unauthorized();
 
-  let body: { action?: string; id?: number; estado?: string; notes?: string; acepta?: boolean };
+  let body: {
+    action?: string;
+    id?: number;
+    estado?: string;
+    notes?: string;
+    acepta?: boolean;
+    email?: string;
+    rows?: unknown;
+  };
   try {
     body = await request.json();
   } catch {
@@ -95,6 +104,45 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           ok: true,
           message: acepta ? "Promociones autorizadas." : "Promociones revocadas.",
+        });
+      }
+      case "buscar_en_sheets": {
+        const email = String(body.email ?? "").trim();
+        if (!email || !email.includes("@")) {
+          return NextResponse.json(
+            { ok: false, error: "Indique el correo del titular." },
+            { status: 400 },
+          );
+        }
+        const matches = await findLeadRowsInSheet(email);
+        const enBase = searchLeads(email, null).filter(
+          (l) => l.email.toLowerCase() === email.toLowerCase(),
+        );
+        return NextResponse.json({
+          ok: true,
+          matches,
+          enBase: enBase.map((l) => ({ id: l.id, name: l.name, estado: l.estado_lead })),
+        });
+      }
+      case "borrar_de_sheets": {
+        const email = String(body.email ?? "").trim();
+        const rows = Array.isArray(body.rows)
+          ? body.rows.map(Number).filter((n) => Number.isInteger(n) && n >= 2 && n <= 100000)
+          : [];
+        if (!email || !email.includes("@") || rows.length === 0) {
+          return NextResponse.json(
+            { ok: false, error: "Solicitud incompleta: indique correo y filas." },
+            { status: 400 },
+          );
+        }
+        const deleted = await deleteLeadRowsFromSheet(email, rows);
+        return NextResponse.json({
+          ok: true,
+          deleted,
+          message:
+            deleted > 0
+              ? `${deleted} fila(s) eliminadas de Google Sheets.`
+              : "Las filas ya no coinciden con ese correo (¿se movió la hoja?). Repita la búsqueda.",
         });
       }
       default:

@@ -101,6 +101,93 @@ export async function appendLeadToSheet(lead: LeadRow): Promise<void> {
   });
 }
 
+// ---- Derecho de cancelación (Ley 29733): búsqueda y borrado de filas ----
+
+export interface SheetLeadMatch {
+  /** Número de fila en la hoja (1-indexed, encabezado = fila 1). */
+  row: number;
+  id: string;
+  createdAt: string;
+  name: string;
+  phone: string;
+  email: string;
+}
+
+function requireSheetId(): string {
+  const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+  if (!spreadsheetId) {
+    throw new Error("Falta GOOGLE_SHEET_ID en las variables de entorno.");
+  }
+  return spreadsheetId;
+}
+
+/** Busca todas las filas de leads cuyo email coincida (insensible a mayúsculas). */
+export async function findLeadRowsInSheet(email: string): Promise<SheetLeadMatch[]> {
+  const spreadsheetId = requireSheetId();
+  const auth = getAuth();
+  const sheets = google.sheets({ version: "v4", auth });
+
+  const res = await sheets.spreadsheets.values.get({
+    spreadsheetId,
+    // A=id, B=fecha, C=origen, D=nombre, E=documento, F=teléfono, G=email
+    range: "A2:G",
+  });
+  const wanted = email.trim().toLowerCase();
+  const matches: SheetLeadMatch[] = [];
+  (res.data.values ?? []).forEach((r, i) => {
+    if (String(r[6] ?? "").trim().toLowerCase() !== wanted) return;
+    matches.push({
+      row: i + 2,
+      id: String(r[0] ?? ""),
+      createdAt: String(r[1] ?? ""),
+      name: String(r[3] ?? ""),
+      phone: String(r[5] ?? ""),
+      email: String(r[6] ?? ""),
+    });
+  });
+  return matches;
+}
+
+/**
+ * Elimina filas de leads de la hoja. Antes de borrar re-verifica que cada fila
+ * solicitada siga perteneciendo al email indicado (la hoja pudo moverse entre
+ * la búsqueda y la confirmación). Devuelve cuántas filas se borraron de verdad.
+ */
+export async function deleteLeadRowsFromSheet(
+  email: string,
+  rows: number[],
+): Promise<number> {
+  const matches = await findLeadRowsInSheet(email);
+  const matchRows = new Set(matches.map((m) => m.row));
+  const valid = [...new Set(rows)]
+    .map(Number)
+    .filter((r) => Number.isInteger(r) && r >= 2 && matchRows.has(r))
+    .sort((a, b) => b - a); // de mayor a menor para no desplazar índices
+  if (valid.length === 0) return 0;
+
+  const spreadsheetId = requireSheetId();
+  const auth = getAuth();
+  const sheets = google.sheets({ version: "v4", auth });
+
+  const meta = await sheets.spreadsheets.get({ spreadsheetId });
+  const sheetId = (meta.data.sheets ?? [])[0]?.properties?.sheetId;
+  if (sheetId == null) {
+    throw new Error("No se pudo identificar la hoja de leads en el spreadsheet.");
+  }
+
+  await sheets.spreadsheets.batchUpdate({
+    spreadsheetId,
+    requestBody: {
+      requests: valid.map((row) => ({
+        deleteDimension: {
+          range: { sheetId, dimension: "ROWS", startIndex: row - 1, endIndex: row },
+        },
+      })),
+    },
+  });
+  return valid.length;
+}
+
 // ---- Libro de Reclamaciones: hoja "Reclamos" (espejo) ----
 
 export async function ensureReclamosSheet(): Promise<void> {

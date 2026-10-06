@@ -11,6 +11,7 @@ import {
   AlertTriangle,
   Database,
   Megaphone,
+  UserX,
 } from "lucide-react";
 import SocialManager from "./SocialManager";
 import ReclamosManager from "./ReclamosManager";
@@ -63,6 +64,11 @@ export default function AdminDashboard() {
   const [notice, setNotice] = useState("");
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [busy, setBusy] = useState(false);
+  const [cancelEmail, setCancelEmail] = useState("");
+  const [sheetMatches, setSheetMatches] = useState<
+    { row: number; id: string; createdAt: string; name: string; phone: string; email: string }[]
+  >([]);
+  const [sheetSearched, setSheetSearched] = useState(false);
 
   const load = useCallback(
     async (r: RangeKey, q?: string) => {
@@ -189,6 +195,67 @@ export default function AdminDashboard() {
   const logout = async () => {
     await fetch("/api/admin/logout", { method: "POST" });
     window.location.reload();
+  };
+
+  const searchSheets = async () => {
+    const email = cancelEmail.trim();
+    if (!email.includes("@")) {
+      setError("Ingrese el correo del titular para buscar en Sheets.");
+      return;
+    }
+    setBusy(true);
+    setError("");
+    setSheetMatches([]);
+    setSheetSearched(false);
+    try {
+      const res = await fetch("/api/admin/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "buscar_en_sheets", email }),
+      });
+      const d = await res.json();
+      if (!d.ok) throw new Error(d.error);
+      setSheetMatches(d.matches ?? []);
+      setSheetSearched(true);
+      setNotice(
+        `Sheets: ${d.matches?.length ?? 0} fila(s) · Base VPS: ${d.enBase?.length ?? 0} lead(s) para ${email}`,
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error");
+    } finally { setBusy(false); }
+  };
+
+  const deleteSheetsRows = async () => {
+    const rows = sheetMatches.map((m) => m.row);
+    if (rows.length === 0) return;
+    if (
+      !window.confirm(
+        `¿Eliminar ${rows.length} fila(s) de Google Sheets?\n\n` +
+          `Confirme solo si el titular solicitó la cancelación de sus datos (Ley 29733). ` +
+          `Esta acción no se puede deshacer.`,
+      )
+    )
+      return;
+    setBusy(true);
+    setError("");
+    try {
+      const res = await fetch("/api/admin/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "borrar_de_sheets",
+          email: cancelEmail.trim(),
+          rows,
+        }),
+      });
+      const d = await res.json();
+      if (!d.ok) throw new Error(d.error);
+      setSheetMatches([]);
+      setSheetSearched(false);
+      setNotice(d.message || `${d.deleted} fila(s) eliminadas de Sheets.`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error");
+    } finally { setBusy(false); }
   };
 
   const pendingSync = useMemo(
@@ -536,6 +603,69 @@ export default function AdminDashboard() {
           ya habían sido sincronizados (✓ verde). La limpieza libera espacio del
           servidor, no afecta la hoja de cálculo.
         </p>
+      </div>
+
+      {/* Derecho de cancelación — borrado en Google Sheets (Ley 29733) */}
+      <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col gap-4">
+        <div className="flex items-center gap-2 text-white/80 font-display font-bold text-sm uppercase tracking-wider">
+          <UserX className="w-4 h-4 text-red-300" />
+          Derecho de cancelación — borrado en Google Sheets
+        </div>
+
+        <p className="text-xs text-white/50 leading-relaxed">
+          Si un titular solicita la cancelación de sus datos, la ley exige suprimirlos
+          de <strong>todos</strong> los sistemas: borre su lead de la base VPS
+          (selección en la tabla) <strong>y</strong> sus filas de la hoja de cálculo.
+          Primero busque, revise lo encontrado y solo después elimine.
+        </p>
+
+        <div className="flex gap-2 flex-wrap">
+          <input
+            type="email"
+            value={cancelEmail}
+            onChange={(e) => setCancelEmail(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") searchSheets(); }}
+            placeholder="Correo del titular que pidió la cancelación..."
+            className="flex-1 min-w-[260px] bg-white/10 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-[#D4AF37]/60"
+          />
+          <button
+            onClick={searchSheets}
+            disabled={busy || !cancelEmail.trim()}
+            className="bg-[#D4AF37] text-deep-navy font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Buscar en Sheets
+          </button>
+        </div>
+
+        {sheetSearched && sheetMatches.length === 0 && (
+          <p className="text-sm text-white/50">
+            No hay filas con ese correo en la hoja de leads.
+          </p>
+        )}
+
+        {sheetMatches.length > 0 && (
+          <div className="flex flex-col gap-3">
+            <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm">
+              <p className="text-white/70">
+                Encontradas <strong className="text-white">{sheetMatches.length}</strong> fila(s):
+              </p>
+              <ul className="mt-2 flex flex-col gap-1">
+                {sheetMatches.map((m) => (
+                  <li key={m.row} className="text-xs text-white/60 font-mono">
+                    Fila {m.row} — id {m.id || "?"} · {m.name || "sin nombre"} · {m.createdAt || "sin fecha"}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <button
+              onClick={deleteSheetsRows}
+              disabled={busy}
+              className="bg-red-500/15 border border-red-400/30 text-red-200 hover:bg-red-500/25 transition-colors rounded-xl px-5 py-3 text-sm font-bold disabled:opacity-40 disabled:cursor-not-allowed w-fit"
+            >
+              Eliminar {sheetMatches.length} fila(s) de Sheets
+            </button>
+          </div>
+        )}
       </div>
       </>
       )}
