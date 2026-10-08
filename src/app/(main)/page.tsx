@@ -8,6 +8,7 @@ import Gallery from "@/components/home/Gallery";
 import DossierForm from "@/components/home/DossierForm";
 import SocialVideos from "@/components/home/SocialVideos";
 import FAQ from "@/components/home/FAQ";
+import GuidesStrip from "@/components/home/GuidesStrip";
 import FollowUs from "@/components/home/FollowUs";
 import { ProjectJsonLd } from "@/components/seo/JsonLd";
 import type { Metadata } from "next";
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
     absolute: "Departamentos en venta en Huancayo | Torres Titanium",
   },
   description:
-    "Departamentos en preventa en San Carlos, Huancayo: 1, 2 y 3 dormitorios, bonos vigentes de S/ 24,900 a S/ 47,850, cocheras para residentes y entrega prevista para 2027.",
+    "Departamentos en construcción en San Carlos, Huancayo: 1, 2 y 3 dormitorios, bonos vigentes de S/ 24,900 a S/ 47,850, cocheras para residentes y entrega prevista para 2027.",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
     siteName: "Holding Reynaga | Torres Titanium",
     title: "Departamentos en venta en Huancayo | Torres Titanium",
     description:
-      "Preventa en San Carlos, Huancayo: modelos de 1 a 3 dormitorios, bonos vigentes y estacionamientos para residentes.",
+      "En construcción en San Carlos, Huancayo: modelos de 1 a 3 dormitorios, bonos vigentes y estacionamientos para residentes.",
     images: [
       {
         url: "/og.jpg",
@@ -58,6 +59,7 @@ export default function Home() {
       <DossierForm />
       <SocialVideos />
       <FAQ />
+      <GuidesStrip />
       <FollowUs />
     </div>
   );

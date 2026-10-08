@@ -27,7 +27,7 @@ export async function generateMetadata({
 
   const slug = buildApartmentSlug(apartment);
   const title = `${apartment.type}: ${apartment.bedrooms} dormitorios en Huancayo`;
-  const description = `Departamento en preventa en San Carlos, Huancayo: ${apartment.type}, ${apartment.bedrooms} dormitorios, ${apartment.baths} baños, ${apartment.sqm} m² y precio publicado de ${apartment.price}.`;
+  const description = `Departamento en venta en San Carlos, Huancayo: ${apartment.type}, ${apartment.bedrooms} dormitorios, ${apartment.baths} baños, ${apartment.sqm} m² y precio publicado de ${apartment.price}.`;
 
   return {
     title,
@@ -158,7 +158,7 @@ export default async function DepartmentPage({
               </h1>
 
               <p className="font-body text-deep-navy/70 text-base md:text-lg mb-8 leading-relaxed">
-                El <strong>{apt.type}</strong> es un departamento en preventa de {apt.bedrooms} dormitorios y {apt.baths} baños, con {apt.sqm} m², en Torres Titanium, San Carlos, Huancayo. Consulta el precio publicado, la disponibilidad y las condiciones vigentes con nuestro equipo de ventas.
+                El <strong>{apt.type}</strong> es un departamento de {apt.bedrooms} dormitorios y {apt.baths} baños, con {apt.sqm} m², en Torres Titanium, edificio en construcción en San Carlos, Huancayo. Consulta el precio publicado, la disponibilidad y las condiciones vigentes con nuestro equipo de ventas.
               </p>
 
               {/* Precio y métricas clave */}
@@ -166,7 +166,7 @@ export default async function DepartmentPage({
                 <div className="bg-deep-navy rounded-2xl p-6 mb-8 flex flex-wrap items-center gap-6">
                   <div>
                     <p className="font-display font-bold text-[10px] uppercase tracking-widest text-white/50 mb-1">
-                      Precio preventa
+                      Precio publicado
                     </p>
                     <p className="text-display font-black text-2xl md:text-3xl text-gold-metallic">
                       {apt.price}

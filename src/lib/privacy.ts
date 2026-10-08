@@ -1,5 +1,5 @@
-export const PRIVACY_POLICY_VERSION = "2026-10-02.2";
-export const PRIVACY_POLICY_DATE = "2026-10-02";
+export const PRIVACY_POLICY_VERSION = "2026-10-03.1";
+export const PRIVACY_POLICY_DATE = "2026-10-03";
 export const COOKIE_CONSENT_VERSION = PRIVACY_POLICY_VERSION;
 
 export const LEAD_REQUIRED_CONSENT_TEXT =
@@ -12,10 +12,10 @@ export const MARKETING_CONSENT_TEXT =
 export const LEGAL_REVIEW_MARKER = "[[REVISAR CON ABOGADO]]";
 
 export const RESERVATION_CONDITIONS =
-  `Separación con S/ 1,000 para todos los tipos de departamento. Al separar: se congela el precio vigente en ese momento y la unidad se retira de la oferta a otros clientes. Se firma una Constancia de Separación del Departamento que indica el precio de venta, el monto de separación, el número de departamento, el área y la fecha de separación. Se elabora un cronograma de pago del 10% del valor del departamento, acorde a los ingresos mensuales del cliente. El congelamiento del precio inicia con la separación y culmina si el cliente incumple reiteradamente el cronograma de pago o desiste voluntariamente de la compra. La devolución del monto de separación se rige por las cláusulas del contrato notarial. No hay cargos adicionales.`;
+  `Separación con S/ 1,000 para todos los tipos de departamento.\n\nAl separar: se congela el precio vigente en ese momento y la unidad se retira de la oferta a otros clientes. Se firma una Constancia de Separación del Departamento que indica el precio de venta, el monto de separación, el número de departamento, el área y la fecha de separación.\n\nSe elabora un cronograma de pago del 10% del valor del departamento, acorde a los ingresos mensuales del cliente. El congelamiento del precio inicia con la separación y culmina si el cliente incumple reiteradamente el cronograma de pago o desiste voluntariamente de la compra.\n\nLa devolución del monto de separación se rige por las cláusulas del contrato notarial. No hay cargos adicionales.`;
 
 export const RESERVATION_PRICE_CLAUSE =
-  `Los precios publicados son referenciales y están sujetos a disponibilidad de la unidad. ${RESERVATION_CONDITIONS} No se modificarán unilateralmente las condiciones de una reserva ya formalizada mediante la Constancia de Separación.`;
+  `Los precios publicados son referenciales y están sujetos a disponibilidad de la unidad.\n\n${RESERVATION_CONDITIONS}\n\nNo se modificarán unilateralmente las condiciones de una reserva ya formalizada mediante la Constancia de Separación.`;
 
 export type ConsentPurpose = "quotation" | "reservation_request" | "complaint";
 

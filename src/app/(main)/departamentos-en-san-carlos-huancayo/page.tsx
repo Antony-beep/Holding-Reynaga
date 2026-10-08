@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     siteName: "Holding Reynaga | Torres Titanium",
     title: "Departamentos en San Carlos, Huancayo | Torres Titanium",
     description:
-      "Departamentos de 1 a 3 dormitorios en preventa en San Carlos, Huancayo. Precios, tipologías y separación con S/ 1,000.",
+      "Departamentos de 1 a 3 dormitorios en construcción en San Carlos, Huancayo. Precios, tipologías y separación con S/ 1,000.",
     images: [
       { url: "/og.jpg", width: 1200, height: 630, alt: "Torres Titanium, departamentos en San Carlos, Huancayo" },
     ],
@@ -35,7 +35,7 @@ const SAN_CARLOS_FAQS = [
   {
     question: "¿Qué departamentos hay en venta en San Carlos, Huancayo?",
     answer:
-      "En Torres Titanium, Av. San Agustín 154, San Carlos, hay departamentos en preventa de 1, 2 y 3 dormitorios: el Tipo G de 1 dormitorio (41.35 m²), los Tipos B y D de 2 dormitorios, y los Tipos A y C de 3 dormitorios, con precios publicados desde S/ 163,332.50 hasta S/ 361,741.00.",
+      "En Torres Titanium, Av. San Agustín 154, San Carlos, hay departamentos en construcción de 1, 2 y 3 dormitorios: el Tipo G de 1 dormitorio (41.35 m²), los Tipos B y D de 2 dormitorios, y los Tipos A y C de 3 dormitorios, con precios publicados desde S/ 163,332.50 hasta S/ 361,741.00.",
   },
   {
     question: "¿Dónde exactamente queda el proyecto en San Carlos?",
@@ -45,12 +45,12 @@ const SAN_CARLOS_FAQS = [
   {
     question: "¿Cuánto cuesta un departamento en San Carlos, Huancayo?",
     answer:
-      "Los precios publicados en Torres Titanium van desde S/ 163,332.50 (Tipo G, 1 dormitorio) hasta S/ 361,741.00 (Tipo A, 3 dormitorios de 91.58 m²). El precio por m² publicado ronda S/ 3,950. Durante la preventa hay bonos publicados de S/ 24,900 a S/ 47,850; su vigencia y aplicación se confirman con el equipo de ventas.",
+      "Los precios publicados en Torres Titanium van desde S/ 163,332.50 (Tipo G, 1 dormitorio) hasta S/ 361,741.00 (Tipo A, 3 dormitorios de 91.58 m²). El precio por m² publicado ronda S/ 3,950.\n\nDurante la preventa hay bonos publicados de S/ 24,900 a S/ 47,850; su vigencia y aplicación se confirman con el equipo de ventas.",
   },
   {
     question: "¿Cómo separo un departamento en San Carlos con S/ 1,000?",
     answer:
-      "La separación aplica a todos los tipos: al pagar S/ 1,000 el precio vigente queda congelado, la unidad se retira de la oferta y se firma una Constancia de Separación con el precio, el monto, el número de departamento, el área y la fecha. Luego se elabora un cronograma de pago del 10% del valor del departamento. Los detalles se confirman con ventas.",
+      "La separación aplica a todos los tipos: al pagar S/ 1,000 el precio vigente queda congelado, la unidad se retira de la oferta y se firma una Constancia de Separación con el precio, el monto, el número de departamento, el área y la fecha.\n\nLuego se elabora un cronograma de pago del 10% del valor del departamento. Los detalles se confirman con ventas.",
   },
   {
     question: "¿Qué amenidades tiene el edificio en San Carlos?",
@@ -67,7 +67,7 @@ export default function SanCarlosPage() {
       <OrganizationJsonLd />
       <WebPageJsonLd
         name="Departamentos en venta en San Carlos, Huancayo"
-        description="Departamentos en preventa de 1 a 3 dormitorios en San Carlos, Huancayo: Torres Titanium, desde S/ 163,332.50."
+        description="Departamentos en construcción de 1 a 3 dormitorios en San Carlos, Huancayo: Torres Titanium, desde S/ 163,332.50."
         path="/departamentos-en-san-carlos-huancayo"
       />
       <PillarBreadcrumb
@@ -84,7 +84,7 @@ export default function SanCarlosPage() {
         </h1>
         <p className="text-deep-navy/70 text-lg leading-relaxed max-w-3xl mb-6">
           <strong>Torres Titanium</strong> es un proyecto residencial de 59 departamentos en
-          preventa en la Av. San Agustín 154, San Carlos, Huancayo (Junín, Perú), desarrollado
+          construcción en la Av. San Agustín 154, San Carlos, Huancayo (Junín, Perú), desarrollado
           por <strong>Holding Inversiones Reynaga S.A.C.</strong> Ofrece departamentos de
           1, 2 y 3 dormitorios con precios publicados, cocheras para residentes y entrega
           prevista para 2027.
@@ -138,7 +138,7 @@ export default function SanCarlosPage() {
             Cómo separar un departamento en San Carlos
           </h2>
           <p className="text-deep-navy/70 leading-relaxed mb-4">
-            Torres Titanium está en preventa: puedes separar tu unidad con S/ 1,000. Al
+            Torres Titanium está en construcción: puedes separar tu unidad con S/ 1,000. Al
             separar, el precio vigente queda congelado, la unidad se retira de la oferta a
             otros clientes y se firma una Constancia de Separación del Departamento con el
             precio de venta, el monto de separación, el número de departamento, el área y la
@@ -159,7 +159,7 @@ export default function SanCarlosPage() {
           </p>
           <p className="text-deep-navy/70 leading-relaxed">
             El equipo de ventas atiende en la Av. San Agustín 154, San Carlos, de lunes a
-            viernes de 8:30 a. m. a 6:00 p. m. y sábados de 9:00 a. m. a 2:00 p. m. También
+            sábado, de 8:30 a. m. a 1:30 p. m. y de 3:00 p. m. a 6:30 p. m. También
             puedes escribir por WhatsApp o visitar la página de{" "}
             <Link href="/contacto" className="text-primary font-bold hover:underline">
               contacto

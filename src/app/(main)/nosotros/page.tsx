@@ -59,7 +59,7 @@ export default function NosotrosPage() {
           <Link href="/departamentos-en-san-carlos-huancayo" className="text-primary font-bold hover:underline">
             Torres Titanium
           </Link>
-          : 59 departamentos en preventa en San Carlos, Huancayo, con modelos de 1 a 3
+          : 59 departamentos en construcción en San Carlos, Huancayo, con modelos de 1 a 3
           dormitorios, estacionamientos para residentes y entrega prevista para 2027. Puedes
           recorrer el proyecto en la página principal o descargar el dossier completo.
         </p>
@@ -80,7 +80,7 @@ export default function NosotrosPage() {
             <div>
               <p className="text-[10px] uppercase tracking-widest font-bold text-deep-navy/50 mb-1">Punto de atención (ventas)</p>
               <p className="text-deep-navy">
-                Av. San Agustín 154, San Carlos, Huancayo, Junín — lunes a viernes de 8:30 a. m. a 6:00 p. m. y sábados de 9:00 a. m. a 2:00 p. m.
+                Av. San Agustín 154, San Carlos, Huancayo, Junín — lunes a sábado, de 8:30 a. m. a 1:30 p. m. y de 3:00 p. m. a 6:30 p. m.
               </p>
             </div>
             <div>

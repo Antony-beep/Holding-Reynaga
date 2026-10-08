@@ -35,12 +35,12 @@ const FAQS_1DORM = [
   {
     question: "¿Qué departamento de 1 dormitorio hay en venta en Huancayo?",
     answer:
-      "El Tipo G de Torres Titanium (San Carlos, Huancayo): 1 dormitorio, 1 baño, 41.35 m², sala-comedor, cocina, lavandería y balcón interior. Precio preventa publicado: S/ 163,332.50.",
+      "El Tipo G de Torres Titanium (San Carlos, Huancayo): 1 dormitorio, 1 baño, 41.35 m², sala-comedor, cocina, lavandería y balcón interior. Precio publicado: S/ 163,332.50.",
   },
   {
     question: "¿Para quién es un departamento de 1 dormitorio?",
     answer:
-      "Para quienes buscan su primera propiedad, una inversión en preventa o una vivienda compacta de fácil mantenimiento: profesionales, estudiantes de posgrado o quienes viven solos y valoran la ubicación sobre la superficie.",
+      "Para quienes buscan su primera propiedad, una inversión en esta etapa o una vivienda compacta de fácil mantenimiento: profesionales, estudiantes de posgrado o quienes viven solos y valoran la ubicación sobre la superficie.",
   },
   {
     question: "¿Cuál es el precio por m² de un departamento de 1 dormitorio en Huancayo?",
@@ -81,7 +81,7 @@ export default function UnDormitorioPage() {
         <p className="text-deep-navy/70 text-lg leading-relaxed max-w-3xl mb-6">
           En <strong>Torres Titanium</strong> (San Carlos, Huancayo) el modelo de 1 dormitorio
           es el <strong>Tipo G</strong>: 41.35 m² distribuidos en sala-comedor, cocina, 1
-          baño completo, lavandería y balcón interior. Su precio preventa publicado es de{" "}
+          baño completo, lavandería y balcón interior. Su precio publicado es de{" "}
           <strong>S/ 163,332.50</strong>, la opción de entrada al proyecto.
         </p>
         <p className="text-deep-navy/70 leading-relaxed max-w-3xl">
@@ -110,7 +110,7 @@ export default function UnDormitorioPage() {
             Un departamento de 1 dormitorio en una zona consolidada como San Carlos combina
             tres ventajas: precio de entrada más accesible, costos de mantenimiento menores
             y alta demanda de alquiler si en el futuro decides invertir. Al ser un proyecto
-            nuevo en preventa, incluye acabados de primera e iluminación natural.
+            nuevo en construcción, incluye acabados de primera e iluminación natural.
           </p>
           <p className="text-deep-navy/70 leading-relaxed">
             La ubicación en Av. San Agustín 154 conecta con la Universidad Continental, la

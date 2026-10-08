@@ -450,7 +450,7 @@ export default function Hero() {
                 </div>
                 <div className="flex flex-col justify-center text-left">
                   <p className="text-surface text-[0.55rem] sm:text-[0.65rem] opacity-70 uppercase tracking-wider font-semibold leading-tight">
-                    Departamentos en preventa
+                    Departamentos en construcción
                   </p>
                   <p className="text-surface font-bold text-xs sm:text-sm lg:text-xs xl:text-sm leading-tight">
                     San Carlos, Huancayo

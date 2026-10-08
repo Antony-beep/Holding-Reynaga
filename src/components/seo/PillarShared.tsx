@@ -80,7 +80,7 @@ export function ApartmentMiniCards({
             <div className="flex items-end justify-between">
               <div>
                 <p className="text-[10px] uppercase tracking-widest text-deep-navy/50 font-bold">
-                  Precio preventa
+                  Precio publicado
                 </p>
                 <p className="font-display font-black text-lg text-deep-navy">{apt.price}</p>
               </div>
@@ -111,7 +111,11 @@ export function FaqBlock({
     mainEntity: faqs.map(({ question, answer }) => ({
       "@type": "Question",
       name: question,
-      acceptedAnswer: { "@type": "Answer", text: answer },
+      acceptedAnswer: {
+        "@type": "Answer",
+        // El schema recibe texto corrido; los saltos dobles son solo para la UI.
+        text: answer.replace(/\n\n/g, " "),
+      },
     })),
   };
   return (
@@ -134,7 +138,11 @@ export function FaqBlock({
               {f.question}
               <ChevronRight className="w-4 h-4 text-primary shrink-0 transition-transform group-open:rotate-90" aria-hidden="true" />
             </summary>
-            <p className="text-sm text-deep-navy/70 leading-relaxed mt-3">{f.answer}</p>
+            <div className="mt-4 flex flex-col gap-3">
+              {f.answer.split("\n\n").map((paragraph, i) => (
+                <p key={i} className="text-sm text-deep-navy/70 leading-relaxed">{paragraph}</p>
+              ))}
+            </div>
           </details>
         ))}
       </div>

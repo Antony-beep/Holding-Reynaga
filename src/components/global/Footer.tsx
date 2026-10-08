@@ -88,10 +88,10 @@ export default function Footer() {
                 </span>
               </div>
               <p className="ml-14 max-w-[260px] text-xs leading-relaxed text-surface/65">
-                Atención: lunes a viernes, 8:30 a. m.–6:00 p. m.; sábados, 9:00 a. m.–2:00 p. m.
+                Atención: lunes a sábado, 8:30 a. m.–1:30 p. m. y 3:00–6:30 p. m.
               </p>
               <p className="ml-14 max-w-[260px] text-xs leading-relaxed text-surface/50">
-                Domicilio legal: [[DOMICILIO LEGAL COMPLETO]]. {LEGAL_REVIEW_MARKER}.
+                Domicilio legal: Jr. Lino Nro. 132, Oficina 401, Huancayo Cercado, Huancayo (Junín). {LEGAL_REVIEW_MARKER}.
               </p>
             </div>
           </div>

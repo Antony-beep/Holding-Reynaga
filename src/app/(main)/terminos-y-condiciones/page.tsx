@@ -70,7 +70,7 @@ export default function TermsPage() {
                   <h2 className="text-2xl font-black m-0 tracking-tight">1. INFORMACIÓN GENERAL DE LA EMPRESA</h2>
                 </div>
                 <p>
-                  El titular de este sitio es <strong>HOLDING INVERSIONES REYNAGA S.A.C.</strong>, identificado con <strong>RUC N° 20614870959</strong>, datos confirmados por el titular del proyecto. Domicilio legal: <strong>[[DOMICILIO LEGAL COMPLETO]]</strong>. Su acreditación está pendiente; las direcciones comerciales publicadas no sustituyen esa verificación. {LEGAL_REVIEW_MARKER}.
+                  El titular de este sitio es <strong>HOLDING INVERSIONES REYNAGA S.A.C.</strong>, identificado con <strong>RUC N° 20614870959</strong>, datos confirmados por el titular del proyecto. Domicilio legal: <strong>Jr. Lino Nro. 132, Huancayo Cercado (Oficina 401, a una cuadra del Parque Grau), Huancayo, Junín, Perú</strong> — domicilio fiscal confirmado en la consulta pública del RUC. Las direcciones comerciales publicadas no sustituyen esa verificación. {LEGAL_REVIEW_MARKER}.
                 </p>
                 <p>
                   El propósito de este sitio es brindar información comercial sobre la venta y preventa de los departamentos del proyecto ubicado en la <strong>Av. San Agustín 154, San Carlos, Huancayo</strong>.
@@ -92,16 +92,11 @@ export default function TermsPage() {
                   Las imágenes pueden mostrar mobiliario o equipamiento de ambientación. Su inclusión y cualquier diferencia respecto de la entrega deben informarse antes de contratar y quedar reflejadas en la documentación aplicable. El alcance de esta precisión requiere revisión legal. {LEGAL_REVIEW_MARKER}.
                 </p>
               <h3 id="condiciones-de-reserva" className="text-xl font-bold mt-8 mb-4 scroll-mt-32">Precios, bonos y solicitudes de reserva</h3>
-              <p>{RESERVATION_PRICE_CLAUSE}</p>
-              <p className="mt-4">
-                <strong>La separación funciona así:</strong> el cliente paga S/ 1,000 y se firma una
-                <em> Constancia de Separación del Departamento</em> que indica el precio de venta, el monto
-                de separación, el número de departamento, el área y la fecha. A partir de ese momento:
-                el precio queda congelado, la unidad se retira de la oferta a otros clientes, y se elabora
-                un cronograma de pago del 10% del valor del departamento, acorde a los ingresos mensuales
-                del cliente. Sin cargos adicionales. La devolución del monto de separación se rige por las
-                cláusulas del contrato notarial.
-              </p>
+              <div className="flex flex-col gap-4">
+                {RESERVATION_PRICE_CLAUSE.split("\n\n").map((parrafo, i) => (
+                  <p key={i}>{parrafo}</p>
+                ))}
+              </div>
               <p className="mt-4">
                 <strong>Enviar el formulario de este sitio web únicamente solicita atención, una cotización o información para una reserva.</strong>{" "}
                 No formaliza la separación, no cobra S/ 1,000, no firma la Constancia de Separación y no
@@ -202,7 +197,7 @@ export default function TermsPage() {
                   <li><strong>Teléfono de Ventas:</strong> <a href="tel:+51981407634" className="text-primary font-bold hover:underline">981407634</a>. Los enlaces a WhatsApp se abren por iniciativa del usuario.</li>
                   <li><strong>Correo Electrónico:</strong> <a href="mailto:holdingreynagaredes@gmail.com" className="text-primary font-bold hover:underline break-all">holdingreynagaredes@gmail.com</a>.</li>
                   <li><strong>Punto de atención / Proyecto publicado:</strong> Av. San Agustín 154, San Carlos, Huancayo.</li>
-                  <li><strong>Domicilio legal:</strong> [[DOMICILIO LEGAL COMPLETO]]. {LEGAL_REVIEW_MARKER}.</li>
+                  <li><strong>Domicilio legal:</strong> Jr. Lino Nro. 132, Huancayo Cercado (Oficina 401, a una cuadra del Parque Grau), Huancayo, Junín, Perú. {LEGAL_REVIEW_MARKER}.</li>
                   <li>La designación formal de estos canales para derechos de datos personales se detalla como pendiente en la <Link href="/politica-de-privacidad#derechos" className="text-primary font-bold hover:underline">Política de Privacidad</Link>. {LEGAL_REVIEW_MARKER}.</li>
                 </ul>
               </section>

@@ -69,12 +69,12 @@ export default function WebMCPTools() {
     void register({
       name: "torres_titanium_listar_departamentos",
       description:
-        "Lista los tipos de departamento en preventa del proyecto Torres Titanium (Huancayo, Perú) con dormitorios, área, precio referencial y enlaces.",
+        "Lista los tipos de departamento en construcción del proyecto Torres Titanium (Huancayo, Perú) con dormitorios, área, precio referencial y enlaces.",
       inputSchema: { type: "object", properties: {}, additionalProperties: false },
       execute: async () => ({
         proyecto: "Torres Titanium",
         entrega: "2027",
-        nota: "Precios referenciales de preventa, sujetos a disponibilidad.",
+        nota: "Precios referenciales publicados, sujetos a disponibilidad.",
         departamentos: publicApartments(),
       }),
     });
@@ -82,7 +82,7 @@ export default function WebMCPTools() {
     void register({
       name: "torres_titanium_detalle_departamento",
       description:
-        "Devuelve área, precio de preventa y características de un tipo de departamento de Torres Titanium (ej.: 'Tipo A', 'A', 'a').",
+        "Devuelve área, precio publicado y características de un tipo de departamento de Torres Titanium (ej.: 'Tipo A', 'A', 'a').",
       inputSchema: {
         type: "object",
         properties: {
@@ -114,7 +114,7 @@ export default function WebMCPTools() {
       execute: async () => ({
         telefonoWhatsApp: "+51 981 407 634",
         email: "holdingreynagaredes@gmail.com",
-        horario: "Lun–Vie 8:30–18:00; Sáb 9:00–14:00",
+        horario: "Lun–Sáb 8:30–13:30 y 15:00–18:30",
         direccion: "Av. San Agustín 154, San Carlos, Huancayo, Perú",
         libroDeReclamaciones: `${SITE_URL}/libro-de-reclamaciones`,
         nota:

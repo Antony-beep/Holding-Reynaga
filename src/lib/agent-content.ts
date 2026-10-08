@@ -8,7 +8,7 @@ import { SITE_URL } from "@/lib/site";
  */
 export const LLMS_MARKDOWN = `# Torres Titanium — Holding Inversiones Reynaga S.A.C.
 
-> Proyecto residencial en preventa en San Carlos, Huancayo, Junín, Perú.
+> Proyecto residencial en construcción en San Carlos, Huancayo, Junín, Perú.
 > Departamentos de 1, 2 y 3 dormitorios con entrega prevista para 2027.
 > Bonos de preventa anunciados desde S/ 24,900 hasta S/ 47,850. Separación anunciada con S/ 1,000; consulta disponibilidad, vigencia y condiciones documentadas con ventas.
 > Borrador de textos legales publicado el 2026-10-02, versión 2026-10-02.1, con pendientes [[REVISAR CON ABOGADO]].
@@ -19,7 +19,7 @@ Holding Inversiones Reynaga S.A.C. (RUC 20614870959) es una inmobiliaria y const
 
 ## Qué ofrecemos
 
-- Departamentos en preventa de 1, 2 y 3 dormitorios
+- Departamentos en construcción de 1, 2 y 3 dormitorios
 - 7 tipos de departamento (A, B, C, D, F, G, H) con áreas de 41 a 92 m²
 - Precios desde S/ 163,332.50 hasta S/ 361,741.00
 - Bonos de descuento de preventa anunciados: S/ 24,900 a S/ 47,850; régimen y condiciones de aplicación pendientes [[REVISAR CON ABOGADO]]
@@ -51,13 +51,13 @@ El dossier PDF se descarga directamente, sin completar un formulario. La descarg
 ## Ubicación
 
 - Dirección del proyecto: Av. San Agustín 154, San Carlos, Huancayo, Perú
-- Domicilio legal: [[DOMICILIO LEGAL COMPLETO]] [[REVISAR CON ABOGADO]]. Las direcciones comerciales publicadas no acreditan el domicilio legal.
+- Domicilio legal: Jr. Lino Nro. 132, Huancayo Cercado (Oficina 401, a una cuadra del Parque Grau), Huancayo, Junín, Perú — domicilio fiscal confirmado en el RUC 20614870959. Las direcciones comerciales publicadas no acreditan el domicilio legal.
 - Coordenadas: -12.047615, -75.200334
 
 ## Contacto
 
 - Teléfono / WhatsApp: +51 981 407 634
-- Horario de atención: lunes a viernes, 8:30 a. m.–6:00 p. m.; sábados, 9:00 a. m.–2:00 p. m.
+- Horario de atención: lunes a sábado, 8:30 a. m.–1:30 p. m. y 3:00–6:30 p. m.
 - Email: holdingreynagaredes@gmail.com
 - Libro de Reclamaciones: https://inmobiliariaholdingreynaga.com/libro-de-reclamaciones
 
@@ -101,7 +101,7 @@ export function apartmentMarkdown(apartment: Apartment): string {
 - **Dormitorios:** ${apartment.bedrooms}
 - **Baños:** ${apartment.baths}
 - **Área:** ${apartment.sqm} m²
-- **Precio de preventa:** ${apartment.price}
+- **Precio publicado:** ${apartment.price}
 - **Estilo:** ${apartment.area}
 ${features ? `\n## Características\n${features}\n` : ""}
 ## Enlaces
@@ -109,7 +109,7 @@ ${features ? `\n## Características\n${features}\n` : ""}
 - Página del departamento: ${SITE_URL}/departamentos/${slug}
 - Tour virtual 360°: ${SITE_URL}/vision360/${tourId}
 
-> Precio referencial de preventa, sujeto a disponibilidad de la unidad. Enviar el
+> Precio referencial publicado, sujeto a disponibilidad de la unidad. Enviar el
 > formulario web no formaliza una reserva ni realiza un cobro: solo solicita
 > atención, cotización o información. Contacto: +51 981 407 634.
 `;

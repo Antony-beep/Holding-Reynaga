@@ -87,7 +87,7 @@ export default function LibroReclamacionesPage() {
           <Mail className="w-5 h-5 text-[#B8860B] shrink-0" />
           <p className="leading-relaxed text-center sm:text-left">
             Proveedor: <strong className="text-deep-navy">HOLDING INVERSIONES REYNAGA S.A.C.</strong> —
-            RUC 20614870959 — Domicilio legal: [[DOMICILIO LEGAL COMPLETO]]. {LEGAL_REVIEW_MARKER}.
+            RUC 20614870959 — Domicilio legal: Jr. Lino Nro. 132, Huancayo Cercado (Oficina 401, a una cuadra del Parque Grau), Huancayo, Junín, Perú. {LEGAL_REVIEW_MARKER}.
             Punto de atención publicado: Av. San Agustín 154, San Carlos, Huancayo.
             Marco normativo: Ley N° 29571 y D.S. N° 011-2011-PCM, modificado por el{" "}
             <a href="https://busquedas.elperuano.pe/dispositivo/NL/2095978-1" target="_blank" rel="noopener noreferrer" className="text-[#B8860B] font-bold hover:underline">

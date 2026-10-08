@@ -97,12 +97,12 @@ export default function ContactoPage() {
               </div>
               <ul className="text-deep-navy/70 flex flex-col gap-2">
                 <li className="flex justify-between gap-4 border-b border-black/5 pb-2">
-                  <span>Lunes a viernes</span>
-                  <strong className="text-deep-navy">8:30 a. m. – 6:00 p. m.</strong>
+                  <span>Lunes a sábado (mañana)</span>
+                  <strong className="text-deep-navy">8:30 a. m. – 1:30 p. m.</strong>
                 </li>
                 <li className="flex justify-between gap-4">
-                  <span>Sábados</span>
-                  <strong className="text-deep-navy">9:00 a. m. – 2:00 p. m.</strong>
+                  <span>Lunes a sábado (tarde)</span>
+                  <strong className="text-deep-navy">3:00 p. m. – 6:30 p. m.</strong>
                 </li>
               </ul>
             </div>

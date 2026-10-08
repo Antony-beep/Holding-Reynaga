@@ -40,12 +40,12 @@ const FAQS_3DORM = [
   {
     question: "¿Cuál es el departamento más grande de Torres Titanium?",
     answer:
-      "El Tipo A: 91.58 m² con 3 dormitorios y 2 baños completos, sala-comedor, cocina, lavandería y balcón parrillero. Su precio preventa publicado es de S/ 361,741.00 y es la tipología Premium del proyecto.",
+      "El Tipo A: 91.58 m² con 3 dormitorios y 2 baños completos, sala-comedor, cocina, lavandería y balcón parrillero. Su precio publicado es de S/ 361,741.00 y es la tipología Premium del proyecto.",
   },
   {
     question: "¿Un departamento de 3 dormitorios cabe en mi presupuesto?",
     answer:
-      "Los precios publicados de 3 dormitorios van de S/ 286,651.50 (Tipo C) a S/ 361,741.00 (Tipo A). Con la separación de S/ 1,000 se congela el precio y se firma un cronograma de pago del 10% del valor acorde a tus ingresos. El equipo de ventas también informa sobre opciones de financiamiento.",
+      "Los precios publicados de 3 dormitorios van de S/ 286,651.50 (Tipo C) a S/ 361,741.00 (Tipo A).\n\nCon la separación de S/ 1,000 se congela el precio y se firma un cronograma de pago del 10% del valor acorde a tus ingresos. El equipo de ventas también informa sobre opciones de financiamiento.",
   },
   {
     question: "¿Qué incluyen los departamentos de 3 dormitorios?",

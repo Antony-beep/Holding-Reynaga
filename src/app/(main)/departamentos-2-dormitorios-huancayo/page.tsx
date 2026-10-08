@@ -45,12 +45,12 @@ const FAQS_2DORM = [
   {
     question: "¿Un departamento de 2 dormitorios es buena inversión en Huancayo?",
     answer:
-      "Es la tipología con mayor equilibrio entre precio y demanda: sirve para parejas, familias pequeñas o como inversión en alquiler. Con la separación de S/ 1,000 puedes congelar el precio vigente en preventa y acceder a los bonos publicados.",
+      "Es la tipología con mayor equilibrio entre precio y demanda: sirve para parejas, familias pequeñas o como inversión en alquiler. Con la separación de S/ 1,000 puedes congelar el precio vigente y acceder a los bonos publicados.",
   },
   {
     question: "¿Puedo visitar los departamentos de 2 dormitorios?",
     answer:
-      "Sí. El equipo de ventas atiende en Av. San Agustín 154, San Carlos, Huancayo (lunes a viernes de 8:30 a. m. a 6:00 p. m., sábados de 9:00 a. m. a 2:00 p. m.) y coordina visitas. También puedes pedir el dossier y los planos por WhatsApp al +51 981 407 634.",
+      "Sí. El equipo de ventas atiende en Av. San Agustín 154, San Carlos, Huancayo (lunes a sábado, de 8:30 a. m. a 1:30 p. m. y de 3:00 p. m. a 6:30 p. m.) y coordina visitas. También puedes pedir el dossier y los planos por WhatsApp al +51 981 407 634.",
   },
 ] as const;
 

@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     "departamentos Huancayo",
     "departamentos en San Carlos",
     "departamentos en venta Huancayo",
-    "departamentos en preventa Huancayo",
+    "departamentos en construcción Huancayo",
     "departamentos San Carlos Huancayo",
     "proyecto inmobiliario Junín",
   ],
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Departamentos en venta en Huancayo | Torres Titanium",
     description:
-      "Preventa en San Carlos, Huancayo: departamentos de 1 a 3 dormitorios, bonos de S/ 24,900 a S/ 47,850. Separa con S/ 1,000. Entrega 2027.",
+      "Departamentos de 1 a 3 dormitorios en construcción en San Carlos, Huancayo. Bonos de S/ 24,900 a S/ 47,850. Separa con S/ 1,000. Entrega 2027.",
     images: ["/og.jpg"],
   },
   robots: {

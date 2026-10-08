@@ -16,7 +16,7 @@ export default function Location() {
   const pointsOfInterest = [
     { id: "continental", name: "Universidad Continental", time: "1 min", Icon: GraduationCap },
     { id: "upla", name: "UPLA", time: "7 min", Icon: GraduationCap },
-    { id: "roosevelt", name: "Roosevelt", time: "4 min", Icon: GraduationCap },
+    { id: "roosevelt", name: "Universidad Roosevelt", time: "4 min", Icon: GraduationCap },
     { id: "grau", name: "Parque Grau", time: "4 min", Icon: TreePine },
     { id: "identidad", name: "Parque Identidad Wanka", time: "2 min", Icon: TreePine },
     { id: "tupac", name: "Parque Túpac", time: "8 min", Icon: TreePine },
@@ -70,8 +70,7 @@ export default function Location() {
                 <h3 className="font-display text-sm md:text-base text-white font-bold mb-2">Atención presencial</h3>
                 <p className="font-body text-white/75 text-sm md:text-base leading-relaxed">
                   Av. San Agustín 154, San Carlos, Huancayo<br />
-                  Lunes a viernes: 8:30 a. m.–6:00 p. m.<br />
-                  Sábados: 9:00 a. m.–2:00 p. m.
+                  Lunes a sábado: 8:30 a. m.–1:30 p. m. y 3:00 p. m.–6:30 p. m.
                 </p>
                 <a
                   href="tel:+51981407634"

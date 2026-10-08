@@ -35,7 +35,7 @@ const HUANCAYO_FAQS = [
   {
     question: "¿Cuánto cuesta un departamento en Huancayo?",
     answer:
-      "En el proyecto Torres Titanium de San Carlos, los precios publicados van desde S/ 163,332.50 por un departamento de 1 dormitorio (41.35 m²) hasta S/ 361,741.00 por uno de 3 dormitorios (91.58 m²). El precio por m² publicado ronda S/ 3,950 y existen bonos de preventa de S/ 24,900 a S/ 47,850.",
+      "En el proyecto Torres Titanium de San Carlos, los precios publicados van desde S/ 163,332.50 por un departamento de 1 dormitorio (41.35 m²) hasta S/ 361,741.00 por uno de 3 dormitorios (91.58 m²).\n\nEl precio por m² publicado ronda S/ 3,950 y existen bonos de preventa de S/ 24,900 a S/ 47,850.",
   },
   {
     question: "¿Dónde conviene comprar un departamento en Huancayo?",
@@ -45,7 +45,7 @@ const HUANCAYO_FAQS = [
   {
     question: "¿Hay departamentos nuevos en preventa en Huancayo?",
     answer:
-      "Sí. Torres Titanium es un proyecto de 59 departamentos nuevos en preventa en San Carlos, Huancayo, con entrega prevista para 2027. Comprar en preventa permite separar con S/ 1,000, congelar el precio vigente y acceder a los bonos publicados.",
+      "Sí. Torres Titanium es un proyecto de 59 departamentos nuevos en construcción en San Carlos, Huancayo, con entrega prevista para 2027. Comprar en esta etapa permite separar con S/ 1,000, congelar el precio vigente y acceder a los bonos publicados.",
   },
   {
     question: "¿Qué tipos de departamento ofrece Torres Titanium en Huancayo?",
@@ -55,7 +55,7 @@ const HUANCAYO_FAQS = [
   {
     question: "¿Cómo visito el proyecto o pido información?",
     answer:
-      "Puedes escribir por WhatsApp al +51 981 407 634 o visitar el punto de atención en Av. San Agustín 154, San Carlos, Huancayo, de lunes a viernes de 8:30 a. m. a 6:00 p. m. y sábados de 9:00 a. m. a 2:00 p. m. El equipo de Holding Reynaga comparte el dossier y coordina visitas.",
+      "Puedes escribir por WhatsApp al +51 981 407 634 o visitar el punto de atención en Av. San Agustín 154, San Carlos, Huancayo, de lunes a sábado, de 8:30 a. m. a 1:30 p. m. y de 3:00 p. m. a 6:30 p. m. El equipo de Holding Reynaga comparte el dossier y coordina visitas.",
   },
 ] as const;
 
@@ -155,7 +155,7 @@ export default function HuancayoPage() {
             Cómo comprar un departamento en Huancayo
           </h2>
           <p className="text-deep-navy/70 leading-relaxed mb-4">
-            El proceso típico en un proyecto en preventa como Torres Titanium tiene tres
+            El proceso típico en un proyecto en construcción como Torres Titanium tiene tres
             pasos: primero, elegir la tipología y verificar disponibilidad; segundo, separar
             la unidad con S/ 1,000 — lo que congela el precio vigente y retira la unidad de
             la oferta — firmando una Constancia de Separación; tercero, seguir el cronograma

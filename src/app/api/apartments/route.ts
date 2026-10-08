@@ -31,7 +31,7 @@ export async function GET() {
       entrega: "2027",
       preciosActualizados: PRICING_UPDATED,
       nota:
-        "Precios referenciales de preventa en soles (S/). Sujetos a disponibilidad de la unidad. La reserva anunciada es de S/ 1,000 y se formaliza únicamente con ventas.",
+        "Precios referenciales publicados en soles (S/). Sujetos a disponibilidad de la unidad. La reserva anunciada es de S/ 1,000 y se formaliza únicamente con ventas.",
       departamentos,
     },
     {

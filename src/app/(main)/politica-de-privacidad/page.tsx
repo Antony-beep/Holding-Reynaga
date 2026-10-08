@@ -97,7 +97,7 @@ export default function PrivacyPolicyPage() {
                 con <strong className="text-deep-navy">RUC 20614870959</strong>. Estos dos datos fueron confirmados por el titular del proyecto.
               </p>
               <p className="mt-4">
-                Domicilio legal: <strong>[[DOMICILIO LEGAL COMPLETO]]</strong>. {LEGAL_REVIEW_MARKER}.
+                Domicilio legal: <strong>Jr. Lino Nro. 132, Huancayo Cercado (Oficina 401, a una cuadra del Parque Grau), Huancayo, Junín, Perú</strong> — domicilio fiscal confirmado en la consulta pública del RUC N° 20614870959. {LEGAL_REVIEW_MARKER}.
                 Las direcciones comerciales publicadas en el sitio no acreditan por sí solas el domicilio legal.
               </p>
               <p className="mt-4">

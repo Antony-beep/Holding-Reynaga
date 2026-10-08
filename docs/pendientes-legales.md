@@ -7,16 +7,16 @@ Checklist de brechas detectadas en la auditoría del sistema. Actualizado: 2026-
 | # | Tema | Estado | Responsable | Siguiente paso |
 |---|---|---|---|---|
 | 1 | **Registro RNPDP** — inscribir el banco de datos en el Registro Nacional de Protección de Datos Personales (ANPD) | 🟡 En trámite | Usuario | Trámite ante ANPD. Al obtener el número, reemplazar `[[NÚMERO RNPDP]]` en `/politica-de-privacidad#banco-de-datos` |
-| 2 | **Domicilio legal completo** | 🟡 Pendiente | Usuario → agente | Confirmado: usar el domicilio fiscal del RUC. Falta el texto exacto para insertarlo en política, Libro de Reclamaciones, `faqs.ts` y `OrganizationJsonLd` (estos dos últimos aún muestran la dirección vieja de Jr. Lino) |
-| 3 | **Plazos de retención** — 10 finalidades con `[[PLAZO]]` sin definir | 🟡 Pendiente | Abogado → agente | El abogado define cada plazo → insertarlos en `/politica-de-privacidad#conservacion` |
-| 4 | **Plazos de respuesta ARCO** — acceso, rectificación, cancelación, oposición | 🟡 Pendiente | Abogado → agente | Definir → reemplazar `[[PLAZOS DE RESPUESTA]]` en `#derechos` |
-| 5 | **Transferencias internacionales** — Google, Meta, Resend, Cloudflare | 🟡 Pendiente | Abogado | Documentar `[[DESTINATARIOS Y PAÍSES]]` y `[[GARANTÍAS DE TRANSFERENCIA]]` en `#transferencias` |
-| 6 | **Contratos con proveedores** — cláusulas de encargo de tratamiento | 🟡 Pendiente | Abogado | Verificar contratos/ToS de Resend, Google Workspace/Sheets, Meta, Cloudflare |
+| 2 | **Plazos de retención** — 10 finalidades con `[[PLAZO]]` sin definir | 🟡 Pendiente | Abogado → agente | El abogado define cada plazo → insertarlos en `/politica-de-privacidad#conservacion` |
+| 3 | **Plazos de respuesta ARCO** — acceso, rectificación, cancelación, oposición | 🟡 Pendiente | Abogado → agente | Definir → reemplazar `[[PLAZOS DE RESPUESTA]]` en `#derechos` |
+| 4 | **Transferencias internacionales** — Google, Meta, Resend, Cloudflare | 🟡 Pendiente | Abogado | Documentar `[[DESTINATARIOS Y PAÍSES]]` y `[[GARANTÍAS DE TRANSFERENCIA]]` en `#transferencias` |
+| 5 | **Contratos con proveedores** — cláusulas de encargo de tratamiento | 🟡 Pendiente | Abogado | Verificar contratos/ToS de Resend, Google Workspace/Sheets, Meta, Cloudflare |
 
 ## Resueltos
 
 | # | Tema | Estado |
 |---|---|---|
+| 6 | **Domicilio legal completo** — Jr. Lino Nro. 132, Huancayo Cercado (Oficina 401, a una cuadra del Parque Grau), Huancayo, Junín | ✅ Confirmado contra el RUC 20614870959 e insertado en política, términos, Libro de Reclamaciones, footer, agent-content, PDF Anexo I, schema, FAQ, /nosotros y /contacto. Versión de política bump a 2026-10-03.1 |
 | 7 | Aviso del libro físico en el domicilio | ✅ Confirmado por el usuario |
 | 8 | Feriados 2027 precargados (Semana Santa: 25-26 marzo) + aviso en el panel explicando por qué cargarlos cada año | ✅ Implementado |
 | 9 | Derecho de cancelación vs Google Sheets — herramienta de búsqueda y borrado de filas (buscar → confirmar → borrar, con re-verificación) en el panel admin | ✅ Implementado |

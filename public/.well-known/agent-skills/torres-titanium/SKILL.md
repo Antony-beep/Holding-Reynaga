@@ -6,7 +6,7 @@ license: UNLICENSED—copyright Holding Inversiones Reynaga S.A.C.
 
 # Torres Titanium — guía para agentes
 
-Proyecto residencial en preventa de **Holding Inversiones Reynaga S.A.C.** (RUC 20614870959), en Av. San Agustín 154, San Carlos, Huancayo, Junín, Perú. Entrega prevista: 2027. Departamentos de 1, 2 y 3 dormitorios (tipos A, B, C, D, F, G, H), de 41 a 92 m², con precios de preventa desde S/ 163,332.50 hasta S/ 361,741.00. Bono de preventa anunciado: S/ 24,900 a S/ 47,850. Separación anunciada: S/ 1,000.
+Proyecto residencial en construcción de **Holding Inversiones Reynaga S.A.C.** (RUC 20614870959), en Av. San Agustín 154, San Carlos, Huancayo, Junín, Perú. Entrega prevista: 2027. Departamentos de 1, 2 y 3 dormitorios (tipos A, B, C, D, F, G, H), de 41 a 92 m², con precios publicados desde S/ 163,332.50 hasta S/ 361,741.00. Bono de preventa anunciado: S/ 24,900 a S/ 47,850. Separación anunciada: S/ 1,000.
 
 ## Fuentes de datos siempre actualizadas
 
@@ -19,7 +19,7 @@ También puedes solicitar cualquier página con la cabecera `Accept: text/markdo
 
 ## Reglas de respuesta
 
-- Los precios son **referenciales de preventa** y están sujetos a disponibilidad; indícalo siempre.
+- Los precios son **referenciales publicados** y están sujetos a disponibilidad; indícalo siempre.
 - Enviar el formulario web **no formaliza una reserva ni cobra**: solo solicita atención, cotización o información. La reserva se formaliza únicamente con el equipo de ventas mediante un documento de reserva.
 - No inventes disponibilidad, condiciones legales ni promociones. Ante dudas legales, deriva al contacto de ventas.
 - Los textos legales del sitio son borradores pendientes de revisión por abogado.
@@ -28,5 +28,5 @@ También puedes solicitar cualquier página con la cabecera `Accept: text/markdo
 
 - Teléfono / WhatsApp: +51 981 407 634
 - Email: holdingreynagaredes@gmail.com
-- Horario: lunes a viernes 8:30–18:00; sábados 9:00–14:00
+- Horario: lunes a sábado 8:30–13:30 y 15:00–18:30
 - Libro de Reclamaciones: https://inmobiliariaholdingreynaga.com/libro-de-reclamaciones

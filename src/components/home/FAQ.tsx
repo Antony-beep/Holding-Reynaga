@@ -28,7 +28,7 @@ export default function FAQ() {
           </p>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-5">
           {FAQS.map((faq, index) => {
             const isOpen = openIndex === index;
             const questionId = `${componentId}-faq-question-${index}`;
@@ -71,10 +71,17 @@ export default function FAQ() {
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                   className="overflow-hidden"
                 >
-                  <div className="px-6 md:px-8 pb-6 pt-2 border-t border-black/5">
-                    <p className="font-body text-deep-navy/70 leading-relaxed text-base md:text-lg">
-                      {faq.answer}
-                    </p>
+                  <div className="px-6 md:px-8 pb-8 pt-5 border-t border-black/5">
+                    <div className="flex flex-col gap-4">
+                      {faq.answer.split("\n\n").map((paragraph, i) => (
+                        <p
+                          key={i}
+                          className="font-body text-deep-navy/70 leading-relaxed text-base md:text-lg"
+                        >
+                          {paragraph}
+                        </p>
+                      ))}
+                    </div>
                   </div>
                 </motion.div>
               </div>
