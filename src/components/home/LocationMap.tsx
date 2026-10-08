@@ -32,7 +32,7 @@ const mapLocations = [
     id: "roosevelt",
     coords: [-12.041842, -75.195334] as [number, number],
     type: "education",
-    name: "Roosevelt",
+    name: "Universidad Roosevelt",
   },
   {
     id: "grau",
