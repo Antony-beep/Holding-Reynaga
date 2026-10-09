@@ -12,9 +12,20 @@ import {
   Database,
   Megaphone,
   UserX,
+  Users,
 } from "lucide-react";
 import SocialManager from "./SocialManager";
 import ReclamosManager from "./ReclamosManager";
+import UsersManager from "./UsersManager";
+
+type Role = "admin" | "operador" | "lectura";
+const ROLE_LEVELS_UI: Record<Role, number> = { lectura: 0, operador: 1, admin: 2 };
+const ROLE_LABELS_UI: Record<Role, string> = { admin: "Admin", operador: "Operador", lectura: "Lectura" };
+
+const ESTADO_LABEL: Record<string, string> = {
+  nuevo: "Nuevo", contactado: "Contactado", calificado: "Calificado",
+  visita_agendada: "Visita agendada", reservado: "Reservado", descartado: "Descartado",
+};
 
 interface Lead {
   id: number;
@@ -49,7 +60,8 @@ const AGE_OPTIONS = [
 ];
 
 export default function AdminDashboard() {
-  const [view, setView] = useState<"leads" | "social" | "reclamos">("leads");
+  const [view, setView] = useState<"leads" | "social" | "reclamos" | "usuarios">("leads");
+  const [me, setMe] = useState<{ username: string; displayName: string; role: Role } | null>(null);
   const [range, setRange] = useState<RangeKey>("week");
   const [leads, setLeads] = useState<Lead[]>([]);
   const [total, setTotal] = useState(0);
@@ -104,6 +116,21 @@ export default function AdminDashboard() {
   useEffect(() => {
     load(range);
   }, [range, load]);
+
+  // Identidad del usuario conectado (para permisos de la interfaz)
+  useEffect(() => {
+    fetch("/api/admin/login", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d?.ok && d.user) setMe(d.user);
+        else window.location.reload();
+      })
+      .catch(() => {});
+  }, []);
+
+  const myRole: Role = me?.role ?? "lectura";
+  const can = (min: Role) => ROLE_LEVELS_UI[myRole] >= ROLE_LEVELS_UI[min];
+  const readOnly = !can("operador");
 
   const toggleAll = () => {
     setSelected((prev) =>
@@ -298,14 +325,37 @@ export default function AdminDashboard() {
           >
             Reclamos
           </button>
+          {can("admin") && (
+            <button
+              onClick={() => setView("usuarios")}
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+                view === "usuarios"
+                  ? "bg-[#D4AF37] text-deep-navy"
+                  : "text-white/70 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              Usuarios
+            </button>
+          )}
         </div>
-        <button
-          onClick={logout}
-          className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm hover:bg-red-500/20 hover:border-red-400/30 transition-colors flex items-center gap-2"
-        >
-          <LogOut className="w-4 h-4" />
-          Salir
-        </button>
+        <div className="flex items-center gap-3">
+          {me && (
+            <span className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs flex items-center gap-2">
+              <Users className="w-4 h-4 text-[#D4AF37]" />
+              <span className="text-white/80">{me.displayName}</span>
+              <span className="px-2 py-0.5 rounded-full bg-[#D4AF37]/15 text-[#D4AF37] font-bold uppercase tracking-wider">
+                {ROLE_LABELS_UI[myRole]}
+              </span>
+            </span>
+          )}
+          <button
+            onClick={logout}
+            className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm hover:bg-red-500/20 hover:border-red-400/30 transition-colors flex items-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            Salir
+          </button>
+        </div>
       </div>
 
       {view === "leads" && (
@@ -413,15 +463,17 @@ export default function AdminDashboard() {
         <table className="w-full text-sm min-w-[1000px]">
           <thead>
             <tr className="text-left text-white/50 border-b border-white/10 bg-white/5">
-              <th className="px-4 py-3 w-10">
-                <input
-                  type="checkbox"
-                  checked={leads.length > 0 && selected.size === leads.length}
-                  onChange={toggleAll}
-                  className="accent-[#D4AF37]"
-                  aria-label="Seleccionar todos"
-                />
-              </th>
+              {can("admin") && (
+                <th className="px-4 py-3 w-10">
+                  <input
+                    type="checkbox"
+                    checked={leads.length > 0 && selected.size === leads.length}
+                    onChange={toggleAll}
+                    className="accent-[#D4AF37]"
+                    aria-label="Seleccionar todos"
+                  />
+                </th>
+              )}
               <th className="px-4 py-3">Fecha (UTC)</th>
               <th className="px-4 py-3">Origen</th>
               <th className="px-4 py-3">Nombre</th>
@@ -456,15 +508,17 @@ export default function AdminDashboard() {
                     selected.has(lead.id) ? "bg-[#D4AF37]/10" : "hover:bg-white/5"
                   }`}
                 >
-                  <td className="px-4 py-3">
-                    <input
-                      type="checkbox"
-                      checked={selected.has(lead.id)}
-                      onChange={() => toggleOne(lead.id)}
-                      className="accent-[#D4AF37]"
-                      aria-label={`Seleccionar lead ${lead.id}`}
-                    />
-                  </td>
+                  {can("admin") && (
+                    <td className="px-4 py-3">
+                      <input
+                        type="checkbox"
+                        checked={selected.has(lead.id)}
+                        onChange={() => toggleOne(lead.id)}
+                        className="accent-[#D4AF37]"
+                        aria-label={`Seleccionar lead ${lead.id}`}
+                      />
+                    </td>
+                  )}
                   <td className="px-4 py-3 whitespace-nowrap text-white/70">
                     {lead.created_at}
                   </td>
@@ -487,6 +541,19 @@ export default function AdminDashboard() {
                     {lead.interest || "—"}
                   </td>
                   <td className="px-4 py-3">
+                    {readOnly ? (
+                      <span className={`text-[11px] font-bold rounded-full px-2 py-1 inline-block ${
+                        (lead.estado_lead === "nuevo" || !lead.estado_lead) ? "bg-amber-500/20 text-amber-300"
+                        : lead.estado_lead === "contactado" ? "bg-blue-500/20 text-blue-300"
+                        : lead.estado_lead === "calificado" ? "bg-purple-500/20 text-purple-300"
+                        : lead.estado_lead === "visita_agendada" ? "bg-cyan-500/20 text-cyan-300"
+                        : lead.estado_lead === "reservado" ? "bg-green-500/20 text-green-300"
+                        : lead.estado_lead === "descartado" ? "bg-white/10 text-white/40"
+                        : "bg-white/10 text-white/60"
+                      }`}>
+                        {ESTADO_LABEL[lead.estado_lead || "nuevo"]}
+                      </span>
+                    ) : (
                     <select
                       value={lead.estado_lead || "nuevo"}
                       onChange={async (e) => {
@@ -524,8 +591,36 @@ export default function AdminDashboard() {
                       <option value="reservado" className="text-black">Reservado</option>
                       <option value="descartado" className="text-black">Descartado</option>
                     </select>
+                    )}
                   </td>
                   <td className="px-4 py-3">
+                    {readOnly ? (
+                      <span
+                        title={
+                          lead.marketing_consent_accepted === null
+                            ? "Registro histórico sin evidencia de consentimiento"
+                            : lead.marketing_revoked_at
+                              ? `Revocadas: ${lead.marketing_revoked_at}`
+                              : lead.marketing_consent_accepted === 1
+                                ? "Aceptó promociones"
+                                : "Sin promociones"
+                        }
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1 ${
+                          lead.marketing_consent_accepted === 1
+                            ? "bg-teal-500/20 text-teal-300"
+                            : lead.marketing_consent_accepted === 0
+                              ? "bg-white/10 text-white/40"
+                              : "bg-white/5 text-white/30"
+                        }`}
+                      >
+                        <Megaphone className="w-3 h-3" aria-hidden="true" />
+                        {lead.marketing_consent_accepted === 1
+                          ? "Sí"
+                          : lead.marketing_consent_accepted === 0
+                            ? "No"
+                            : "—"}
+                      </span>
+                    ) : (
                     <button
                       onClick={() => togglePromos(lead)}
                       disabled={busy}
@@ -553,6 +648,7 @@ export default function AdminDashboard() {
                           ? "No"
                           : "—"}
                     </button>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     {lead.sheets_synced === 1 ? (
@@ -568,7 +664,8 @@ export default function AdminDashboard() {
         </table>
       </div>
 
-      {/* Acciones de limpieza */}
+      {/* Acciones de limpieza (solo admin) */}
+      {can("admin") && (
       <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col gap-4">
         <div className="flex items-center gap-2 text-white/80 font-display font-bold text-sm uppercase tracking-wider">
           <Trash2 className="w-4 h-4 text-[#D4AF37]" />
@@ -604,8 +701,10 @@ export default function AdminDashboard() {
           servidor, no afecta la hoja de cálculo.
         </p>
       </div>
+      )}
 
-      {/* Derecho de cancelación — borrado en Google Sheets (Ley 29733) */}
+      {/* Derecho de cancelación — borrado en Google Sheets (Ley 29733, solo admin) */}
+      {can("admin") && (
       <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col gap-4">
         <div className="flex items-center gap-2 text-white/80 font-display font-bold text-sm uppercase tracking-wider">
           <UserX className="w-4 h-4 text-red-300" />
@@ -667,12 +766,15 @@ export default function AdminDashboard() {
           </div>
         )}
       </div>
+      )}
       </>
       )}
 
-      {view === "social" && <SocialManager />}
+      {view === "social" && <SocialManager role={myRole} />}
 
-      {view === "reclamos" && <ReclamosManager />}
+      {view === "reclamos" && <ReclamosManager role={myRole} />}
+
+      {view === "usuarios" && <UsersManager />}
     </div>
   );
 }

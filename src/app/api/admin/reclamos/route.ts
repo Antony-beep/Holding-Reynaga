@@ -1,11 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { revalidatePath } from "next/cache";
-import { isAuthorized } from "@/lib/auth";
+import { ROLE_LEVELS, getSession, type AdminSession } from "@/lib/auth";
 import { checkBodySize, MAX_BODY_BYTES } from "@/lib/body-guard";
 import {
   addHoliday,
   deleteHoliday,
   getHolidayRows,
+  logAdminAudit,
   getReclamoById,
   getReclamos,
   getReclamosConfig,
@@ -23,10 +24,23 @@ export const runtime = "nodejs";
 function unauthorized() {
   return NextResponse.json({ ok: false, error: "No autorizado." }, { status: 401 });
 }
+function forbidden() {
+  return NextResponse.json({ ok: false, error: "Su rol no permite esta acción." }, { status: 403 });
+}
+function needRole(session: AdminSession, role: "lectura" | "operador" | "admin") {
+  return ROLE_LEVELS[session.role] >= ROLE_LEVELS[role];
+}
+function getClientIp(req: NextRequest): string {
+  const fwd = req.headers.get("x-forwarded-for");
+  if (fwd) return fwd.split(",")[0].trim();
+  return req.headers.get("x-real-ip") ?? "unknown";
+}
 
 /** GET: lista de reclamos (+deadline/días restantes), config y feriados. */
 export async function GET(request: NextRequest) {
-  if (!isAuthorized(request.headers.get("cookie"))) return unauthorized();
+  const session = getSession(request.headers.get("cookie"));
+  if (!session) return unauthorized();
+  if (!needRole(session, "lectura")) return forbidden();
 
   const url = new URL(request.url);
 
@@ -41,8 +55,16 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  // Export CSV para INDECOPI
+  // Export CSV para INDECOPI — requiere operador
   if (url.searchParams.get("export") === "csv") {
+    if (!needRole(session, "operador")) return forbidden();
+    logAdminAudit({
+      userId: session.userId,
+      username: session.username,
+      action: "csv_export",
+      entity: "reclamos",
+      ip: getClientIp(request),
+    });
     const rows = getReclamos();
     const header = [
       "codigo", "fecha_registro_utc", "deadline_habil", "tipo", "bien", "monto",
@@ -101,7 +123,9 @@ export async function POST(request: NextRequest) {
   const sizeError = checkBodySize(request, MAX_BODY_BYTES.admin);
   if (sizeError) return sizeError;
 
-  if (!isAuthorized(request.headers.get("cookie"))) return unauthorized();
+  const session = getSession(request.headers.get("cookie"));
+  if (!session) return unauthorized();
+  if (!needRole(session, "operador")) return forbidden();
 
   let body: Record<string, unknown>;
   try {
@@ -111,6 +135,21 @@ export async function POST(request: NextRequest) {
   }
 
   const action = String(body.action ?? "");
+
+  // Acciones reservadas al rol admin
+  const adminOnly = new Set(["guardar_config", "test_email", "add_holiday", "delete_holiday"]);
+  if (adminOnly.has(action) && !needRole(session, "admin")) return forbidden();
+
+  const audit = (entityId: string | number, detail = "") =>
+    logAdminAudit({
+      userId: session.userId,
+      username: session.username,
+      action,
+      entity: action.includes("holiday") ? "feriado" : action.includes("config") || action === "test_email" ? "config" : "reclamo",
+      entityId,
+      detail: detail.slice(0, 300),
+      ip: getClientIp(request),
+    });
 
   try {
     switch (action) {
@@ -122,6 +161,7 @@ export async function POST(request: NextRequest) {
         if (!reclamo) throw new Error("Reclamo no encontrado.");
         if (respuesta.trim().length < 10) throw new Error("La respuesta debe tener al menos 10 caracteres.");
         updateReclamo(id, { respuesta, respondido_por: respondidoPor });
+        audit(id, "borrador guardado");
         return NextResponse.json({ ok: true, message: "Respuesta registrada. Ya puede enviarla con el botón 'Enviar respuesta'." });
       }
 
@@ -178,6 +218,7 @@ export async function POST(request: NextRequest) {
         updateReclamo(id, { respuesta_enviada_en: fechaEnvio });
         // Guardar messageId como evidencia de entrega
         getDb().prepare("UPDATE reclamos SET message_id = ? WHERE id = ?").run(result.messageId ?? "", id);
+        audit(id, `enviada a ${reclamo.email}${result.messageId ? " · " + result.messageId : ""}`);
 
         return NextResponse.json({
           ok: true,
@@ -200,6 +241,7 @@ export async function POST(request: NextRequest) {
         if (!reclamo) throw new Error("Reclamo no encontrado.");
         if (!reclamo.respuesta_enviada_en) throw new Error("Marque primero la respuesta como enviada.");
         updateReclamo(id, { estado: "atendido" });
+        audit(id, "atendido");
         return NextResponse.json({ ok: true, message: "Reclamo marcado como atendido." });
       }
 
@@ -208,12 +250,14 @@ export async function POST(request: NextRequest) {
         const motivo = String(body.motivo ?? "").slice(0, 500);
         if (motivo.trim().length < 10) throw new Error("El motivo de anulación es obligatorio (mínimo 10 caracteres). Queda registrado en el historial legal.");
         updateReclamo(id, { estado: "anulado", anulado_motivo: motivo });
+        audit(id, "anulado: " + motivo.slice(0, 120));
         return NextResponse.json({ ok: true, message: "Reclamo anulado con motivo. El registro se conserva." });
       }
 
       case "reabrir": {
         const id = Number(body.id);
         updateReclamo(id, { estado: "pendiente", anulado_motivo: "" });
+        audit(id, "reabierto");
         return NextResponse.json({ ok: true, message: "Reclamo reabierto." });
       }
 
@@ -232,6 +276,7 @@ export async function POST(request: NextRequest) {
         });
         if (!result.ok) throw new Error(result.error ?? "El envío falló.");
         updateReclamo(id, { email_cliente_enviado: 1 });
+        audit(id, "copia reenviada al consumidor");
         return NextResponse.json({ ok: true, message: "Copia reenviada al consumidor." });
       }
 
@@ -241,6 +286,7 @@ export async function POST(request: NextRequest) {
           throw new Error("Correo inválido.");
         }
         setReclamosConfig("notify_email", email);
+        audit(0, "notify_email → " + email);
         return NextResponse.json({ ok: true, message: `Notificaciones de reclamos se enviarán a ${email}.` });
       }
 
@@ -252,6 +298,7 @@ export async function POST(request: NextRequest) {
           html: `<p style="font-family:Arial,sans-serif">Correo de prueba del sistema de notificaciones de reclamos. Si lee esto, el destino <strong>${to}</strong> funciona correctamente.</p>`,
         });
         if (!result.ok) throw new Error(result.error ?? "El envío falló.");
+        audit(0, "prueba enviada a " + to);
         return NextResponse.json({ ok: true, message: `Correo de prueba enviado a ${to}. Revise la bandeja (y spam).` });
       }
 
@@ -259,12 +306,14 @@ export async function POST(request: NextRequest) {
         const fecha = String(body.fecha ?? "");
         if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) throw new Error("Fecha inválida (YYYY-MM-DD).");
         const added = addHoliday(fecha);
+        audit(0, "agregado " + fecha);
         return NextResponse.json({ ok: true, message: added ? "Feriado agregado." : "El feriado ya existía." });
       }
 
       case "delete_holiday": {
         const id = Number(body.id);
         deleteHoliday(id);
+        audit(id, "eliminado");
         return NextResponse.json({ ok: true, message: "Feriado eliminado." });
       }
 

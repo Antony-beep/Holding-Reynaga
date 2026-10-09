@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { isAuthorized } from "@/lib/auth";
+import { ROLE_LEVELS, getSession, type AdminSession } from "@/lib/auth";
 import {
   countLeads,
   countLeadsOlderThan,
@@ -8,6 +8,7 @@ import {
   getLeadById,
   getLeadsRange,
   getLeadStats,
+  logAdminAudit,
   searchLeads,
   setLeadMarketingConsent,
   updateLeadEstado,
@@ -27,9 +28,22 @@ const RANGES: Record<string, number | null> = {
 function unauthorized() {
   return NextResponse.json({ ok: false, error: "No autorizado." }, { status: 401 });
 }
+function forbidden() {
+  return NextResponse.json({ ok: false, error: "Su rol no permite esta acción." }, { status: 403 });
+}
+function needRole(session: AdminSession, role: "lectura" | "operador" | "admin") {
+  return ROLE_LEVELS[session.role] >= ROLE_LEVELS[role];
+}
+function getClientIp(req: NextRequest): string {
+  const fwd = req.headers.get("x-forwarded-for");
+  if (fwd) return fwd.split(",")[0].trim();
+  return req.headers.get("x-real-ip") ?? "unknown";
+}
 
 export async function GET(request: NextRequest) {
-  if (!isAuthorized(request.headers.get("cookie"))) return unauthorized();
+  const session = getSession(request.headers.get("cookie"));
+  if (!session) return unauthorized();
+  if (!needRole(session, "lectura")) return forbidden();
 
   const rangeParam = request.nextUrl.searchParams.get("range") ?? "week";
   const searchQuery = request.nextUrl.searchParams.get("q") ?? "";
@@ -61,7 +75,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  if (!isAuthorized(request.headers.get("cookie"))) return unauthorized();
+  const session = getSession(request.headers.get("cookie"));
+  if (!session) return unauthorized();
+  if (!needRole(session, "operador")) return forbidden();
+  const ip = getClientIp(request);
 
   let body: {
     action?: string;
@@ -78,15 +95,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: "Solicitud inválida." }, { status: 400 });
   }
 
+  const audit = (action: string, entityId: string | number, detail: string) =>
+    logAdminAudit({ userId: session.userId, username: session.username, action, entity: "lead", entityId, detail, ip });
+
   try {
     const id = Number(body.id);
     switch (body.action) {
+      // ---- Rol operador ----
       case "cambiar_estado": {
         updateLeadEstado(id, String(body.estado));
+        audit("lead_estado", id, String(body.estado));
         return NextResponse.json({ ok: true, message: "Estado actualizado a " + body.estado + "." });
       }
       case "guardar_notas": {
         updateLeadNotes(id, String(body.notes ?? ""));
+        audit("lead_notas", id, "");
         return NextResponse.json({ ok: true, message: "Notas guardadas." });
       }
       case "cambiar_promos": {
@@ -101,12 +124,16 @@ export async function POST(request: NextRequest) {
           const nota = `[${stamp}] Promociones ${acepta ? "autorizadas" : "revocadas"} — registrado desde el panel.`;
           updateLeadNotes(id, `${lead.lead_notes ? lead.lead_notes + "\n" : ""}${nota}`.slice(0, 2000));
         }
+        audit("lead_promos", id, acepta ? "autorizadas" : "revocadas");
         return NextResponse.json({
           ok: true,
           message: acepta ? "Promociones autorizadas." : "Promociones revocadas.",
         });
       }
+
+      // ---- Rol admin ----
       case "buscar_en_sheets": {
+        if (!needRole(session, "admin")) return forbidden();
         const email = String(body.email ?? "").trim();
         if (!email || !email.includes("@")) {
           return NextResponse.json(
@@ -118,6 +145,7 @@ export async function POST(request: NextRequest) {
         const enBase = searchLeads(email, null).filter(
           (l) => l.email.toLowerCase() === email.toLowerCase(),
         );
+        audit("sheets_busqueda", email, `${matches.length} fila(s)`);
         return NextResponse.json({
           ok: true,
           matches,
@@ -125,6 +153,7 @@ export async function POST(request: NextRequest) {
         });
       }
       case "borrar_de_sheets": {
+        if (!needRole(session, "admin")) return forbidden();
         const email = String(body.email ?? "").trim();
         const rows = Array.isArray(body.rows)
           ? body.rows.map(Number).filter((n) => Number.isInteger(n) && n >= 2 && n <= 100000)
@@ -136,6 +165,7 @@ export async function POST(request: NextRequest) {
           );
         }
         const deleted = await deleteLeadRowsFromSheet(email, rows);
+        audit("sheets_borrado", email, `${deleted} fila(s)`);
         return NextResponse.json({
           ok: true,
           deleted,
@@ -157,7 +187,10 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  if (!isAuthorized(request.headers.get("cookie"))) return unauthorized();
+  const session = getSession(request.headers.get("cookie"));
+  if (!session) return unauthorized();
+  if (!needRole(session, "admin")) return forbidden();
+  const ip = getClientIp(request);
 
   let body: {
     ids?: unknown;
@@ -186,6 +219,10 @@ export async function DELETE(request: NextRequest) {
       );
     }
     const deleted = deleteLeadsByIds(ids);
+    logAdminAudit({
+      userId: session.userId, username: session.username, action: "leads_borrados",
+      entity: "lead", entityId: ids.join(",").slice(0, 100), detail: `${deleted} registros`, ip,
+    });
     return NextResponse.json({ ok: true, deleted });
   }
 
@@ -208,5 +245,9 @@ export async function DELETE(request: NextRequest) {
   }
 
   const deleted = deleteLeadsOlderThan(olderThanDays);
+  logAdminAudit({
+    userId: session.userId, username: session.username, action: "leads_limpieza",
+    entity: "lead", detail: `antigüedad ${olderThanDays} días: ${deleted} registros`, ip,
+  });
   return NextResponse.json({ ok: true, deleted });
 }

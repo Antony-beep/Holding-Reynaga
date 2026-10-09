@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { ADMIN_COOKIE, isAdminConfigured, verifySessionToken } from "@/lib/auth";
+import { ADMIN_COOKIE, getSession } from "@/lib/auth";
 import AdminLogin from "@/components/admin/AdminLogin";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default async function AdminPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get(ADMIN_COOKIE)?.value;
-  const isAuthed = isAdminConfigured() && verifySessionToken(token);
+  const session = token ? getSession(`hr_admin=${token}`) : null;
 
   return (
     <main className="min-h-screen bg-deep-navy text-white py-10 px-4">
@@ -28,21 +28,7 @@ export default async function AdminPage() {
           </h1>
         </header>
 
-        {!isAdminConfigured() ? (
-          <div className="bg-red-500/10 border border-red-400/30 text-red-200 rounded-2xl p-6 max-w-xl">
-            <h2 className="font-display font-bold text-lg mb-2">
-              Panel no configurado
-            </h2>
-            <p className="text-sm leading-relaxed">
-              Falta definir la variable de entorno <code>ADMIN_PASSWORD</code> en
-              el servidor para activar el acceso.
-            </p>
-          </div>
-        ) : isAuthed ? (
-          <AdminDashboard />
-        ) : (
-          <AdminLogin />
-        )}
+        {session ? <AdminDashboard /> : <AdminLogin />}
       </div>
     </main>
   );

@@ -46,7 +46,8 @@ function timeAgoEs(dateStr: string | null): string {
   return `hace ${Math.floor(hours / 24)} días`;
 }
 
-export default function SocialManager() {
+export default function SocialManager({ role = "admin" }: { role?: "admin" | "operador" | "lectura" }) {
+  const canWrite = role === "admin" || role === "operador";
   const [posts, setPosts] = useState<SocialPost[]>([]);
   const [sync, setSync] = useState<Record<string, SocialSync>>({});
   const [loading, setLoading] = useState(true);
@@ -189,7 +190,8 @@ export default function SocialManager() {
         </div>
       )}
 
-      {/* Alta manual / emergencia */}
+      {/* Alta manual / emergencia (operador y admin) */}
+      {canWrite && (
       <form
         onSubmit={addPost}
         className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col gap-4"
@@ -250,6 +252,7 @@ export default function SocialManager() {
           Guardar publicación
         </button>
       </form>
+      )}
 
       {/* Listado de posts */}
       <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden overflow-x-auto">
@@ -326,14 +329,16 @@ export default function SocialManager() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <button
-                      onClick={() => removePost(post.id)}
-                      disabled={busy}
-                      aria-label={`Eliminar publicación ${post.id}`}
-                      className="text-white/40 hover:text-red-300 transition-colors disabled:opacity-40"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    {canWrite && (
+                      <button
+                        onClick={() => removePost(post.id)}
+                        disabled={busy}
+                        aria-label={`Eliminar publicación ${post.id}`}
+                        className="text-white/40 hover:text-red-300 transition-colors disabled:opacity-40"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))

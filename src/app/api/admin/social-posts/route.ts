@@ -3,12 +3,13 @@ import { revalidatePath } from "next/cache";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { isAuthorized } from "@/lib/auth";
+import { ROLE_LEVELS, getSession } from "@/lib/auth";
 import { checkBodySize, MAX_BODY_BYTES } from "@/lib/body-guard";
 import {
   deleteSocialPostsByIds,
   getSocialPosts,
   getSocialSync,
+  logAdminAudit,
   upsertSocialPost,
 } from "@/lib/db";
 import { isValidNetwork } from "@/lib/social";
@@ -20,6 +21,17 @@ const MAX_THUMB_BYTES = 8 * 1024 * 1024; // 8 MB
 
 function unauthorized() {
   return NextResponse.json({ ok: false, error: "No autorizado." }, { status: 401 });
+}
+function forbidden() {
+  return NextResponse.json({ ok: false, error: "Su rol no permite esta acción." }, { status: 403 });
+}
+function needRole(session: { role: "admin" | "operador" | "lectura" }, role: "lectura" | "operador") {
+  return ROLE_LEVELS[session.role] >= ROLE_LEVELS[role];
+}
+function getClientIp(req: NextRequest): string {
+  const fwd = req.headers.get("x-forwarded-for");
+  if (fwd) return fwd.split(",")[0].trim();
+  return req.headers.get("x-real-ip") ?? "unknown";
 }
 
 /** Ruta absoluta del archivo de thumbnail a partir de thumb_path público (/social/xxx.jpg). */
@@ -71,7 +83,8 @@ async function fetchTiktokOembed(postUrl: string) {
 }
 
 export async function GET(request: NextRequest) {
-  if (!isAuthorized(request.headers.get("cookie"))) return unauthorized();
+  const session = getSession(request.headers.get("cookie"));
+  if (!session) return unauthorized();
 
   const posts = getSocialPosts();
   const sync = getSocialSync();
@@ -82,7 +95,9 @@ export async function POST(request: NextRequest) {
   const sizeError = checkBodySize(request, MAX_BODY_BYTES.admin);
   if (sizeError) return sizeError;
 
-  if (!isAuthorized(request.headers.get("cookie"))) return unauthorized();
+  const session = getSession(request.headers.get("cookie"));
+  if (!session) return unauthorized();
+  if (!needRole(session, "operador")) return forbidden();
 
   let body: {
     network?: string;
@@ -142,6 +157,15 @@ export async function POST(request: NextRequest) {
       source: "manual",
     });
 
+    logAdminAudit({
+      userId: session.userId,
+      username: session.username,
+      action: "post_manual",
+      entity: "publicacion",
+      entityId: url.slice(0, 200),
+      ip: getClientIp(request),
+    });
+
     revalidatePath("/");
     return NextResponse.json({ ok: true });
   } catch (err) {
@@ -159,7 +183,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  if (!isAuthorized(request.headers.get("cookie"))) return unauthorized();
+  const session = getSession(request.headers.get("cookie"));
+  if (!session) return unauthorized();
+  if (!needRole(session, "operador")) return forbidden();
 
   let body: { ids?: unknown };
   try {
@@ -192,6 +218,15 @@ export async function DELETE(request: NextRequest) {
   }
 
   const deleted = deleteSocialPostsByIds(ids);
+  logAdminAudit({
+    userId: session.userId,
+    username: session.username,
+    action: "posts_borrados",
+    entity: "publicacion",
+    entityId: ids.join(",").slice(0, 100),
+    detail: `${deleted} publicaciones`,
+    ip: getClientIp(request),
+  });
   revalidatePath("/");
   return NextResponse.json({ ok: true, deleted });
 }

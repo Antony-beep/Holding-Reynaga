@@ -1,6 +1,7 @@
 import Database from "better-sqlite3";
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import type { ConsentEvidence, ConsentPurpose } from "./privacy";
 
 const DATA_DIR = process.env.HOLDING_DATA_DIR || path.join(process.cwd(), "data");
@@ -155,6 +156,41 @@ export function getDb(): Database.Database {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       fecha TEXT NOT NULL UNIQUE
     );
+
+    CREATE TABLE IF NOT EXISTS admin_users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL UNIQUE,
+      display_name TEXT NOT NULL DEFAULT '',
+      password_hash TEXT NOT NULL,
+      role TEXT NOT NULL CHECK (role IN ('admin','operador','lectura')),
+      active INTEGER NOT NULL DEFAULT 1,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      created_by TEXT NOT NULL DEFAULT '',
+      last_login_at TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS admin_sessions (
+      token TEXT PRIMARY KEY,
+      user_id INTEGER NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      expires_at TEXT NOT NULL,
+      ip TEXT NOT NULL DEFAULT '',
+      user_agent TEXT NOT NULL DEFAULT ''
+    );
+    CREATE INDEX IF NOT EXISTS idx_admin_sessions_user ON admin_sessions (user_id);
+
+    CREATE TABLE IF NOT EXISTS admin_audit (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      at TEXT NOT NULL DEFAULT (datetime('now')),
+      user_id INTEGER,
+      username TEXT NOT NULL DEFAULT '',
+      action TEXT NOT NULL,
+      entity TEXT NOT NULL DEFAULT '',
+      entity_id TEXT NOT NULL DEFAULT '',
+      detail TEXT NOT NULL DEFAULT '',
+      ip TEXT NOT NULL DEFAULT ''
+    );
+    CREATE INDEX IF NOT EXISTS idx_admin_audit_user ON admin_audit (user_id, at);
   `);
 
   const leadCols = db.prepare("PRAGMA table_info(leads)").all() as {
@@ -202,6 +238,19 @@ export function getDb(): Database.Database {
             db.exec(`ALTER TABLE ${table} ADD COLUMN ${name} ${type}`);
           }
         }
+      }
+
+      // Bootstrap de usuarios: si la tabla está vacía, sembrar el superadmin
+      // con la contraseña del entorno (ADMIN_PASSWORD). Si cambia el env,
+      // el login del usuario "admin" la acepta y re-sincroniza el hash (auth.ts).
+      const usersCount = (db
+        .prepare("SELECT COUNT(*) AS c FROM admin_users")
+        .get() as { c: number }).c;
+      if (usersCount === 0) {
+        const envPass = process.env.ADMIN_PASSWORD ?? "";
+        db.prepare(
+          "INSERT INTO admin_users (username, display_name, password_hash, role, created_by) VALUES (?, ?, ?, 'admin', 'bootstrap')",
+        ).run("admin", "Administrador", hashPassword(envPass));
       }
     }).immediate();
   } catch (error) {
@@ -837,4 +886,194 @@ export function getHolidayRows(): { id: number; fecha: string }[] {
   return getDb()
     .prepare("SELECT id, fecha FROM holidays ORDER BY fecha ASC")
     .all() as { id: number; fecha: string }[];
+}
+
+// ---- Usuarios, sesiones y auditoría del panel ----
+
+/** Hash scrypt nativo: "salt_hex:hash_hex". Verificado con timingSafeEqual en auth.ts. */
+export function hashPassword(password: string): string {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
+  return `${salt}:${hash}`;
+}
+
+export function verifyPasswordHash(password: string, stored: string): boolean {
+  const [salt, hash] = stored.split(":");
+  if (!salt || !hash) return false;
+  const candidate = crypto.scryptSync(password, salt, 64);
+  const expected = Buffer.from(hash, "hex");
+  if (candidate.length !== expected.length) return false;
+  return crypto.timingSafeEqual(candidate, expected);
+}
+
+export type AdminRole = "admin" | "operador" | "lectura";
+export const ADMIN_ROLES: AdminRole[] = ["admin", "operador", "lectura"];
+
+export interface AdminUserRow {
+  id: number;
+  username: string;
+  display_name: string;
+  password_hash: string;
+  role: AdminRole;
+  active: number;
+  created_at: string;
+  created_by: string;
+  last_login_at: string | null;
+}
+
+export function getAdminUserByUsername(username: string): AdminUserRow | undefined {
+  return getDb()
+    .prepare("SELECT * FROM admin_users WHERE username = ?")
+    .get(String(username).toLowerCase()) as AdminUserRow | undefined;
+}
+
+export function getAdminUserById(id: number): AdminUserRow | undefined {
+  return getDb()
+    .prepare("SELECT * FROM admin_users WHERE id = ?")
+    .get(id) as AdminUserRow | undefined;
+}
+
+export function listAdminUsers(): Omit<AdminUserRow, "password_hash">[] {
+  return getDb()
+    .prepare(
+      "SELECT id, username, display_name, role, active, created_at, created_by, last_login_at FROM admin_users ORDER BY id ASC",
+    )
+    .all() as Omit<AdminUserRow, "password_hash">[];
+}
+
+export function createAdminUser(input: {
+  username: string;
+  displayName: string;
+  password: string;
+  role: AdminRole;
+  createdBy: string;
+}): number {
+  const info = getDb()
+    .prepare(
+      "INSERT INTO admin_users (username, display_name, password_hash, role, created_by) VALUES (?, ?, ?, ?, ?)",
+    )
+    .run(
+      input.username.toLowerCase(),
+      input.displayName,
+      hashPassword(input.password),
+      input.role,
+      input.createdBy,
+    );
+  return Number(info.lastInsertRowid);
+}
+
+export function setAdminUserPassword(id: number, password: string): void {
+  getDb()
+    .prepare("UPDATE admin_users SET password_hash = ? WHERE id = ?")
+    .run(hashPassword(password), id);
+}
+
+export function setAdminUserActive(id: number, active: boolean): void {
+  getDb().prepare("UPDATE admin_users SET active = ? WHERE id = ?").run(active ? 1 : 0, id);
+}
+
+export function touchAdminUserLogin(id: number): void {
+  getDb()
+    .prepare("UPDATE admin_users SET last_login_at = datetime('now') WHERE id = ?")
+    .run(id);
+}
+
+// ---- Sesiones ----
+
+export interface AdminSessionRow {
+  token: string;
+  user_id: number;
+  created_at: string;
+  expires_at: string;
+  ip: string;
+  user_agent: string;
+}
+
+export function createAdminSession(input: {
+  userId: number;
+  hours: number;
+  ip: string;
+  userAgent: string;
+}): string {
+  const token = crypto.randomBytes(32).toString("hex");
+  const expires = new Date(Date.now() + input.hours * 60 * 60 * 1000)
+    .toISOString()
+    .replace("T", " ")
+    .slice(0, 19);
+  getDb()
+    .prepare("INSERT INTO admin_sessions (token, user_id, expires_at, ip, user_agent) VALUES (?, ?, ?, ?, ?)")
+    .run(token, input.userId, expires, input.ip, input.userAgent.slice(0, 300));
+  return token;
+}
+
+/** Devuelve la sesión con su usuario si el token es válido y el usuario está activo. */
+export function getAdminSession(token: string): { session: AdminSessionRow; user: AdminUserRow } | undefined {
+  const session = getDb()
+    .prepare("SELECT * FROM admin_sessions WHERE token = ?")
+    .get(token) as AdminSessionRow | undefined;
+  if (!session) return undefined;
+  if (new Date(session.expires_at.replace(" ", "T") + "Z").getTime() < Date.now()) {
+    deleteAdminSession(token);
+    return undefined;
+  }
+  const user = getAdminUserById(session.user_id);
+  if (!user || user.active !== 1) {
+    deleteAdminSession(token);
+    return undefined;
+  }
+  return { session, user };
+}
+
+export function deleteAdminSession(token: string): void {
+  getDb().prepare("DELETE FROM admin_sessions WHERE token = ?").run(token);
+}
+
+/** Revoca todas las sesiones de un usuario (al desactivarlo o cambiar su contraseña). */
+export function revokeAdminUserSessions(userId: number): void {
+  getDb().prepare("DELETE FROM admin_sessions WHERE user_id = ?").run(userId);
+}
+
+/** Limpieza oportunista de sesiones expiradas (se llama en cada login). */
+export function purgeExpiredAdminSessions(): void {
+  getDb()
+    .prepare("DELETE FROM admin_sessions WHERE expires_at < datetime('now')")
+    .run();
+}
+
+// ---- Auditoría ----
+
+export function logAdminAudit(input: {
+  userId: number | null;
+  username: string;
+  action: string;
+  entity?: string;
+  entityId?: string | number;
+  detail?: string;
+  ip?: string;
+}): void {
+  getDb()
+    .prepare(
+      "INSERT INTO admin_audit (user_id, username, action, entity, entity_id, detail, ip) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    )
+    .run(
+      input.userId ?? null,
+      input.username,
+      input.action,
+      input.entity ?? "",
+      String(input.entityId ?? ""),
+      (input.detail ?? "").slice(0, 500),
+      input.ip ?? "",
+    );
+}
+
+/** Últimos eventos de auditoría (para la pestaña de usuarios). */
+export function getAdminAuditTail(limit = 100) {
+  return getDb()
+    .prepare(
+      "SELECT at, username, action, entity, entity_id, detail, ip FROM admin_audit ORDER BY id DESC LIMIT ?",
+    )
+    .all(limit) as {
+      at: string; username: string; action: string;
+      entity: string; entity_id: string; detail: string; ip: string;
+    }[];
 }

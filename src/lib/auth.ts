@@ -1,70 +1,41 @@
 import crypto from "node:crypto";
+import {
+  getAdminSession,
+  getAdminUserByUsername,
+  verifyPasswordHash,
+  createAdminSession,
+  deleteAdminSession,
+  purgeExpiredAdminSessions,
+  touchAdminUserLogin,
+  logAdminAudit,
+  type AdminRole,
+  type AdminUserRow,
+} from "./db";
 
 /**
- * Autenticación simple del panel /admin:
- *  - Contraseña única en la variable de entorno ADMIN_PASSWORD
- *  - Sesión: cookie HttpOnly con token firmado (HMAC-SHA256 + expiración)
- *  - Sin dependencias externas ni base de datos de sesiones
+ * Autenticación del panel /admin con usuarios y roles:
+ *  - Usuarios en la tabla admin_users (scrypt nativo, sin dependencias)
+ *  - El usuario "admin" siembra desde ADMIN_PASSWORD y siempre la acepta
+ *    (break-glass: cambiarla en el VPS cambia su contraseña)
+ *  - Sesiones en tabla con identidad → revocación instantánea por usuario
+ *  - Roles: admin > operador > lectura
  */
 
 export const ADMIN_COOKIE = "hr_admin";
 const SESSION_HOURS = 8;
-const SALT = "hr-admin-session-v1";
 
-export function isAdminConfigured(): boolean {
-  return Boolean(process.env.ADMIN_PASSWORD);
-}
+export const ROLE_LEVELS: Record<AdminRole, number> = {
+  lectura: 0,
+  operador: 1,
+  admin: 2,
+};
 
-function deriveKey(): Buffer {
-  // Clave derivada de la propia contraseña: no requiere otra variable de entorno.
-  return crypto
-    .createHash("sha256")
-    .update(`${SALT}:${process.env.ADMIN_PASSWORD ?? ""}`)
-    .digest();
-}
-
-function hmac(value: string): string {
-  return crypto.createHmac("sha256", deriveKey()).update(value).digest("hex");
-}
-
-/** Compara dos strings en tiempo constante (evita ataques de timing). */
-function safeEqual(a: string, b: string): boolean {
-  const bufA = Buffer.from(a);
-  const bufB = Buffer.from(b);
-  if (bufA.length !== bufB.length) return false;
-  return crypto.timingSafeEqual(bufA, bufB);
-}
-
-export function checkPassword(password: string): boolean {
-  const real = process.env.ADMIN_PASSWORD ?? "";
-  if (!real) return false;
-  return safeEqual(password, real);
-}
-
-/** Crea el token de sesión: "<expiración-ms>.<firma>". */
-export function createSessionToken(): string {
-  const exp = String(Date.now() + SESSION_HOURS * 60 * 60 * 1000);
-  return `${exp}.${hmac(exp)}`;
-}
-
-/** Verifica firma y vigencia del token. */
-export function verifySessionToken(token: string | undefined): boolean {
-  if (!token) return false;
-  const [exp, sig] = token.split(".");
-  if (!exp || !sig) return false;
-  const expMs = Number(exp);
-  if (!Number.isFinite(expMs) || expMs < Date.now()) return false;
-  return safeEqual(sig, hmac(exp));
-}
-
-/** Lee y valida la cookie de admin desde un objeto Headers con cookie header. */
-export function isAuthorized(cookieHeader: string | null): boolean {
-  if (!cookieHeader) return false;
-  const cookies = cookieHeader.split(";").map((c) => c.trim());
-  const adminCookie = cookies.find((c) => c.startsWith(`${ADMIN_COOKIE}=`));
-  if (!adminCookie) return false;
-  const token = decodeURIComponent(adminCookie.slice(ADMIN_COOKIE.length + 1));
-  return verifySessionToken(token);
+export interface AdminSession {
+  userId: number;
+  username: string;
+  displayName: string;
+  role: AdminRole;
+  token: string;
 }
 
 export const SESSION_COOKIE_OPTIONS = {
@@ -75,28 +46,112 @@ export const SESSION_COOKIE_OPTIONS = {
   maxAge: SESSION_HOURS * 60 * 60,
 };
 
-// ---- Rate limit del login (en memoria, por IP) ----
+/** Verifica usuario+contraseña. Devuelve el usuario si es válido.
+ *  Regla break-glass: "admin" también acepta la contraseña del entorno
+ *  y, si aplica, re-sincroniza su hash en la base. */
+export function authenticate(
+  username: string,
+  password: string,
+): AdminUserRow | undefined {
+  const user = getAdminUserByUsername(username);
+  if (!user) return undefined;
+  if (user.active !== 1) return undefined;
+
+  if (verifyPasswordHash(password, user.password_hash)) return user;
+
+  // Break-glass: solo el usuario "admin" con rol admin acepta el env.
+  if (user.username === "admin" && user.role === "admin") {
+    const envPass = process.env.ADMIN_PASSWORD ?? "";
+    if (envPass && password === envPass) return user;
+  }
+  return undefined;
+}
+
+/** Crea sesión (token aleatorio en tabla) y devuelve el token para la cookie. */
+export function startSession(input: {
+  userId: number;
+  ip: string;
+  userAgent: string;
+}): string {
+  purgeExpiredAdminSessions();
+  return createAdminSession({ ...input, hours: SESSION_HOURS });
+}
+
+export function endSession(token: string): void {
+  deleteAdminSession(token);
+}
+
+/** Lee la cookie, valida la sesión y devuelve la identidad del usuario. */
+export function getSession(cookieHeader: string | null): AdminSession | null {
+  if (!cookieHeader) return null;
+  const cookies = cookieHeader.split(";").map((c) => c.trim());
+  const adminCookie = cookies.find((c) => c.startsWith(`${ADMIN_COOKIE}=`));
+  if (!adminCookie) return null;
+  const token = decodeURIComponent(adminCookie.slice(ADMIN_COOKIE.length + 1));
+  const found = getAdminSession(token);
+  if (!found) return null;
+  return {
+    userId: found.user.id,
+    username: found.user.username,
+    displayName: found.user.display_name || found.user.username,
+    role: found.user.role,
+    token,
+  };
+}
+
+export function registerSuccessfulLogin(userId: number): void {
+  touchAdminUserLogin(userId);
+}
+
+export function auditLogin(
+  userId: number | null,
+  username: string,
+  ok: boolean,
+  ip: string,
+): void {
+  logAdminAudit({
+    userId,
+    username,
+    action: ok ? "login_ok" : "login_fallido",
+    entity: "sesion",
+    ip,
+  });
+}
+
+// ---- Rate limit del login (en memoria, por IP y por usuario) ----
 const loginAttempts = new Map<string, { count: number; resetAt: number }>();
 const LOGIN_WINDOW_MS = 15 * 60_000;
 const LOGIN_MAX_FAILS = 5;
 
-export function isLoginRateLimited(ip: string): boolean {
+function isRateLimited(key: string): boolean {
   const now = Date.now();
-  const entry = loginAttempts.get(ip);
+  const entry = loginAttempts.get(key);
   if (!entry || entry.resetAt < now) return false;
   return entry.count >= LOGIN_MAX_FAILS;
 }
 
-export function registerLoginFail(ip: string): void {
+function registerFail(key: string): void {
   const now = Date.now();
-  const entry = loginAttempts.get(ip);
+  const entry = loginAttempts.get(key);
   if (!entry || entry.resetAt < now) {
-    loginAttempts.set(ip, { count: 1, resetAt: now + LOGIN_WINDOW_MS });
+    loginAttempts.set(key, { count: 1, resetAt: now + LOGIN_WINDOW_MS });
     return;
   }
   entry.count += 1;
 }
 
-export function clearLoginFails(ip: string): void {
-  loginAttempts.delete(ip);
+export function isLoginRateLimited(ip: string, username?: string): boolean {
+  if (isRateLimited(`ip:${ip}`)) return true;
+  if (username && isRateLimited(`user:${username.toLowerCase()}`)) return true;
+  return false;
+}
+
+export function registerLoginFail(ip: string, username?: string): void {
+  registerFail(`ip:${ip}`);
+  if (username) registerFail(`user:${username.toLowerCase()}`);
+}
+
+export function clearLoginFails(ip: string, username?: string): void {
+  loginAttempts.delete(`ip:${ip}`);
+  if (username) loginAttempts.delete(`user:${username.toLowerCase()}`);
 }

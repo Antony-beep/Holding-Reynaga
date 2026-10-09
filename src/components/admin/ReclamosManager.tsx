@@ -37,8 +37,10 @@ interface HolidayRow { id: number; fecha: string }
 
 type Tab = "reclamos" | "feriados" | "config";
 
-export default function ReclamosManager() {
+export default function ReclamosManager({ role = "admin" }: { role?: "admin" | "operador" | "lectura" }) {
   const [tab, setTab] = useState<Tab>("reclamos");
+  const isAdmin = role === "admin";
+  const canWrite = role === "admin" || role === "operador";
   const [reclamos, setReclamos] = useState<Reclamo[]>([]);
   const [holidays, setHolidays] = useState<HolidayRow[]>([]);
   const [notifyEmail, setNotifyEmail] = useState("");
@@ -124,14 +126,16 @@ export default function ReclamosManager() {
         <button onClick={load} className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm hover:bg-white/10 transition-colors flex items-center gap-2">
           <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} /> Actualizar
         </button>
-        <a href="/api/admin/reclamos?export=csv" className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm hover:bg-white/10 transition-colors flex items-center gap-2">
-          <Download className="w-4 h-4" /> Export CSV (INDECOPI)
-        </a>
+        {canWrite && (
+          <a href="/api/admin/reclamos?export=csv" className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm hover:bg-white/10 transition-colors flex items-center gap-2">
+            <Download className="w-4 h-4" /> Export CSV (INDECOPI)
+          </a>
+        )}
       </div>
 
       {/* Sub-pestañas */}
       <div className="flex gap-2 bg-white/5 border border-white/10 rounded-xl p-1.5 w-fit">
-        {([["reclamos", "Reclamos"], ["feriados", "Feriados"], ["config", "Configuración"]] as const).map(([key, label]) => (
+        {([["reclamos", "Reclamos"], ...(isAdmin ? [["feriados", "Feriados"] as const, ["config", "Configuración"] as const] : [])] as const).map(([key, label]) => (
           <button key={key} onClick={() => setTab(key)}
             className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${tab === key ? "bg-[#D4AF37] text-deep-navy" : "text-white/70 hover:text-white hover:bg-white/10"}`}>
             {label}
@@ -263,8 +267,21 @@ export default function ReclamosManager() {
 
               {/* Gestión de la respuesta */}
               <div className="border-t border-white/10 pt-4 flex flex-col gap-3">
+                {!canWrite ? (
+                  <div className="text-xs text-white/60 bg-white/5 rounded-xl p-3 leading-relaxed">
+                    <strong className="text-white/80">Respuesta registrada (modo lectura):</strong>
+                    <p className="mt-2 whitespace-pre-wrap">{selected.respuesta || "Sin respuesta registrada todavía."}</p>
+                    {selected.respuesta && (
+                      <p className="mt-2 text-white/40">
+                        Registrada por {selected.respondido_por || "—"}
+                        {selected.respuesta_enviada_en ? ` · enviada el ${selected.respuesta_enviada_en}` : " · aún no enviada"}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                <>
                 <p className="text-white/60 font-bold text-[10px] uppercase tracking-widest flex items-center gap-2">
-                  <Settings2 className="w-3.5 h-3.5 text-[#D4AF37]" /> Respuesta al consumidor (flujo: registrar â†’ enviar desde su correo â†’ marcar enviada)
+                  <Settings2 className="w-3.5 h-3.5 text-[#D4AF37]" /> Respuesta al consumidor (flujo: registrar â†' enviar desde su correo â†' marcar enviada)
                 </p>
                 <textarea
                   value={respuestaText}
@@ -333,6 +350,8 @@ export default function ReclamosManager() {
                     Respuesta registrada por <strong>{selected.respondido_por || "—"}</strong>
                     {selected.respuesta_enviada_en ? ` · enviada al consumidor el ${selected.respuesta_enviada_en}` : " · aún no marcada como enviada"}
                   </p>
+                )}
+                </>
                 )}
               </div>
             </div>

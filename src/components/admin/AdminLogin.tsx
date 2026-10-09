@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Lock, Loader2 } from "lucide-react";
+import { Lock, Loader2, User } from "lucide-react";
 
 export default function AdminLogin() {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,7 +17,7 @@ export default function AdminLogin() {
       const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ username, password }),
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
@@ -41,17 +42,31 @@ export default function AdminLogin() {
           Acceso restringido
         </h2>
         <p className="text-center text-white/50 text-sm mb-8">
-          Ingrese la contraseña de administrador para ver los leads.
+          Ingrese su usuario y contraseña del equipo.
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="relative">
+            <User className="w-4 h-4 text-white/30 absolute left-4 top-1/2 -translate-y-1/2" aria-hidden="true" />
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Usuario"
+              required
+              autoFocus
+              autoComplete="username"
+              autoCapitalize="none"
+              className="bg-white/10 border border-white/15 rounded-xl pl-11 pr-4 py-3.5 text-white placeholder:text-white/30 outline-none focus:border-[#D4AF37]/60 focus:ring-2 focus:ring-[#D4AF37]/20 transition-all"
+            />
+          </div>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Contraseña"
             required
-            autoFocus
+            autoComplete="current-password"
             className="bg-white/10 border border-white/15 rounded-xl px-4 py-3.5 text-white placeholder:text-white/30 outline-none focus:border-[#D4AF37]/60 focus:ring-2 focus:ring-[#D4AF37]/20 transition-all"
           />
           {error && (
