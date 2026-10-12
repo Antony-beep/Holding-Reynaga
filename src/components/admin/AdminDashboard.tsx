@@ -13,10 +13,12 @@ import {
   Megaphone,
   UserX,
   Users,
+  HelpCircle,
 } from "lucide-react";
 import SocialManager from "./SocialManager";
 import ReclamosManager from "./ReclamosManager";
 import UsersManager from "./UsersManager";
+import HelpModal from "./HelpModal";
 
 type Role = "admin" | "operador" | "lectura";
 const ROLE_LEVELS_UI: Record<Role, number> = { lectura: 0, operador: 1, admin: 2 };
@@ -81,6 +83,7 @@ export default function AdminDashboard() {
     { row: number; id: string; createdAt: string; name: string; phone: string; email: string }[]
   >([]);
   const [sheetSearched, setSheetSearched] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const load = useCallback(
     async (r: RangeKey, q?: string) => {
@@ -339,6 +342,15 @@ export default function AdminDashboard() {
           )}
         </div>
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => setHelpOpen(true)}
+            title="Guía: estados de leads, promos y tipos de usuario"
+            aria-label="Abrir guía de ayuda del panel"
+            className="bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-xl p-2.5 text-[#D4AF37] hover:bg-[#D4AF37]/20 transition-colors flex items-center gap-2"
+          >
+            <HelpCircle className="w-4 h-4" />
+            <span className="hidden sm:inline text-xs font-bold uppercase tracking-wider">Guía</span>
+          </button>
           {me && (
             <span className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs flex items-center gap-2">
               <Users className="w-4 h-4 text-[#D4AF37]" />
@@ -775,6 +787,8 @@ export default function AdminDashboard() {
       {view === "reclamos" && <ReclamosManager role={myRole} />}
 
       {view === "usuarios" && <UsersManager />}
+
+      <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} />
     </div>
   );
 }
