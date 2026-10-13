@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   Loader2, RefreshCw, AlertTriangle, CheckCircle2, Clock3,
-  XCircle, Save, Send, Download, Printer, CalendarDays, Settings2, ListTodo,
+  XCircle, Save, Send, Download, Printer, CalendarDays, Settings2, ListTodo, BookOpen,
 } from "lucide-react";
+import ReclamosGuideModal from "./ReclamosGuideModal";
 
 interface Reclamo {
   id: number;
@@ -55,6 +56,7 @@ export default function ReclamosManager({ role = "admin" }: { role?: "admin" | "
   const [respuestaText, setRespuestaText] = useState("");
   const [respondidoPor, setRespondidoPor] = useState("");
   const [anularMotivo, setAnularMotivo] = useState("");
+  const [guideOpen, setGuideOpen] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -131,6 +133,14 @@ export default function ReclamosManager({ role = "admin" }: { role?: "admin" | "
             <Download className="w-4 h-4" /> Export CSV (INDECOPI)
           </a>
         )}
+        <button
+          onClick={() => setGuideOpen(true)}
+          title="Guía de atención de reclamos y quejas según INDECOPI"
+          aria-label="Abrir guía de reclamos"
+          className="bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-xl px-4 py-2 text-sm text-[#D4AF37] hover:bg-[#D4AF37]/20 transition-colors flex items-center gap-2"
+        >
+          <BookOpen className="w-4 h-4" /> Guía de Reclamos
+        </button>
       </div>
 
       {/* Sub-pestañas */}
@@ -449,6 +459,8 @@ export default function ReclamosManager({ role = "admin" }: { role?: "admin" | "
           </div>
         </div>
       )}
+
+      <ReclamosGuideModal open={guideOpen} onClose={() => setGuideOpen(false)} />
     </div>
   );
 }

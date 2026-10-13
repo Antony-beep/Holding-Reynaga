@@ -181,6 +181,7 @@ export async function POST(request: NextRequest) {
         // Enviar vía Resend con PDF adjunto
         const result = await sendMail({
           to: reclamo.email,
+          replyTo: getNotifyEmail(),
           subject: `Respuesta a su reclamo ${reclamo.codigo} — Holding Reynaga`,
           html: `
             <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
@@ -270,6 +271,7 @@ export async function POST(request: NextRequest) {
         const pdfBase64 = Buffer.from(pdf).toString("base64");
         const result = await sendMail({
           to: reclamo.email,
+          replyTo: getNotifyEmail(),
           subject: `Hoja de Reclamación ${reclamo.codigo} — Holding Reynaga (reenvío de copia)`,
           html: `<p style="font-family:Arial,sans-serif">Adjuntamos nuevamente la copia de su hoja de reclamación <strong>${reclamo.codigo}</strong>.</p>`,
           attachments: [{ filename: `${reclamo.codigo}.pdf`, content: pdfBase64 }],

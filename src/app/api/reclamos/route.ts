@@ -145,6 +145,7 @@ export async function POST(request: NextRequest) {
     try {
       const result = await sendMail({
         to: reclamo.email,
+        replyTo: getNotifyEmail(),
         subject: `Hoja de Reclamación ${codigo} — Holding Reynaga`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto;">
