@@ -185,7 +185,7 @@ export default function ReclamosManager({ role = "admin" }: { role?: "admin" | "
                 <tbody>
                   {loading ? (
                     <tr><td colSpan={8} className="px-4 py-12 text-center text-white/50">
-                      <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" /> Cargando reclamosâ€¦
+                      <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" /> Cargando reclamos…
                     </td></tr>
                   ) : reclamos.length === 0 ? (
                     <tr><td colSpan={8} className="px-4 py-12 text-center text-white/50">
@@ -219,7 +219,7 @@ export default function ReclamosManager({ role = "admin" }: { role?: "admin" | "
                           {r.estado}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-white/40">â†’</td>
+                      <td className="px-4 py-3 text-white/40">→</td>
                     </tr>
                   ))}
                 </tbody>
@@ -291,12 +291,12 @@ export default function ReclamosManager({ role = "admin" }: { role?: "admin" | "
                 ) : (
                 <>
                 <p className="text-white/60 font-bold text-[10px] uppercase tracking-widest flex items-center gap-2">
-                  <Settings2 className="w-3.5 h-3.5 text-[#D4AF37]" /> Respuesta al consumidor (flujo: registrar â†' enviar desde su correo â†' marcar enviada)
+                  <Settings2 className="w-3.5 h-3.5 text-[#D4AF37]" /> Respuesta al consumidor (flujo: registrar → enviar desde su correo → marcar enviada)
                 </p>
                 <textarea
                   value={respuestaText}
                   onChange={(e) => setRespuestaText(e.target.value)}
-                  placeholder="Escriba la respuesta formal que se enviará al consumidorâ€¦"
+                  placeholder="Escriba la respuesta formal que se enviará al consumidor…"
                   className="bg-white/10 border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-[#D4AF37]/60 min-h-[110px]"
                   maxLength={3000}
                 />
@@ -434,7 +434,7 @@ export default function ReclamosManager({ role = "admin" }: { role?: "admin" | "
             </div>
             <p className="text-[11px] text-white/40 leading-relaxed">
               Recomendación: enviar el email de prueba tras cada cambio. Un correo muerto
-              significa que nadie se entera de los reclamos â†’ plazos legales incumplidos.
+              significa que nadie se entera de los reclamos → plazos legales incumplidos.
             </p>
           </div>
 

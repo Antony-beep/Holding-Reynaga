@@ -14,11 +14,13 @@ import {
   UserX,
   Users,
   HelpCircle,
+  Download,
 } from "lucide-react";
 import SocialManager from "./SocialManager";
 import ReclamosManager from "./ReclamosManager";
 import UsersManager from "./UsersManager";
 import HelpModal from "./HelpModal";
+import LeadDetailModal from "./LeadDetailModal";
 
 type Role = "admin" | "operador" | "lectura";
 const ROLE_LEVELS_UI: Record<Role, number> = { lectura: 0, operador: 1, admin: 2 };
@@ -43,6 +45,11 @@ interface Lead {
   lead_notes: string;
   marketing_consent_accepted: number | null;
   marketing_revoked_at: string | null;
+  consent_recorded_at: string | null;
+  policy_version: string | null;
+  required_consent_text: string | null;
+  marketing_consent_text: string | null;
+  consent_purpose: string | null;
   sheets_synced: number;
 }
 
@@ -84,6 +91,7 @@ export default function AdminDashboard() {
   >([]);
   const [sheetSearched, setSheetSearched] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [detailLead, setDetailLead] = useState<Lead | null>(null);
 
   const load = useCallback(
     async (r: RangeKey, q?: string) => {
@@ -293,6 +301,11 @@ export default function AdminDashboard() {
     [leads],
   );
 
+  const onNotesSaved = (leadId: number, notes: string) => {
+    setDetailLead((prev) => (prev && prev.id === leadId ? { ...prev, lead_notes: notes } : prev));
+    setLeads((prev) => prev.map((l) => (l.id === leadId ? { ...l, lead_notes: notes } : l)));
+  };
+
   return (
     <div className="flex flex-col gap-6">
       {/* Switcher de vistas + logout global */}
@@ -390,6 +403,15 @@ export default function AdminDashboard() {
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             Actualizar
           </button>
+          {can("operador") && (
+            <a
+              href="/api/admin/leads?export=csv"
+              className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm hover:bg-white/10 transition-colors flex items-center gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Export CSV
+            </a>
+          )}
         </div>
       </div>
 
@@ -545,7 +567,15 @@ export default function AdminDashboard() {
                       {lead.source === "fab" ? "Reserva" : "Dossier"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 font-medium text-white">{lead.name}</td>
+                  <td className="px-4 py-3 font-medium text-white">
+                    <button
+                      onClick={() => setDetailLead(lead)}
+                      title="Ver detalle: mensaje del cliente, notas y consentimiento"
+                      className="text-left underline decoration-white/20 underline-offset-2 hover:decoration-[#D4AF37] hover:text-[#D4AF37] transition-colors"
+                    >
+                      {lead.name}
+                    </button>
+                  </td>
                   <td className="px-4 py-3 text-white/70">{lead.document}</td>
                   <td className="px-4 py-3 text-white/70">{lead.phone}</td>
                   <td className="px-4 py-3 text-white/70">{lead.email}</td>
@@ -789,6 +819,15 @@ export default function AdminDashboard() {
       {view === "usuarios" && <UsersManager />}
 
       <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} />
+
+      {detailLead && (
+        <LeadDetailModal
+          lead={detailLead}
+          readOnly={readOnly}
+          onClose={() => setDetailLead(null)}
+          onNotesSaved={onNotesSaved}
+        />
+      )}
     </div>
   );
 }

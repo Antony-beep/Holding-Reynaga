@@ -45,6 +45,46 @@ export async function GET(request: NextRequest) {
   if (!session) return unauthorized();
   if (!needRole(session, "lectura")) return forbidden();
 
+  // Export CSV de leads — requiere operador (mismos criterios que el CSV INDECOPI)
+  if (request.nextUrl.searchParams.get("export") === "csv") {
+    if (!needRole(session, "operador")) return forbidden();
+    logAdminAudit({
+      userId: session.userId,
+      username: session.username,
+      action: "csv_export_leads",
+      entity: "lead",
+      ip: getClientIp(request),
+    });
+    const rows = getLeadsRange(null, 20000);
+    const header = [
+      "id", "fecha_registro_utc", "origen", "nombre", "documento", "telefono",
+      "email", "interes", "mensaje", "estado_lead", "notas_internas",
+      "promos_aceptadas", "promos_revocadas_en",
+      "consent_recorded_at", "policy_version", "required_consent_text",
+      "required_consent_accepted", "marketing_consent_text",
+      "marketing_consent_accepted", "consent_purpose",
+    ];
+    const esc = (v: string) => `"${(v ?? "").replace(/"/g, '""').replace(/\r?\n/g, " ")}"`;
+    const lines = [header.join(",")];
+    for (const r of rows) {
+      lines.push([
+        r.id, r.created_at, r.source, r.name, r.document ?? "", r.phone,
+        r.email, r.interest, r.message, r.estado_lead, r.lead_notes,
+        r.marketing_consent_accepted ?? "", r.marketing_revoked_at ?? "",
+        r.consent_recorded_at ?? "", r.policy_version ?? "", r.required_consent_text ?? "",
+        r.required_consent_accepted ?? "", r.marketing_consent_text ?? "",
+        r.marketing_consent_accepted ?? "", r.consent_purpose ?? "",
+      ].map((v) => esc(String(v))).join(","));
+    }
+    const csv = "\uFEFF" + lines.join("\r\n"); // BOM para Excel en Windows
+    return new NextResponse(csv, {
+      headers: {
+        "Content-Type": "text/csv; charset=utf-8",
+        "Content-Disposition": 'attachment; filename="leads.csv"',
+      },
+    });
+  }
+
   const rangeParam = request.nextUrl.searchParams.get("range") ?? "week";
   const searchQuery = request.nextUrl.searchParams.get("q") ?? "";
   const days = RANGES[rangeParam];

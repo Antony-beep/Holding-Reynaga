@@ -1077,3 +1077,14 @@ export function getAdminAuditTail(limit = 100) {
       entity: string; entity_id: string; detail: string; ip: string;
     }[];
 }
+
+/** IDs de usuarios con sesión vigente ahora (badge "En línea" del panel). */
+export function getActiveSessionUserIds(): number[] {
+  return (
+    getDb()
+      .prepare(
+        "SELECT DISTINCT user_id AS id FROM admin_sessions WHERE expires_at > datetime('now')",
+      )
+      .all() as { id: number }[]
+  ).map((r) => r.id);
+}

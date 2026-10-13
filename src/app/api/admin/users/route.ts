@@ -4,6 +4,7 @@ import { getSession, ROLE_LEVELS } from "@/lib/auth";
 import {
   ADMIN_ROLES,
   createAdminUser,
+  getActiveSessionUserIds,
   getAdminAuditTail,
   getAdminUserById,
   getAdminUserByUsername,
@@ -37,6 +38,7 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({
     ok: true,
     users: listAdminUsers(),
+    online: getActiveSessionUserIds(),
     audit: getAdminAuditTail(60),
   });
 }

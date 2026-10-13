@@ -45,6 +45,7 @@ function randomPassword(): string {
 
 export default function UsersManager() {
   const [users, setUsers] = useState<AdminUser[]>([]);
+  const [online, setOnline] = useState<number[]>([]);
   const [audit, setAudit] = useState<AuditRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -64,6 +65,7 @@ export default function UsersManager() {
         throw new Error(data.error || "No se pudieron cargar los usuarios.");
       }
       setUsers(data.users ?? []);
+      setOnline(data.online ?? []);
       setAudit(data.audit ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error inesperado.");
@@ -132,6 +134,15 @@ export default function UsersManager() {
             <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
             Usuarios activos: <strong className="text-white">{users.filter((u) => u.active === 1).length}</strong>
           </span>
+          {online.length > 0 && (
+            <span className="bg-green-500/10 border border-green-400/30 rounded-xl px-4 py-2 text-sm flex items-center gap-2 text-green-200">
+              <span className="relative flex h-2.5 w-2.5" aria-hidden="true">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-60"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400"></span>
+              </span>
+              En línea: <strong>{online.length}</strong>
+            </span>
+          )}
         </div>
         <div className="flex gap-2">
           <button onClick={load} className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm hover:bg-white/10 transition-colors flex items-center gap-2">
@@ -243,7 +254,15 @@ export default function UsersManager() {
                 </td>
                 <td className="px-4 py-3">
                   {u.active === 1 ? (
-                    <CheckCircle2 className="w-4 h-4 text-green-400" />
+                    <div className="flex flex-col gap-1">
+                      <CheckCircle2 className="w-4 h-4 text-green-400" />
+                      {online.includes(u.id) && (
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-green-300 flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" aria-hidden="true"></span>
+                          En línea
+                        </span>
+                      )}
+                    </div>
                   ) : (
                     <Ban className="w-4 h-4 text-red-400" />
                   )}

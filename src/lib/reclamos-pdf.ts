@@ -9,7 +9,7 @@ import { labelBien } from "./schemas/reclamo";
  */
 
 const NAVY = rgb(0.039, 0.098, 0.192); // #0a1931
-const GOLD = rgb(0.71, 0.686, 0.059); // aproximado #b5af0fâ†’ uso dorado sobrio
+const GOLD = rgb(0.71, 0.686, 0.059); // aproximado #b5af0f→ uso dorado sobrio
 const BLACK = rgb(0.1, 0.1, 0.12);
 const GRAY = rgb(0.45, 0.45, 0.5);
 
