@@ -81,6 +81,98 @@ def first(selector_root, css_selector):
     return nodes[0] if nodes else None
 
 
+# ---------------------------------------------------------------- Decodo (Web Data API)
+
+# Capa anti-bloqueos: /scrape de Decodo trae el HTML renderizado a través
+# de IPs residenciales rotativas. Si falla o no hay clave, cada red cae a
+# su camino stealth local actual (fallback, no hay regresión).
+DECODO_API_KEY = ENV.get("DECODO_API_KEY", "").strip()
+DECODO_SCRAPE_URL = "https://data.decodo.com/v1/scrape"
+
+
+def decodo_fetch(url: str, timeout: int = 90):
+    """
+    Trae el HTML renderizado de una página vía Decodo /scrape (rotación de
+    IPs, anti-bot y render JS con headless:"html"). Devuelve un Selector
+    de Scrapling: el parsing de siempre funciona igual. Lanza excepción si
+    algo falla — el llamador decide el fallback.
+    """
+    from scrapling.parser import Selector
+
+    from curl_cffi import requests as creq
+
+    if not DECODO_API_KEY:
+        raise RuntimeError("sin DECODO_API_KEY en .env.local")
+
+    r = creq.post(
+        DECODO_SCRAPE_URL,
+        headers={
+            "Authorization": f"Bearer {DECODO_API_KEY}",
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        json={"url": url, "headless": "html"},
+        timeout=timeout,
+    )
+    if r.status_code != 200:
+        raise RuntimeError(f"Decodo HTTP {r.status_code}: {r.text[:120]}")
+    data = r.json()
+    results = data.get("results") or []
+    if not results:
+        raise RuntimeError("Decodo: respuesta sin results")
+    item = results[0]
+    status = item.get("status_code")
+    if status is not None and int(status) != 200:
+        raise RuntimeError(f"Decodo: la página respondió {status}")
+    html = item.get("content") or ""
+    if len(html) < 1000:
+        raise RuntimeError("Decodo: contenido vacío o mínimo")
+    return Selector(content=html)
+
+
+def _decodo_sano(sel, red: str) -> None:
+    """Chequeos de sanidad por red sobre el HTML que trajo Decodo.
+    Lanza excepción si la página evidentemente vino bloqueada."""
+    if red in ("facebook", "instagram"):
+        if first(sel, "form[action*='login']") is not None:
+            raise RuntimeError("login-wall (vía Decodo)")
+    if red == "tiktok":
+        # Sin JSON SSR y sin links de video en el grid → challenge WAF
+        if (
+            first(sel, "script#__UNIVERSAL_DATA_FOR_REHYDRATION__") is None
+            and first(sel, "a[href*='/video/']") is None
+        ):
+            raise RuntimeError("challenge WAF de TikTok (vía Decodo)")
+    if red == "facebook":
+        if first(sel, "div[role='article']") is None:
+            raise RuntimeError("sin articles (vía Decodo)")
+        # Debe haber al menos un link de post extraíble; si no, el markup
+        # llegó con otro layout y el parser local no lo entiende → fallback.
+        if first(sel, "a[href*='story_fbid'], a[href*='/posts/'], a[href*='/videos/']") is None:
+            raise RuntimeError("articles sin links de post (vía Decodo)")
+    if red == "instagram" and first(sel, "a[href^='/p/'], a[href*='/reel/']") is None:
+        raise RuntimeError("sin posts visibles (vía Decodo)")
+
+
+def fetch_page(url: str, red: str):
+    """
+    Dispatcher de red: Decodo primero (si hay clave), fallback al camino
+    stealth local. Devuelve un Selector listo para parsear, o None para
+    que el llamador use su propio camino stealth (session/fetcher).
+    """
+    if not DECODO_API_KEY:
+        return None
+    try:
+        log(f"{red}: probando Decodo (Web Data API)…")
+        sel = decodo_fetch(url)
+        _decodo_sano(sel, red)
+        log(f"{red}: Decodo OK")
+        return sel
+    except Exception as e:
+        log(f"{red}: Decodo falló ({e}) → fallback stealth local")
+        return None
+
+
 # ---------------------------------------------------------------- db utils
 
 def db_connect() -> sqlite3.Connection:
@@ -209,35 +301,38 @@ def download_image(url: str, retries: int = 2):
 
 def scrape_tiktok() -> list:
     """
-    Perfil de TikTok con sesión stealth y reintentos:
-    la 1ª pasada resuelve el challenge WAF y deja cookies; las siguientes
-    intentan hasta que el HTML del perfil realmente contenga videos
-    (el WAF a veces repite el challenge — se reintenta hasta 3 veces).
+    Perfil de TikTok: Decodo primero; si falla, sesión stealth local con
+    reintentos (la 1ª pasada resuelve el challenge WAF y deja cookies; las
+    siguientes intentan hasta que el HTML del perfil realmente contenga
+    videos — el WAF a veces repite el challenge — se reintenta hasta 3 veces).
     """
     import time as _time
 
     from scrapling.fetchers import StealthySession
 
-    log("TikTok: navegador stealth (doble pasada WAF)...")
     url = f"https://www.tiktok.com/@{TIKTOK_USER}"
-    with StealthySession(headless=True, google_search=False, block_images=True) as session:
-        session.fetch(url, network_idle=True)  # 1ª: resuelve el challenge
+    resp = fetch_page(url, "TikTok")
 
-        resp = None
-        for attempt in range(3):
-            r = session.fetch(url, network_idle=True)
-            html = r.html_content if hasattr(r, "html_content") else str(r.body)
-            if "/video/" in html or "__UNIVERSAL_DATA_FOR_REHYDRATION__" in html:
-                resp = r
-                break
-            log(f"TikTok: intento {attempt + 1} devolvió el challenge WAF, reintentando...")
-            _time.sleep(3)
+    if resp is None:
+        log("TikTok: navegador stealth (doble pasada WAF)...")
+        with StealthySession(headless=True, google_search=False, block_images=True) as session:
+            session.fetch(url, network_idle=True)  # 1ª: resuelve el challenge
 
-        if resp is None:
-            raise RuntimeError("el WAF de TikTok no dejó pasar tras 3 intentos")
+            resp = None
+            for attempt in range(3):
+                r = session.fetch(url, network_idle=True)
+                html = r.html_content if hasattr(r, "html_content") else str(r.body)
+                if "/video/" in html or "__UNIVERSAL_DATA_FOR_REHYDRATION__" in html:
+                    resp = r
+                    break
+                log(f"TikTok: intento {attempt + 1} devolvió el challenge WAF, reintentando...")
+                _time.sleep(3)
 
-    if resp.status != 200:
-        raise RuntimeError(f"perfil HTTP {resp.status}")
+            if resp is None:
+                raise RuntimeError("el WAF de TikTok no dejó pasar tras 3 intentos")
+
+        if resp.status != 200:
+            raise RuntimeError(f"perfil HTTP {resp.status}")
 
     node = first(resp, "script#__UNIVERSAL_DATA_FOR_REHYDRATION__::text")
     data = {}
@@ -307,9 +402,11 @@ def scrape_tiktok() -> list:
 
         # 1) Recorrer el grid: además del id, el <img> de portada de cada
         #    video lleva el caption completo en su atributo alt (respaldo
-        #    para cuando el oEmbed no devuelve título).
+        #    para cuando el oEmbed no devuelve título) y su URL de portada
+        #    real del CDN en src (primera fuente de miniaturas: cero
+        #    requests extra — el oEmbed de TikTok rate-limitea con 429).
         seen = set()
-        video_data = []  # [(video_id, dom_caption)]
+        video_data = []  # [(video_id, dom_caption, dom_thumb_url)]
         for a in resp.css(f"a[href*='@{TIKTOK_USER}/video/']"):
             href = (a.attrib or {}).get("href", "")
             m = re.search(r"/video/(\d+)", href)
@@ -317,18 +414,35 @@ def scrape_tiktok() -> list:
                 continue
             seen.add(m.group(1))
             dom_caption = ""
+            dom_thumb_url = ""
             img_el = first(a, "img")
             if img_el is not None:
-                dom_caption = ((img_el.attrib or {}).get("alt") or "")[:300]
-            video_data.append((m.group(1), dom_caption))
+                attribs = img_el.attrib or {}
+                dom_caption = (attribs.get("alt") or "")[:300]
+                dom_thumb_url = (attribs.get("src") or "").strip()
+                if not dom_thumb_url:
+                    srcset = (attribs.get("srcset") or "").split(",")[0].strip().split(" ")[0]
+                    dom_thumb_url = srcset
+            video_data.append((m.group(1), dom_caption, dom_thumb_url))
 
-        # 2) Por cada video (saltando los anclados): oEmbed para título +
-        #    thumbnail, con reintento y caption del DOM como respaldo.
-        for video_id, dom_caption in video_data[TIKTOK_PINNED_VIDEOS:TIKTOK_PINNED_VIDEOS + MAX_PER_NETWORK["tiktok"]]:
+        # 2) Por cada video (saltando los anclados): miniatura del DOM,
+        #    oEmbed para título (y thumb de respaldo) con reintentos,
+        #    caption del DOM como último recurso.
+        for video_id, dom_caption, dom_thumb_url in video_data[TIKTOK_PINNED_VIDEOS:TIKTOK_PINNED_VIDEOS + MAX_PER_NETWORK["tiktok"]]:
             url = f"https://www.tiktok.com/@{TIKTOK_USER}/video/{video_id}"
 
             caption = ""
             thumb_path = ""
+
+            # 2a) Miniatura desde el DOM renderizado (URL real del CDN)
+            if dom_thumb_url.startswith("http"):
+                try:
+                    img, ctype = download_image(dom_thumb_url)
+                    thumb_path = save_thumb("tiktok", url, img, ctype)
+                except Exception as e:
+                    log(f"  [warn] thumb DOM TikTok {video_id}: {e}")
+
+            # 2b) oEmbed: título (siempre) + thumb si el DOM no la logró
             for attempt in (1, 2):
                 try:
                     r = creq.get(
@@ -339,10 +453,14 @@ def scrape_tiktok() -> list:
                     if r.status_code == 200:
                         oe = r.json()
                         caption = (oe.get("title") or "")[:300]
-                        thumb_url = oe.get("thumbnail_url") or ""
-                        if thumb_url:
-                            img, ctype = download_image(thumb_url)
-                            thumb_path = save_thumb("tiktok", url, img, ctype)
+                        if not thumb_path:
+                            thumb_url = oe.get("thumbnail_url") or ""
+                            if thumb_url:
+                                img, ctype = download_image(thumb_url)
+                                thumb_path = save_thumb("tiktok", url, img, ctype)
+                    else:
+                        # El 429 de rate-limit era silencioso: ahora queda visible
+                        log(f"  [warn] oEmbed TikTok {video_id}: HTTP {r.status_code} (intento {attempt})")
                 except Exception as e:
                     log(f"  [warn] oEmbed TikTok {video_id} (intento {attempt}): {e}")
                 if caption:
@@ -388,23 +506,27 @@ def parse_relative_es(text: str):
 
 
 def scrape_facebook() -> list:
-    """Página pública con navegador stealth sobre www (mbasic está deprecado)."""
+    """Página pública: Decodo primero; navegador stealth local como respaldo."""
     from scrapling.fetchers import StealthyFetcher
 
-    log("Facebook: lanzando navegador stealth sobre www...")
-    resp = StealthyFetcher.fetch(
-        f"https://www.facebook.com/profile.php?id={FACEBOOK_PAGE_ID}",
-        headless=True,
-        google_search=False,
-        block_images=True,
-        network_idle=True,
-    )
-    if resp.status != 200:
-        raise RuntimeError(f"HTTP {resp.status}")
+    url = f"https://www.facebook.com/profile.php?id={FACEBOOK_PAGE_ID}"
+    resp = fetch_page(url, "Facebook")
 
-    # Detección de login-wall
-    if first(resp, "form[action*='login']") is not None:
-        raise RuntimeError("login-wall")
+    if resp is None:
+        log("Facebook: lanzando navegador stealth sobre www...")
+        resp = StealthyFetcher.fetch(
+            url,
+            headless=True,
+            google_search=False,
+            block_images=True,
+            network_idle=True,
+        )
+        if resp.status != 200:
+            raise RuntimeError(f"HTTP {resp.status}")
+
+        # Detección de login-wall
+        if first(resp, "form[action*='login']") is not None:
+            raise RuntimeError("login-wall")
 
     # Los posts de una Página sin sesión viven en div[role='article']
     posts = []
@@ -476,20 +598,24 @@ def scrape_facebook() -> list:
 # ---------------------------------------------------------------- Instagram
 
 def scrape_instagram() -> list:
-    """La mas dura: requiere navegador stealth (Camoufox). Best-effort."""
+    """La mas dura: Decodo primero; navegador stealth (Camoufox) como respaldo. Best-effort."""
     from scrapling.fetchers import StealthyFetcher
 
-    log("Instagram: lanzando navegador stealth...")
-    resp = StealthyFetcher.fetch(
-        f"https://www.instagram.com/{INSTAGRAM_USER}/",
-        headless=True,
-        google_search=False,
-        block_images=False,
-        network_idle=True,
-    )
+    url = f"https://www.instagram.com/{INSTAGRAM_USER}/"
+    resp = fetch_page(url, "Instagram")
 
-    if first(resp, "form[action*='login']") is not None:
-        raise RuntimeError("login-wall")
+    if resp is None:
+        log("Instagram: lanzando navegador stealth...")
+        resp = StealthyFetcher.fetch(
+            url,
+            headless=True,
+            google_search=False,
+            block_images=False,
+            network_idle=True,
+        )
+
+        if first(resp, "form[action*='login']") is not None:
+            raise RuntimeError("login-wall")
 
     posts = []
     seen = set()

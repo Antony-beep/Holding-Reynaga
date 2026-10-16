@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import Image from "next/image";
-import { getSocialFeed, pickFeaturedSocialPost } from "@/lib/db";
+import { getSocialFeed, getRecentSocialPosts } from "@/lib/db";
 import {
   NETWORK_LABELS,
   SOCIAL_LINKS,
@@ -73,13 +73,21 @@ function NetworkIcon({
 }
 
 /**
- * Sección de video destacado: reel vertical 9:16 (publicación aleatoria
- * del día) + mini-feed con la última publicación de cada red social.
- * Server Component puro: cero JS en cliente.
+ * Sección de video destacado: reel vertical 9:16 + mini-feed con la última
+ * publicación de cada red social. Server Component puro: cero JS en cliente.
+ *
+ * REGLA DE MINIATURAS: solo se exhiben publicaciones cuya portada existe
+ * físicamente en el disco del VPS (las que el scraper logró descargar).
+ * Posts sin miniatura no aparecen ni en el reel ni en el feed.
  */
 export default function SocialVideos() {
-  const post = pickFeaturedSocialPost();
-  const feed = getSocialFeed(5);
+  const pool = getRecentSocialPosts(12).filter((p) => thumbExists(p.thumb_path));
+  const post = pool.length > 0
+    ? pool[Math.floor(Math.random() * pool.length)]
+    : null;
+  const feed = getSocialFeed(12)
+    .filter((item: SocialPostRow) => thumbExists(item.thumb_path))
+    .slice(0, 5);
   const hasThumb = post ? thumbExists(post.thumb_path) : false;
 
   if (!post) {

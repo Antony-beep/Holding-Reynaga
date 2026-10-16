@@ -563,18 +563,16 @@ export function getSocialPosts(): SocialPostRow[] {
 }
 
 /**
- * Elige el post destacado del día: aleatorio entre los más recientes
- * (pool de hasta 12: los últimos de cada red). Se decide una vez por
- * regeneración ISR, así todos los visitantes del día ven el mismo.
+ * Pool de publicaciones recientes (hasta 12) para elegir el reel del día.
+ * La sección de videos filtra este pool a los posts con miniatura real
+ * en disco antes de elegir: solo se exhibe lo que cargó su portada.
  */
-export function pickFeaturedSocialPost(): SocialPostRow | null {
-  const pool = getDb()
+export function getRecentSocialPosts(limit = 12): SocialPostRow[] {
+  return getDb()
     .prepare(
-      "SELECT * FROM social_posts ORDER BY COALESCE(posted_at, created_at) DESC, id DESC LIMIT 12",
+      "SELECT * FROM social_posts ORDER BY COALESCE(posted_at, created_at) DESC, id DESC LIMIT ?",
     )
-    .all() as SocialPostRow[];
-  if (pool.length === 0) return null;
-  return pool[Math.floor(Math.random() * pool.length)];
+    .all(limit) as SocialPostRow[];
 }
 
 /**
