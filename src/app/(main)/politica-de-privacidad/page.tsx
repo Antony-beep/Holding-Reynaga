@@ -110,14 +110,17 @@ export default function PrivacyPolicyPage() {
             <section id="banco-de-datos" className="scroll-mt-32">
               <h2 className="font-display text-2xl font-black text-deep-navy tracking-tight mb-6">2. Banco de datos personales</h2>
               <p>
-                La denominación del banco o de los bancos aplicables es <strong>[[NOMBRE DEL BANCO DE DATOS]]</strong>
-                {" "}y su número en el Registro Nacional de Protección de Datos Personales es <strong>[[NÚMERO RNPDP]]</strong>.
-                Deben acreditarse la inscripción, la denominación y el alcance de cada banco; no se afirma que
-                estén inscritos o actualizados. {LEGAL_REVIEW_MARKER}.
+                La denominación del banco de datos inscrita es <strong>PROSPECTO DE CLIENTES</strong>,
+                {" "}con el código de inscripción <strong>INS-2026-6247</strong> en el Registro Nacional
+                de Protección de Datos Personales (inscrito el 16/10/2026). La finalidad inscrita
+                comprende la atención de consultas comerciales, cotizaciones, promociones,
+                programación de citas y el seguimiento de ventas del proyecto inmobiliario Torres
+                Titanium, mediante llamadas telefónicas, correo electrónico y WhatsApp. {LEGAL_REVIEW_MARKER}.
               </p>
               <p className="mt-4">
-                El código contempla registros de solicitudes comerciales y de reclamos, así como su
-                sincronización con Google Sheets. Esta descripción técnica no acredita el registro legal de los bancos.
+                El código contempla además el registro del Libro de Reclamaciones y la sincronización
+                con Google Sheets. La evaluación de si dichos registros requieren una inscripción
+                adicional en el RNPDP corresponde a la revisión legal pendiente. {LEGAL_REVIEW_MARKER}.
               </p>
             </section>
 
