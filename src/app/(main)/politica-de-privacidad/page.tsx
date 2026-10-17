@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Shield, Lock } from "lucide-react";
 import {
-  LEGAL_REVIEW_MARKER,
   PRIVACY_POLICY_DATE,
   PRIVACY_POLICY_VERSION,
 } from "@/lib/privacy";
 
 const description =
-  "Borrador de la política de privacidad de Holding Inversiones Reynaga S.A.C.: finalidades, proveedores, derechos y preferencias de cookies.";
+  "Política de privacidad de Holding Inversiones Reynaga S.A.C.: bases jurídicas, transferencias internacionales, plazos de conservación, derechos ARCO y cookies, conforme a la Ley N° 29733 y el D.S. N° 016-2024-JUS.";
 
 export const metadata: Metadata = {
   title: "Política de Privacidad",
@@ -27,17 +26,102 @@ export const metadata: Metadata = {
   },
 };
 
-const retentionPurposes = [
-  "Contacto solicitado",
-  "Cotización y seguimiento solicitado",
-  "Solicitud de reserva y documentación que pudiera formalizarse",
-  "Atención y conservación de reclamos o quejas",
-  "Promociones opcionales por WhatsApp, correo o llamadas",
-  "Analítica opcional con Google Analytics",
-  "Publicidad opcional con Meta Pixel",
-  "Preferencias de cookies en este navegador",
-  "Evidencia de consentimiento y de su revocación",
-  "Registros técnicos y prevención de abuso",
+/** Plazos de conservación por finalidad (dictamen legal, 17/10/2026). */
+const retentionTerms: Array<{ purpose: string; term: string }> = [
+  {
+    purpose: "Contacto solicitado",
+    term: "Dos (2) años contados desde el último contacto con el interesado, o hasta culminar la venta total del proyecto Torres Titanium, lo que ocurra primero.",
+  },
+  {
+    purpose: "Cotización y seguimiento solicitado",
+    term: "Dos (2) años contados desde el último contacto con el interesado, o hasta culminar la venta total del proyecto Torres Titanium, lo que ocurra primero.",
+  },
+  {
+    purpose: "Solicitud de reserva",
+    term: "Un (1) año si la separación no llega a formalizarse presencialmente. Formalizada la separación o la compraventa del inmueble, diez (10) años (prescripción contractual del Art. 2001 del Código Civil y normas tributarias aplicables).",
+  },
+  {
+    purpose: "Atención y conservación de reclamos o quejas",
+    term: "Cuatro (4) años desde la fecha de interposición del reclamo o queja.",
+  },
+  {
+    purpose: "Promociones opcionales por WhatsApp, correo o llamadas",
+    term: "Hasta que el titular revoque su consentimiento o por un plazo máximo de tres (3) años desde su última interacción con nuestras comunicaciones comerciales.",
+  },
+  {
+    purpose: "Analítica opcional con Google Analytics",
+    term: "Catorce (14) meses en los servidores de Google Analytics para datos a nivel de usuario o evento, o hasta que el usuario revoque su permiso de cookies.",
+  },
+  {
+    purpose: "Publicidad opcional con Meta Pixel",
+    term: "Noventa (90) días en la cookie del navegador (_fbp) y hasta ciento ochenta (180) días en la plataforma publicitaria de Meta, o hasta que el usuario revoque su permiso.",
+  },
+  {
+    purpose: "Preferencias de cookies en este navegador",
+    term: "Doce (12) meses desde la decisión; transcurrido ese plazo se solicita nuevamente la preferencia.",
+  },
+  {
+    purpose: "Evidencia de consentimiento y de su revocación",
+    term: "Cuatro (4) años posteriores a la finalización del tratamiento o a la revocación, con la única finalidad de acreditar el cumplimiento legal ante eventuales fiscalizaciones de la ANPDP o INDECOPI.",
+  },
+  {
+    purpose: "Registros técnicos y prevención de abuso",
+    term: "Seis (6) meses desde el evento técnico.",
+  },
+  {
+    purpose: "Registros de auditoría del panel de administración",
+    term: "Dos (2) años desde cada evento registrado, conforme a las exigencias de trazabilidad del Reglamento de la Ley N° 29733.",
+  },
+  {
+    purpose: "Sesiones del panel de administración",
+    term: "Ocho (8) horas.",
+  },
+];
+
+/** Inventario de cookies y almacenamiento (cotejado con la implementación). */
+const cookieInventory: Array<{ name: string; provider: string; category: string; duration: string; purpose: string }> = [
+  {
+    name: "cookie-consent (localStorage)",
+    provider: "Holding Reynaga (propia)",
+    category: "Necesaria",
+    duration: "12 meses",
+    purpose: "Guarda la elección del usuario sobre las categorías de cookies aceptadas o rechazadas, junto con la fecha y la versión de la política.",
+  },
+  {
+    name: "Token de Cloudflare Turnstile",
+    provider: "Cloudflare, Inc.",
+    category: "Necesaria (seguridad)",
+    duration: "Efímero, durante el envío del formulario",
+    purpose: "Verifica que el visitante que completa el formulario es una persona y protege el sitio contra bots; no se almacena de forma persistente.",
+  },
+  {
+    name: "_ga",
+    provider: "Google LLC (GA4)",
+    category: "Analítica (opcional)",
+    duration: "2 años",
+    purpose: "Distingue a los usuarios únicos mediante un identificador generado aleatoriamente para elaborar estadísticas de uso del sitio.",
+  },
+  {
+    name: "_ga_<ID de propiedad>",
+    provider: "Google LLC (GA4)",
+    category: "Analítica (opcional)",
+    duration: "2 años",
+    purpose: "Mantiene y conserva el estado de la sesión estadística en Google Analytics 4.",
+  },
+  {
+    name: "_fbp",
+    provider: "Meta Platforms, Inc.",
+    category: "Marketing (opcional)",
+    duration: "90 días",
+    purpose: "Almacena y realiza seguimiento de las visitas para mostrar publicidad relevante en Facebook e Instagram.",
+  },
+  {
+    name: "_fbc",
+    provider: "Meta Platforms, Inc.",
+    category: "Marketing (opcional)",
+    duration: "90 días",
+    purpose: "Registra si el visitante llegó al sitio a través de un clic en un anuncio de Meta.",
+  },
 ];
 
 export default function PrivacyPolicyPage() {
@@ -53,9 +137,9 @@ export default function PrivacyPolicyPage() {
             Política de <span className="text-primary">Privacidad</span>
           </h1>
           <p className="mt-6 text-white/60 font-medium text-sm tracking-widest uppercase">
-            Publicación del borrador: <time dateTime={PRIVACY_POLICY_DATE}>{PRIVACY_POLICY_DATE}</time>
+            Última actualización: <time dateTime={PRIVACY_POLICY_DATE}>{PRIVACY_POLICY_DATE}</time>
           </p>
-          <p className="mt-2 text-white/60 font-body text-sm">Versión {PRIVACY_POLICY_VERSION}</p>
+          <p className="mt-2 text-white/60 font-body text-sm">Versión {PRIVACY_POLICY_VERSION} · Revisada con asesoría legal</p>
         </div>
       </div>
 
@@ -64,11 +148,12 @@ export default function PrivacyPolicyPage() {
           <div className="flex items-start gap-4 rounded-2xl border border-primary/25 bg-primary/5 p-5 mb-8">
             <Shield className="w-6 h-6 text-primary shrink-0 mt-1" aria-hidden="true" />
             <div className="font-body text-sm leading-relaxed text-deep-navy/80">
-              <p className="font-bold text-deep-navy mb-2">Borrador con información pendiente de revisión legal</p>
+              <p className="font-bold text-deep-navy mb-2">Texto revisado con asesoría legal (octubre de 2026)</p>
               <p>
-                Los campos entre dobles corchetes no son datos acreditados ni condiciones aprobadas.
-                Cada punto pendiente se identifica con {LEGAL_REVIEW_MARKER}. Este documento no certifica
-                el cumplimiento legal ni la configuración de los servicios en producción.
+                Esta versión incorpora el dictamen de la asesoría legal: bases jurídicas conforme al
+                D.S. N° 016-2024-JUS, plazos de conservación definidos, garantías de transferencia
+                internacional y procedimiento de derechos ARCO. La inscripción del Libro de
+                Reclamaciones como banco de datos separado se encuentra en trámite ante el RNPDP.
               </p>
             </div>
           </div>
@@ -97,30 +182,34 @@ export default function PrivacyPolicyPage() {
                 con <strong className="text-deep-navy">RUC 20614870959</strong>. Estos dos datos fueron confirmados por el titular del proyecto.
               </p>
               <p className="mt-4">
-                Domicilio legal: <strong>Jr. Lino Nro. 132, Huancayo Cercado (Oficina 401, a una cuadra del Parque Grau), Huancayo, Junín, Perú</strong> — domicilio fiscal confirmado en la consulta pública del RUC N° 20614870959. {LEGAL_REVIEW_MARKER}.
+                Domicilio legal: <strong>Jr. Lino Nro. 132, Huancayo Cercado (Oficina 401, a una cuadra del Parque Grau), Huancayo, Junín, Perú</strong> — domicilio fiscal confirmado en la consulta pública del RUC N° 20614870959.
                 Las direcciones comerciales publicadas en el sitio no acreditan por sí solas el domicilio legal.
               </p>
               <p className="mt-4">
-                Canales publicados: <a href="mailto:holdingreynagaredes@gmail.com" className="text-primary font-bold hover:underline break-all">holdingreynagaredes@gmail.com</a>
+                Canales formales para el ejercicio de derechos y revocación: <a href="mailto:holdingreynagaredes@gmail.com" className="text-primary font-bold hover:underline break-all">holdingreynagaredes@gmail.com</a>
                 {" "}y <a href="tel:+51981407634" className="text-primary font-bold hover:underline">981407634</a>.
-                Su designación como canales formales para derechos y revocación está pendiente de confirmación legal. {LEGAL_REVIEW_MARKER}.
               </p>
             </section>
 
             <section id="banco-de-datos" className="scroll-mt-32">
               <h2 className="font-display text-2xl font-black text-deep-navy tracking-tight mb-6">2. Banco de datos personales</h2>
               <p>
-                La denominación del banco de datos inscrita es <strong>PROSPECTO DE CLIENTES</strong>,
+                La denominación del banco de datos inscrita es <strong>PROSPECTO DE CLIENTES - TORRES TITANIUM</strong>,
                 {" "}con el código de inscripción <strong>INS-2026-6247</strong> en el Registro Nacional
-                de Protección de Datos Personales (inscrito el 16/10/2026). La finalidad inscrita
-                comprende la atención de consultas comerciales, cotizaciones, promociones,
-                programación de citas y el seguimiento de ventas del proyecto inmobiliario Torres
-                Titanium, mediante llamadas telefónicas, correo electrónico y WhatsApp. {LEGAL_REVIEW_MARKER}.
+                de Protección de Datos Personales (16/10/2026), modificado mediante <strong>MOD-2026-2174</strong>
+                (17/10/2026). La finalidad inscrita comprende la atención de consultas comerciales,
+                cotizaciones, promociones, programación de citas y el seguimiento de ventas del proyecto
+                inmobiliario Torres Titanium, mediante llamadas telefónicas, correo electrónico y WhatsApp.
+                La modificación declara la transferencia internacional de datos hacia Estados Unidos
+                (Google LLC, Meta Platforms Inc., Resend Inc. y Cloudflare Inc.).
               </p>
               <p className="mt-4">
-                El código contempla además el registro del Libro de Reclamaciones y la sincronización
-                con Google Sheets. La evaluación de si dichos registros requieren una inscripción
-                adicional en el RNPDP corresponde a la revisión legal pendiente. {LEGAL_REVIEW_MARKER}.
+                El registro del Libro de Reclamaciones y su sincronización con Google Sheets constituyen
+                un banco de datos personales <strong>separado</strong>, en trámite de inscripción ante el
+                RNPDP bajo la denominación <strong>QUEJAS Y RECLAMOS</strong>, con flujo transfronterizo
+                declarado hacia Google LLC y Resend Inc. (Estados Unidos), conforme al dictamen legal.
+                Su finalidad es exclusivamente el cumplimiento de la obligación legal del Libro de
+                Reclamaciones (Ley N° 29571).
               </p>
             </section>
 
@@ -138,9 +227,16 @@ export default function PrivacyPolicyPage() {
                 El dossier PDF es público y se descarga directamente, sin completar un formulario.
                 La solicitud del archivo puede generar registros técnicos del alojamiento, pero no una autorización de promociones.
               </p>
-              <p className="mt-4">
-                La necesidad de cada campo, el tratamiento de datos de representantes o menores y la
-                minimización de los registros técnicos deben revisarse. {LEGAL_REVIEW_MARKER}.
+              <h3 className="font-display text-xl font-bold text-deep-navy mt-8 mb-4">Datos personales de menores de edad</h3>
+              <p>
+                Los servicios, proyectos inmobiliarios y formularios de este sitio web están dirigidos
+                exclusivamente a personas mayores de dieciocho (18) años con plena capacidad legal para
+                contratar. HOLDING INVERSIONES REYNAGA S.A.C. no recopila intencionalmente datos
+                personales de menores de edad. En caso de que detectemos o un padre, madre o tutor legal
+                nos informe que un menor de edad ha ingresado sus datos personales en nuestros
+                formularios sin el consentimiento de quienes ejercen su patria potestad o tutela,
+                procederemos a la eliminación inmediata e irreversible de dichos registros de nuestras
+                bases de datos.
               </p>
             </section>
 
@@ -157,9 +253,57 @@ export default function PrivacyPolicyPage() {
               <p className="mt-4">
                 Una respuesta al contacto pedido no es una autorización general para campañas promocionales.
                 Sin los datos necesarios puede no ser posible atender la solicitud concreta; ello no impide
-                consultar el sitio o descargar el dossier. La base jurídica de cada tratamiento y los campos
-                realmente necesarios deben definirse con asesoría legal. {LEGAL_REVIEW_MARKER}.
+                consultar el sitio o descargar el dossier.
               </p>
+              <h3 className="font-display text-xl font-bold text-deep-navy mt-8 mb-4">Bases jurídicas del tratamiento</h3>
+              <p className="mb-4">
+                Conforme al dictamen legal, cada finalidad se ampara en las siguientes bases de la
+                Ley N° 29733, su Reglamento (D.S. N° 016-2024-JUS) y la Ley N° 29571:
+              </p>
+              <div className="overflow-x-auto rounded-xl border border-black/10">
+                <table className="w-full text-left text-sm">
+                  <caption className="sr-only">Bases jurídicas por finalidad</caption>
+                  <thead className="bg-deep-navy text-white">
+                    <tr>
+                      <th scope="col" className="p-4 font-display">Finalidad</th>
+                      <th scope="col" className="p-4 font-display">Base jurídica</th>
+                      <th scope="col" className="p-4 font-display">Consentimiento</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-t border-black/5">
+                      <th scope="row" className="p-4 font-medium text-deep-navy">Atender consulta, cotización o solicitud de reserva</th>
+                      <td className="p-4">Consentimiento expreso del titular (Art. 13.5 de la Ley N° 29733) y ejecución de medidas precontractuales a solicitud del titular (Art. 14, inc. 5).</td>
+                      <td className="p-4">Casilla obligatoria del formulario sin premarcar, registrada con evidencia.</td>
+                    </tr>
+                    <tr className="border-t border-black/5">
+                      <th scope="row" className="p-4 font-medium text-deep-navy">Promociones por WhatsApp, llamada o correo</th>
+                      <td className="p-4">Consentimiento libre, previo, expreso, informado e inequívoco (Art. 13.5 de la Ley N° 29733 y Art. 58.1.e de la Ley N° 29571).</td>
+                      <td className="p-4">Casilla opcional (opt-in) sin premarcar; revocable en cualquier momento.</td>
+                    </tr>
+                    <tr className="border-t border-black/5">
+                      <th scope="row" className="p-4 font-medium text-deep-navy">Atención del Libro de Reclamaciones virtual</th>
+                      <td className="p-4">Cumplimiento de mandato legal (Art. 14, inc. 13 de la Ley N° 29733, en concordancia con el Art. 150 de la Ley N° 29571 y el D.S. N° 011-2011-PCM).</td>
+                      <td className="p-4">No requiere consentimiento (excepción legal); no condiciona la atención.</td>
+                    </tr>
+                    <tr className="border-t border-black/5">
+                      <th scope="row" className="p-4 font-medium text-deep-navy">Analítica del sitio (Google Analytics 4)</th>
+                      <td className="p-4">Consentimiento expreso por categoría de cookies (Art. 13.5 de la Ley N° 29733).</td>
+                      <td className="p-4">Bloqueado por defecto hasta aceptar la categoría analítica.</td>
+                    </tr>
+                    <tr className="border-t border-black/5">
+                      <th scope="row" className="p-4 font-medium text-deep-navy">Publicidad digital (Meta Pixel)</th>
+                      <td className="p-4">Consentimiento expreso por categoría de cookies (Art. 13.5 de la Ley N° 29733).</td>
+                      <td className="p-4">Bloqueado por defecto hasta aceptar la categoría marketing.</td>
+                    </tr>
+                    <tr className="border-t border-black/5">
+                      <th scope="row" className="p-4 font-medium text-deep-navy">Prevención de abuso, seguridad y auditoría</th>
+                      <td className="p-4">Obligación legal de implementar medidas de seguridad (Art. 16 de la Ley N° 29733 y D.S. N° 016-2024-JUS) y preparación/ejecución segura de la relación precontractual (Art. 14, inc. 5).</td>
+                      <td className="p-4">Aplicado técnicamente (Captcha, honeypot, límites de tasa por IP e identidad).</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
               <h3 className="font-display text-xl font-bold text-deep-navy mt-8 mb-4">Finalidades opcionales e independientes</h3>
               <ul className="list-disc pl-6 space-y-3">
                 <li><strong>Promociones por WhatsApp, correo o llamadas:</strong> requieren una autorización opcional específica del formulario. Puede rechazarse o revocarse sin perder la atención de la solicitud o del reclamo.</li>
@@ -168,72 +312,84 @@ export default function PrivacyPolicyPage() {
               </ul>
               <p className="mt-4">
                 Autorizar promociones de contacto no activa cookies de marketing, y aceptar cookies de
-                marketing no autoriza promociones por WhatsApp, correo o llamadas. El alcance de las
-                campañas y sus condiciones de autorización quedan pendientes de revisión. {LEGAL_REVIEW_MARKER}.
+                marketing no autoriza promociones por WhatsApp, correo o llamadas.
               </p>
             </section>
 
             <section id="destinatarios" className="scroll-mt-32">
               <h2 className="font-display text-2xl font-black text-deep-navy tracking-tight mb-6">5. Destinatarios y servicios de terceros</h2>
               <p className="mb-4">
-                La atención corresponde al personal autorizado del titular. El código contempla las siguientes
-                integraciones; su uso efectivo depende de la configuración del sitio. Deben confirmarse los
-                accesos, la entidad que presta cada servicio, su papel como encargado o destinatario y los
-                acuerdos aplicables. {LEGAL_REVIEW_MARKER}.
+                La atención corresponde al personal autorizado del titular. El sitio utiliza las siguientes
+                integraciones, cada una con el papel indicado (encargado del tratamiento o destinatario):
               </p>
               <ul className="list-disc pl-6 space-y-3">
                 <li><strong>Google Analytics:</strong> analítica de navegación, identificadores y datos técnicos, solo con autorización analítica.</li>
                 <li><strong>Google Sheets:</strong> sincronización y gestión de los registros de solicitudes y reclamos, incluidos sus datos y evidencia de consentimiento.</li>
                 <li><strong>Meta Pixel:</strong> eventos de navegación o conversión y publicidad, solo con autorización de cookies de marketing.</li>
                 <li><strong>WhatsApp:</strong> enlace externo que abre el usuario por iniciativa propia. Si envía un mensaje, WhatsApp trata los datos de contacto, el contenido y los datos técnicos de esa comunicación conforme a sus propias condiciones. Abrir el enlace no autoriza futuras promociones.</li>
-                <li><strong>Alojamiento y nube:</strong> operación del sitio y almacenamiento de registros por <strong>[[PROVEEDORES]]</strong>. {LEGAL_REVIEW_MARKER}.</li>
+                <li><strong>Alojamiento y nube:</strong> operación del sitio y almacenamiento de registros por <strong>Donweb (Dattatec.com SRL)</strong>, proveedor del servidor virtual privado (VPS) donde residen el sitio web y su base de datos principal.</li>
                 <li><strong>Resend:</strong> envío de correos y copias de reclamaciones; puede recibir dirección del destinatario, contenido y adjuntos necesarios para el envío.</li>
                 <li><strong>Cloudflare Turnstile:</strong> comprobación antiautomatización cuando está configurada, con token, IP y datos técnicos necesarios para la verificación.</li>
                 <li><strong>OpenStreetMap:</strong> solicitud de teselas para mostrar el mapa; su servidor puede recibir la IP y datos técnicos de la petición. No es una autorización para marketing de contacto.</li>
                 <li><strong>Autoridades competentes:</strong> documentación cuando exista un requerimiento u obligación aplicable, incluidos los relacionados con el Libro de Reclamaciones.</li>
               </ul>
-              <p className="mt-4">
-                El inventario de destinatarios, los permisos del personal y de las hojas compartidas, los
-                contratos y las condiciones de cada integración deben verificarse. No se afirma que existan
-                contratos firmados, certificaciones o garantías ya acreditadas. {LEGAL_REVIEW_MARKER}.
-              </p>
             </section>
 
             <section id="transferencias" className="scroll-mt-32">
-              <h2 className="font-display text-2xl font-black text-deep-navy tracking-tight mb-6">6. Posibles transferencias al extranjero</h2>
-              <p>
-                El uso de los servicios anteriores puede implicar tratamiento o almacenamiento fuera del Perú.
-                Deben identificarse <strong>[[DESTINATARIOS Y PAÍSES]]</strong> y documentarse las
-                {" "}<strong>[[GARANTÍAS DE TRANSFERENCIA]]</strong> exigibles para cada caso. {LEGAL_REVIEW_MARKER}.
+              <h2 className="font-display text-2xl font-black text-deep-navy tracking-tight mb-6">6. Transferencias internacionales y garantías</h2>
+              <p className="mb-4">
+                Informamos que, para la operación tecnológica del sitio web y la atención de solicitudes,
+                realizamos flujo transfronterizo (transferencia internacional) de datos personales hacia
+                servidores ubicados en los <strong>Estados Unidos de América</strong>, conforme a lo
+                declarado e inscrito ante el Registro Nacional de Protección de Datos Personales
+                (código de modificación <strong>MOD-2026-2174</strong>), a favor de los siguientes
+                destinatarios y encargados del tratamiento:
+              </p>
+              <ul className="list-disc pl-6 space-y-3">
+                <li><strong>Google LLC (Estados Unidos):</strong> para el respaldo documental en la nube (Google Sheets / Google Cloud) y, previo consentimiento, analítica web (Google Analytics 4).</li>
+                <li><strong>Meta Platforms, Inc. / WhatsApp LLC (Estados Unidos):</strong> para la atención de comunicaciones iniciadas vía WhatsApp y, previo consentimiento, herramientas publicitarias (Meta Pixel).</li>
+                <li><strong>Resend Inc. (Estados Unidos):</strong> para el despacho transaccional de correos electrónicos de confirmación y envío de constancias del Libro de Reclamaciones en PDF.</li>
+                <li><strong>Cloudflare, Inc. (Estados Unidos):</strong> para la seguridad perimetral y prevención de envíos automatizados (Cloudflare Turnstile).</li>
+                <li><strong>Donweb (Dattatec.com SRL):</strong> proveedor de infraestructura de servidor virtual privado (VPS) donde se aloja el sitio web y su base de datos principal.</li>
+              </ul>
+              <p className="mt-4">
+                <strong className="text-deep-navy">Garantías aplicables:</strong> dichas transferencias se
+                realizan al amparo del artículo 15 de la Ley N° 29733 y su Reglamento (D.S. N° 016-2024-JUS),
+                habiéndose suscrito con cada proveedor los respectivos Acuerdos de Encargo de Tratamiento
+                de Datos (Data Processing Addendum - DPA) y Cláusulas Contractuales Tipo, exigiendo
+                estándares internacionales de seguridad de la información (certificaciones ISO/IEC 27001
+                y SOC 2 Tipo II) que garantizan un nivel adecuado de protección equivalente al exigido
+                por la legislación peruana.
               </p>
               <p className="mt-4">
-                No se atribuye un país de destino, un contrato de transferencia o una certificación a un proveedor
-                sin comprobarlos. La base jurídica, la información al titular y las salvaguardas de estas
-                transferencias están pendientes de revisión. {LEGAL_REVIEW_MARKER}.
+                Adicionalmente, el mapa interactivo del sitio carga teselas gráficas desde los servidores
+                de OpenStreetMap Foundation (Reino Unido/UE), los cuales reciben únicamente la dirección
+                IP técnica necesaria para mostrar el mapa en su navegador; no se les transfiere la base
+                de datos de prospectos.
               </p>
             </section>
 
             <section id="conservacion" className="scroll-mt-32">
               <h2 className="font-display text-2xl font-black text-deep-navy tracking-tight mb-6">7. Plazos de conservación por finalidad</h2>
               <p className="mb-4">
-                No se ha acreditado un plazo de conservación para las siguientes finalidades. Deben definirse
-                la duración, el momento desde el que se cuenta y las reglas de eliminación o bloqueo de copias
-                y respaldos, considerando las obligaciones aplicables. {LEGAL_REVIEW_MARKER}.
+                Los datos personales no se conservan de forma indefinida una vez cumplida la finalidad
+                del tratamiento. Los plazos aplicables, definidos conforme al dictamen legal, son los
+                siguientes:
               </p>
               <div className="overflow-x-auto rounded-xl border border-black/10">
                 <table className="w-full text-left text-sm">
-                  <caption className="sr-only">Plazos pendientes de conservación por finalidad</caption>
+                  <caption className="sr-only">Plazos de conservación por finalidad</caption>
                   <thead className="bg-deep-navy text-white">
                     <tr>
                       <th scope="col" className="p-4 font-display">Finalidad</th>
-                      <th scope="col" className="p-4 font-display">Plazo y estado</th>
+                      <th scope="col" className="p-4 font-display">Plazo de conservación</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {retentionPurposes.map((purpose) => (
+                    {retentionTerms.map(({ purpose, term }) => (
                       <tr key={purpose} className="border-t border-black/5">
-                        <th scope="row" className="p-4 font-medium text-deep-navy">{purpose}</th>
-                        <td className="p-4">[[PLAZO]] · {LEGAL_REVIEW_MARKER}</td>
+                        <th scope="row" className="p-4 font-medium text-deep-navy align-top">{purpose}</th>
+                        <td className="p-4 align-top">{term}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -242,7 +398,7 @@ export default function PrivacyPolicyPage() {
               <p className="mt-4">
                 Revocar promociones o cookies detiene el tratamiento opcional correspondiente hacia el futuro;
                 no implica borrar automáticamente registros sujetos a obligaciones de conservación ni los
-                datos que terceros ya hayan recibido. Estas excepciones y sus plazos deben precisarse. {LEGAL_REVIEW_MARKER}.
+                datos que terceros ya hayan recibido.
               </p>
             </section>
 
@@ -257,35 +413,50 @@ export default function PrivacyPolicyPage() {
               <p className="mt-4">
                 Esta observación no es una auditoría de producción. No se afirma cifrado de las bases de datos,
                 acceso exclusivo a un equipo, certificaciones o ausencia de incidentes. La configuración efectiva,
-                las autorizaciones de acceso, las copias de respaldo y las medidas organizativas deben verificarse.
-                {" "}{LEGAL_REVIEW_MARKER}.
+                las autorizaciones de acceso, las copias de respaldo y las medidas organizativas se verifican
+                periódicamente. Los registros de auditoría del panel de administración se conservan dos (2) años
+                y las sesiones expiran a las ocho (8) horas.
               </p>
             </section>
 
             <section id="derechos" className="scroll-mt-32">
-              <h2 className="font-display text-2xl font-black text-deep-navy tracking-tight mb-6">9. Derechos, revocación y reclamación ante la ANPD</h2>
+              <h2 className="font-display text-2xl font-black text-deep-navy tracking-tight mb-6">9. Ejercicio de derechos ARCO y Portabilidad</h2>
               <p>
-                Puede solicitar el acceso, la rectificación, la cancelación y la oposición al tratamiento de sus
-                datos (derechos ARCO), así como la portabilidad cuando resulte aplicable conforme a la normativa.
-                Puede revocar la autorización de promociones sin condicionar la atención de una solicitud o reclamo.
-              </p>
-              <p className="mt-4">
-                Para dirigir una solicitud se publican el correo
+                El titular de los datos personales puede ejercer gratuitamente sus derechos de Información,
+                Acceso, Rectificación, Cancelación, Oposición, Revocación del consentimiento y Portabilidad
+                enviando una solicitud al correo electrónico
                 {" "}<a href="mailto:holdingreynagaredes@gmail.com" className="text-primary font-bold hover:underline break-all">holdingreynagaredes@gmail.com</a>
-                {" "}y el teléfono <a href="tel:+51981407634" className="text-primary font-bold hover:underline">981407634</a>.
-                Su habilitación formal, la persona responsable y los requisitos mínimos de identificación o
-                representación deben confirmarse. {LEGAL_REVIEW_MARKER}.
+                {" "}o presentándola físicamente en nuestro domicilio fiscal ubicado en Jr. Lino Nro. 132,
+                Oficina 401, Huancayo Cercado, o en nuestra oficina de ventas en Av. San Agustín 154,
+                San Carlos, Huancayo.
               </p>
               <p className="mt-4">
-                Indique el derecho que desea ejercer y un medio para recibir la respuesta. Los requisitos de
-                verificación y los <strong>[[PLAZOS DE RESPUESTA]]</strong> para cada derecho, incluida la
-                portabilidad cuando corresponda y la revocación, están pendientes de revisión. {LEGAL_REVIEW_MARKER}.
-                No se confunden estos plazos con los del Libro de Reclamaciones.
+                <strong className="text-deep-navy">Responsable Interno de Atención:</strong> Gerencia General
+                de HOLDING INVERSIONES REYNAGA S.A.C. (Sr. Jhon Arquimides Reynaga Soto).
               </p>
+              <h3 className="font-display text-xl font-bold text-deep-navy mt-8 mb-4">Requisitos de verificación de identidad</h3>
+              <p>
+                Para proteger su privacidad y evitar accesos no autorizados por terceros, toda solicitud
+                deberá contener: (i) nombres y apellidos completos del titular; (ii) número y copia simple o
+                imagen legible de su DNI o Carné de Extranjería (y, de actuar mediante representante,
+                vigencia de poder o carta poder con firma legalizada); (iii) descripción clara y precisa de
+                los datos respecto de los cuales busca ejercer el derecho; y (iv) correo electrónico o
+                dirección para recibir la respuesta. La revocación del consentimiento para fines publicitarios
+                podrá realizarse de manera inmediata y sin requisitos adicionales mediante respuesta directa
+                o enlace de baja.
+              </p>
+              <h3 className="font-display text-xl font-bold text-deep-navy mt-8 mb-4">Plazos máximos legales de atención</h3>
+              <ul className="list-disc pl-6 space-y-3">
+                <li><strong>Derecho de Información:</strong> máximo ocho (8) días hábiles contados desde el día siguiente de la presentación de la solicitud.</li>
+                <li><strong>Derecho de Acceso y Portabilidad:</strong> máximo veinte (20) días hábiles contados desde el día siguiente de la presentación de la solicitud. La portabilidad se entrega en formato CSV.</li>
+                <li><strong>Derechos de Rectificación, Cancelación, Oposición y Revocación:</strong> máximo diez (10) días hábiles contados desde el día siguiente de la presentación de la solicitud.</li>
+              </ul>
               <p className="mt-4">
-                Si considera vulnerados sus derechos, puede reclamar ante la
-                {" "}<a href="https://www.gob.pe/anpd" target="_blank" rel="noopener noreferrer" className="text-primary font-bold hover:underline">Autoridad Nacional de Protección de Datos Personales (ANPD)</a>.
-                La determinación del procedimiento aplicable a cada caso debe revisarse. {LEGAL_REVIEW_MARKER}.
+                Estos plazos son independientes de los quince (15) días hábiles del Libro de Reclamaciones.
+                De considerar que no ha sido atendido en el ejercicio de sus derechos, puede presentar una
+                reclamación ante la
+                {" "}<a href="https://www.gob.pe/anpd" target="_blank" rel="noopener noreferrer" className="text-primary font-bold hover:underline">Autoridad Nacional de Protección de Datos Personales (ANPDP)</a>
+                {" "}del Ministerio de Justicia y Derechos Humanos.
               </p>
             </section>
 
@@ -297,10 +468,36 @@ export default function PrivacyPolicyPage() {
                 <h2 className="font-display text-2xl font-black text-deep-navy tracking-tight">10. Política de cookies y almacenamiento local</h2>
               </div>
               <ul className="list-disc pl-6 space-y-4">
-                <li><strong>Necesarias:</strong> recursos estrictamente necesarios para el funcionamiento, la seguridad y el recuerdo de la elección de privacidad. No se destinan a publicidad. La clasificación y el inventario concretos deben validarse. {LEGAL_REVIEW_MARKER}.</li>
+                <li><strong>Necesarias:</strong> recursos estrictamente necesarios para el funcionamiento, la seguridad y el recuerdo de la elección de privacidad. No se destinan a publicidad.</li>
                 <li><strong>Analíticas, opcionales:</strong> Google Analytics mide visitas y eventos y puede tratar identificadores y datos técnicos. No se garantiza anonimato total. Solo se carga con consentimiento de la categoría analítica.</li>
                 <li><strong>Marketing, opcionales:</strong> Meta Pixel mide eventos o conversiones y permite publicidad o audiencias. Solo se carga con consentimiento de la categoría de marketing.</li>
               </ul>
+              <h3 className="font-display text-xl font-bold text-deep-navy mt-8 mb-4">Inventario de cookies y almacenamiento local</h3>
+              <div className="overflow-x-auto rounded-xl border border-black/10">
+                <table className="w-full text-left text-sm">
+                  <caption className="sr-only">Inventario de cookies y almacenamiento local</caption>
+                  <thead className="bg-deep-navy text-white">
+                    <tr>
+                      <th scope="col" className="p-4 font-display">Nombre</th>
+                      <th scope="col" className="p-4 font-display">Proveedor</th>
+                      <th scope="col" className="p-4 font-display">Categoría</th>
+                      <th scope="col" className="p-4 font-display">Duración</th>
+                      <th scope="col" className="p-4 font-display">Propósito</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cookieInventory.map((c) => (
+                      <tr key={c.name} className="border-t border-black/5">
+                        <th scope="row" className="p-4 font-medium text-deep-navy align-top">{c.name}</th>
+                        <td className="p-4 align-top">{c.provider}</td>
+                        <td className="p-4 align-top">{c.category}</td>
+                        <td className="p-4 align-top">{c.duration}</td>
+                        <td className="p-4 align-top">{c.purpose}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
               <p className="mt-4">
                 Google Analytics y Meta Pixel no se cargan sin consentimiento de su categoría correspondiente.
                 Puede aceptar todas las categorías, elegir solo las necesarias o personalizar analítica y
@@ -309,7 +506,8 @@ export default function PrivacyPolicyPage() {
               </p>
               <p className="mt-4">
                 La preferencia de este navegador se guarda en <code className="text-deep-navy">localStorage</code>,
-                junto con la fecha de la decisión y la versión de la política ({PRIVACY_POLICY_VERSION}).
+                junto con la fecha de la decisión y la versión de la política ({PRIVACY_POLICY_VERSION}), con
+                una vigencia de doce (12) meses; transcurrido ese plazo se solicita nuevamente la preferencia.
                 Este almacenamiento local no es una cookie enviada por sí misma al servidor ni sustituye la
                 evidencia de autorización de promociones recogida en un formulario. Si el navegador no permite
                 conservar la elección, no debe activarse una categoría opcional por defecto.
@@ -325,24 +523,19 @@ export default function PrivacyPolicyPage() {
                 Para revocar esas promociones, utilice los canales indicados en el apartado de
                 {" "}<Link href="#derechos" className="text-primary font-bold hover:underline">derechos y revocación</Link>.
               </p>
-              <p className="mt-4">
-                Deben completarse <strong>[[INVENTARIO Y DURACIÓN DE COOKIES]]</strong> y los plazos por
-                finalidad del apartado de conservación, y comprobarse en producción el bloqueo previo y
-                la retirada. {LEGAL_REVIEW_MARKER}.
-              </p>
             </section>
 
             <section id="version" className="scroll-mt-32">
               <h2 className="font-display text-2xl font-black text-deep-navy tracking-tight mb-6">11. Publicación y cambios de versión</h2>
               <p>
-                Versión del borrador: <strong>{PRIVACY_POLICY_VERSION}</strong>. Fecha de publicación:
-                {" "}<time dateTime={PRIVACY_POLICY_DATE}>{PRIVACY_POLICY_DATE}</time>. La lectura de una
-                nueva versión no constituye consentimiento. Los cambios de finalidades opcionales deben
-                comunicarse y, cuando corresponda, requerir una nueva autorización específica.
-              </p>
-              <p className="mt-4">
-                El procedimiento de actualización, la conservación de versiones y las condiciones para
-                solicitar nuevamente consentimiento deben aprobarse. {LEGAL_REVIEW_MARKER}.
+                Versión: <strong>{PRIVACY_POLICY_VERSION}</strong>. Fecha de publicación:
+                {" "}<time dateTime={PRIVACY_POLICY_DATE}>{PRIVACY_POLICY_DATE}</time>. Cada consentimiento
+                registrado por los formularios queda asociado a la versión vigente en el momento del envío,
+                junto con el texto mostrado y la fecha de recepción. La lectura de una nueva versión no
+                constituye consentimiento. Los cambios de finalidades opcionales se comunican y, cuando
+                corresponda, requieren una nueva autorización específica; el consentimiento de cookies se
+                solicita nuevamente al publicar una nueva versión de las categorías o al cumplir su
+                vigencia de doce (12) meses.
               </p>
             </section>
 
@@ -352,8 +545,6 @@ export default function PrivacyPolicyPage() {
                 El marco de referencia es la <strong>Ley N° 29733, Ley de Protección de Datos Personales</strong>,
                 y su Reglamento, aprobado por el
                 {" "}<a href="https://www.gob.pe/institucion/anpd/normas-legales/6554453-n-016-2024-jus" target="_blank" rel="noopener noreferrer" className="text-primary font-bold hover:underline">D.S. N° 016-2024-JUS (fuente oficial ANPD)</a>.
-                La aplicación de bases jurídicas, plazos y obligaciones concretas a este proyecto requiere
-                revisión profesional. {LEGAL_REVIEW_MARKER}.
               </p>
               <p className="mt-4">
                 La información comercial y las solicitudes de reserva se explican en los

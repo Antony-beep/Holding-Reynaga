@@ -9,7 +9,7 @@ import {
   RESERVATION_PRICE_CLAUSE,
 } from "@/lib/privacy";
 
-const description = "Borrador de términos del sitio de Holding Inversiones Reynaga S.A.C.: información comercial, solicitudes de reserva y derechos del consumidor.";
+const description = "Términos del sitio de Holding Inversiones Reynaga S.A.C.: información comercial, precios con IGV, condiciones de separación y bonos, y derechos del consumidor.";
 
 export const metadata: Metadata = {
   title: "Términos y Condiciones",
@@ -43,7 +43,7 @@ export default function TermsPage() {
             Términos y <span className="text-primary">Condiciones</span>
           </h1>
           <p className="mt-6 text-white/50 font-medium text-sm tracking-widest uppercase">
-            Publicación del borrador: <time dateTime={PRIVACY_POLICY_DATE}>{PRIVACY_POLICY_DATE}</time> · Versión {PRIVACY_POLICY_VERSION}
+            Última actualización: <time dateTime={PRIVACY_POLICY_DATE}>{PRIVACY_POLICY_DATE}</time> · Versión {PRIVACY_POLICY_VERSION} · Revisada con asesoría legal
           </p>
         </div>
       </div>
@@ -57,7 +57,7 @@ export default function TermsPage() {
               Este documento describe los términos del sitio informativo de <strong>Torres Titanium</strong>. Navegar no equivale a formalizar una reserva o compraventa ni a consentir promociones o cookies opcionales. Puede consultar el sitio y descargar el dossier público sin aceptar esas finalidades opcionales. El tratamiento de datos se explica por separado en la <Link href="/politica-de-privacidad" className="text-primary font-bold hover:underline">Política de Privacidad</Link>.
             </p>
             <p className="rounded-2xl border border-primary/25 bg-primary/5 p-5 text-sm leading-relaxed mb-12">
-              <strong>Borrador de textos legales.</strong> Los campos entre dobles corchetes y las condiciones pendientes no están acreditados ni aprobados. {LEGAL_REVIEW_MARKER}.
+              <strong>Texto revisado con asesoría legal (octubre de 2026).</strong> Las condiciones de precios, separación, devolución y bonos fueron validadas conforme a la Ley N° 29571 y al dictamen legal. Los pocos puntos aún pendientes conservan la etiqueta {LEGAL_REVIEW_MARKER}.
             </p>
 
             <div className="space-y-16">
@@ -70,7 +70,7 @@ export default function TermsPage() {
                   <h2 className="text-2xl font-black m-0 tracking-tight">1. INFORMACIÓN GENERAL DE LA EMPRESA</h2>
                 </div>
                 <p>
-                  El titular de este sitio es <strong>HOLDING INVERSIONES REYNAGA S.A.C.</strong>, identificado con <strong>RUC N° 20614870959</strong>, datos confirmados por el titular del proyecto. Domicilio legal: <strong>Jr. Lino Nro. 132, Huancayo Cercado (Oficina 401, a una cuadra del Parque Grau), Huancayo, Junín, Perú</strong> — domicilio fiscal confirmado en la consulta pública del RUC. Las direcciones comerciales publicadas no sustituyen esa verificación. {LEGAL_REVIEW_MARKER}.
+                  El titular de este sitio es <strong>HOLDING INVERSIONES REYNAGA S.A.C.</strong>, identificado con <strong>RUC N° 20614870959</strong>. Domicilio legal: <strong>Jr. Lino Nro. 132, Huancayo Cercado (Oficina 401, a una cuadra del Parque Grau), Huancayo, Junín, Perú</strong> — domicilio fiscal confirmado en la consulta pública del RUC. Establecimiento comercial: Av. San Agustín 154, San Carlos, Huancayo.
                 </p>
                 <p>
                   El propósito de este sitio es brindar información comercial sobre la venta y preventa de los departamentos del proyecto ubicado en la <strong>Av. San Agustín 154, San Carlos, Huancayo</strong>.
@@ -104,7 +104,13 @@ export default function TermsPage() {
                 presencialmente con el equipo de ventas.
               </p>
               <p className="mt-4">
-                Los bonos publicados de preventa deben confirmarse para la unidad y la vigencia aplicables, incluida su forma de aplicación al precio. El régimen del descuento y sus condiciones no se declaran acreditados por este borrador. {LEGAL_REVIEW_MARKER}.
+                <strong>Condiciones de los Bonos Promocionales de Preventa / Etapa de Construcción:</strong>{" "}
+                descuentos aplicables desde S/ 24,900.00 hasta S/ 47,850.00 según la tipología de
+                departamento seleccionada. Promoción válida desde el 01/10/2026 hasta el 31/12/2026 o
+                hasta agotar el stock promocional mínimo de cinco (05) unidades inmobiliarias disponibles
+                para esta campaña. Los bonos se descuentan sobre el precio de lista previa firma de la
+                Constancia de Separación, no son canjeables por dinero en efectivo ni acumulables con
+                otras promociones.
               </p>
               <p className="mt-4">
                 Las características y los acabados de la unidad deben detallarse en la documentación comercial y contractual, sin limitar los derechos reconocidos al consumidor. {LEGAL_REVIEW_MARKER}.
@@ -152,7 +158,7 @@ export default function TermsPage() {
                   <li><strong>Reclamo:</strong> disconformidad relacionada al producto o servicio (p. ej., el departamento adquirido, la reserva, la información entregada).</li>
                   <li><strong>Queja:</strong> disconformidad no relacionada al producto o servicio, sino a la atención al público.</li>
                   <li>Tras registrar la hoja, puede descargar una <strong>copia en PDF con un código correlativo</strong>. El sistema contempla también su envío al correo indicado; si no la recibe, puede consultar por los canales publicados.</li>
-                  <li>La obligación legal es responder reclamos y quejas por escrito en un plazo no mayor de <strong>quince (15) días hábiles, improrrogables</strong>, conforme a la normativa citada. La modalidad de comunicación y el procedimiento operativo deben revisarse. {LEGAL_REVIEW_MARKER}.</li>
+                  <li>La obligación legal es responder reclamos y quejas por escrito en un plazo no mayor de <strong>quince (15) días hábiles, improrrogables</strong>, conforme a la normativa citada. La respuesta se envía por correo electrónico con la hoja actualizada en PDF adjunto.</li>
                   <li>El registro de su hoja no impide ni sustituye su derecho de acudir a <strong>INDECOPI</strong> o a las autoridades competentes.</li>
                   <li>La declaración del reclamante versa sobre la veracidad de la información y la lectura de la política para atender su hoja, no sobre aceptar términos comerciales. Las promociones son opcionales y no condicionan el reclamo o la queja.</li>
                   <li>La disponibilidad del libro físico de respaldo y del aviso en el punto de atención debe confirmarse. {LEGAL_REVIEW_MARKER}.</li>
@@ -197,8 +203,8 @@ export default function TermsPage() {
                   <li><strong>Teléfono de Ventas:</strong> <a href="tel:+51981407634" className="text-primary font-bold hover:underline">981407634</a>. Los enlaces a WhatsApp se abren por iniciativa del usuario.</li>
                   <li><strong>Correo Electrónico:</strong> <a href="mailto:holdingreynagaredes@gmail.com" className="text-primary font-bold hover:underline break-all">holdingreynagaredes@gmail.com</a>.</li>
                   <li><strong>Punto de atención / Proyecto publicado:</strong> Av. San Agustín 154, San Carlos, Huancayo.</li>
-                  <li><strong>Domicilio legal:</strong> Jr. Lino Nro. 132, Huancayo Cercado (Oficina 401, a una cuadra del Parque Grau), Huancayo, Junín, Perú. {LEGAL_REVIEW_MARKER}.</li>
-                  <li>La designación formal de estos canales para derechos de datos personales se detalla como pendiente en la <Link href="/politica-de-privacidad#derechos" className="text-primary font-bold hover:underline">Política de Privacidad</Link>. {LEGAL_REVIEW_MARKER}.</li>
+                  <li><strong>Domicilio legal:</strong> Jr. Lino Nro. 132, Huancayo Cercado (Oficina 401, a una cuadra del Parque Grau), Huancayo, Junín, Perú.</li>
+                  <li>Estos canales y domicilios están formalmente designados para el ejercicio de derechos de datos personales conforme a la <Link href="/politica-de-privacidad#derechos" className="text-primary font-bold hover:underline">Política de Privacidad</Link>.</li>
                 </ul>
               </section>
             </div>

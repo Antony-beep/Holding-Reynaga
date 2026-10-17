@@ -1,8 +1,8 @@
 # Precios — Torres Titanium (Holding Inversiones Reynaga S.A.C.)
 
 > Última actualización de los precios publicados: 30 de setiembre de 2026
-> Publicación del borrador legal: 2026-10-02 · Versión 2026-10-02.1 · [[REVISAR CON ABOGADO]]
-> Moneda: Soles peruanos (PEN / S/)
+> Textos legales revisados con asesoría legal: 2026-10-18 · Versión 2026-10-18.1
+> Moneda: Soles peruanos (PEN / S/) — precios totales al contado, IGV incluido; no incluyen gastos notariales ni registrales
 > Proyecto: Av. San Agustín 154, San Carlos, Huancayo, Junín, Perú
 
 ## Resumen
@@ -13,8 +13,10 @@
 | Precio máximo | S/ 361,741.00 |
 | Bono de preventa mínimo | S/ 24,900 |
 | Bono de preventa máximo | S/ 47,850 |
-| Separación anunciada | S/ 1,000; formalización según documento de reserva |
-| Condiciones de separación | [[CONDICIONES DE RESERVA: monto, plazo, documento]] [[REVISAR CON ABOGADO]] |
+| Separación | S/ 1,000 para todos los tipos; se imputa íntegramente a la cuota inicial (10%) al suscribir el Contrato de Compraventa |
+| Condiciones de separación | Constancia de Separación presencial: congela el precio de lista y retira la unidad del mercado por el plazo indicado |
+| Devolución | Banco rechaza financiamiento por causas no imputables antes de la minuta: 100% de la separación en 10 días hábiles, sin penalidad |
+| Bonos de preventa | S/ 24,900 a S/ 47,850; válidos del 01/10/2026 al 31/12/2026 o hasta agotar el stock promocional de cinco (5) unidades; no canjeables por efectivo ni acumulables |
 | Fecha de entrega | Año 2027 |
 | Total de unidades | 59 departamentos |
 | Tipos disponibles | 7 (A, B, C, D, F, G, H) |
@@ -80,8 +82,9 @@
 
 ## Condiciones de compra
 
-- Monto de separación anunciado: S/ 1,000. Deben acordarse por escrito la unidad, el plazo, el documento, la imputación del pago y las condiciones de devolución. [[REVISAR CON ABOGADO]]
-- Bonos de preventa publicados: S/ 24,900 a S/ 47,850. Consultar vigencia, disponibilidad y aplicación al precio; el régimen y las condiciones del descuento están pendientes de revisión. [[REVISAR CON ABOGADO]]
+- Monto de separación: S/ 1,000.00, imputable íntegramente a la cuota inicial (10% del valor del departamento). La Constancia de Separación indica precio de venta, monto de separación, número de departamento, área y fecha.
+- Devolución: si el banco rechaza el financiamiento por causas no imputables al cliente antes de la firma de la minuta, se devuelve el 100% de la separación sin penalidad en diez (10) días hábiles. El desistimiento voluntario o el incumplimiento reiterado del cronograma se rigen por las condiciones expresadas en la Constancia de Separación entregada antes del pago.
+- Bonos de preventa: S/ 24,900 a S/ 47,850 según tipología. Promoción válida del 01/10/2026 al 31/12/2026 o hasta agotar el stock promocional mínimo de cinco (05) unidades. Se descuentan sobre el precio de lista previa firma de la Constancia de Separación; no son canjeables por dinero en efectivo ni acumulables con otras promociones.
 - Financiamiento: Coordinar con el equipo de ventas
 - Contacto: +51 981 407 634 (WhatsApp disponible)
 
@@ -89,7 +92,7 @@
 
 Enviar el formulario únicamente solicita atención, una cotización o información para una reserva. No formaliza una reserva, no confirma automáticamente una unidad, no firma un contrato ni realiza un cobro de S/ 1,000 u otro importe.
 
-Para quienes no han formalizado una reserva, los precios publicados son referenciales y están sujetos a disponibilidad de la unidad y a las condiciones comerciales informadas antes de contratar. Quien complete la reserva según [[CONDICIONES DE RESERVA: monto, plazo, documento]] mantiene el precio indicado en su documento de reserva, durante la vigencia y bajo las condiciones expresamente acordadas en ese documento. No se modificarán unilateralmente las condiciones de una reserva ya formalizada. [[REVISAR CON ABOGADO]]
+Para quienes no han formalizado una reserva, los precios publicados están sujetos a disponibilidad de la unidad. Quien complete la separación presencial mantiene el precio indicado en su Constancia de Separación, durante la vigencia y bajo las condiciones expresamente acordadas en ese documento. No se modificarán unilateralmente las condiciones de una reserva ya formalizada.
 
 ### Dossier PDF público
 
@@ -101,6 +104,6 @@ El dossier está disponible mediante descarga directa, sin completar un formular
 - [Tour virtual 360°](https://inmobiliariaholdingreynaga.com/#recorrido)
 - [Solicitar atención a un asesor](https://inmobiliariaholdingreynaga.com/#reserva)
 - [Dossier PDF público](https://inmobiliariaholdingreynaga.com/docs/BROUCHURE_Setiembre.pdf)
-- [Términos y condiciones de reserva — borrador](https://inmobiliariaholdingreynaga.com/terminos-y-condiciones#condiciones-de-reserva)
-- [Política de Privacidad — borrador](https://inmobiliariaholdingreynaga.com/politica-de-privacidad)
+- [Términos y condiciones de reserva](https://inmobiliariaholdingreynaga.com/terminos-y-condiciones#condiciones-de-reserva)
+- [Política de Privacidad — versión 2026-10-18.1](https://inmobiliariaholdingreynaga.com/politica-de-privacidad)
 - [Política de Cookies](https://inmobiliariaholdingreynaga.com/politica-de-privacidad#cookies)

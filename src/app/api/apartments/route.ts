@@ -31,7 +31,7 @@ export async function GET() {
       entrega: "2027",
       preciosActualizados: PRICING_UPDATED,
       nota:
-        "Precios referenciales publicados en soles (S/). Sujetos a disponibilidad de la unidad. La reserva anunciada es de S/ 1,000 y se formaliza únicamente con ventas.",
+        "Precios totales al contado publicados en soles (S/), IGV incluido; no incluyen gastos notariales ni registrales. Sujetos a disponibilidad de la unidad. La separación es de S/ 1,000 (imputable a la cuota inicial) y se formaliza únicamente con ventas.",
       departamentos,
     },
     {

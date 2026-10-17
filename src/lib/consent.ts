@@ -24,7 +24,10 @@
 
 /** Versión del texto de cookies que el usuario vio al aceptar.
  *  Cambiar cuando cambie el texto legal. */
-export const CONSENT_TEXT_VERSION = "2026-10-01";
+export const CONSENT_TEXT_VERSION = "2026-10-18";
+
+/** Vigencia del consentimiento de cookies: 12 meses (política publicada §7). */
+const CONSENT_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 
 export interface ConsentRecord {
   analytics: boolean;
@@ -68,11 +71,19 @@ export function readConsent(): ConsentInfo {
   // Formato actual (JSON con timestamp y versión) o formato v1 (sin ellos)
   try {
     const parsed = JSON.parse(raw) as Partial<ConsentRecord>;
+    const timestamp = typeof parsed.timestamp === "string" ? parsed.timestamp : null;
+    // Transcurridos 12 meses desde la decisión, se solicita nuevamente el consentimiento.
+    if (timestamp !== null) {
+      const t = Date.parse(timestamp);
+      if (Number.isFinite(t) && Date.now() - t > CONSENT_TTL_MS) {
+        return { analytics: false, marketing: false, decided: false, timestamp, version: null };
+      }
+    }
     return {
       analytics: parsed.analytics === true,
       marketing: parsed.marketing === true,
       decided: true,
-      timestamp: typeof parsed.timestamp === "string" ? parsed.timestamp : null,
+      timestamp,
       version: typeof parsed.version === "string" ? parsed.version : null,
     };
   } catch {

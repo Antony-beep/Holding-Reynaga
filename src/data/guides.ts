@@ -120,7 +120,7 @@ export const GUIDES: Guide[] = [
         heading: "Cómo funciona en Torres Titanium",
         paragraphs: [
           "El proceso del proyecto es transparente: la separación cuesta S/ 1,000 para todos los tipos de departamento; al separar, el precio se congela y la unidad se retira de la oferta a otros clientes. Se firma una Constancia de Separación que indica el precio de venta, el monto de separación, el número de departamento, el área y la fecha.",
-          "Después se elabora un cronograma de pago del 10% del valor del departamento, acorde a los ingresos mensuales del cliente. El congelamiento del precio culmina si el cliente incumple reiteradamente el cronograma o desiste voluntariamente, y la devolución del monto de separación se rige por las cláusulas del contrato notarial.",
+          "Después se elabora un cronograma de pago del 10% del valor del departamento, acorde a los ingresos mensuales del cliente. El abono de S/ 1,000 se imputa íntegramente a esa cuota inicial. El congelamiento del precio culmina si el cliente incumple reiteradamente el cronograma o desiste voluntariamente. Si el banco rechaza el financiamiento por causas no imputables al cliente antes de la firma de la minuta, se devuelve el 100% de la separación sin penalidad en diez (10) días hábiles.",
         ],
       },
       {
@@ -172,7 +172,7 @@ export const GUIDES: Guide[] = [
         heading: "El cronograma de pago del 10%",
         paragraphs: [
           "Después de separar, se elabora un cronograma de pago del 10% del valor del departamento, acorde a tus ingresos mensuales. Este cronograma es personal: se negocia con ventas para que las cuotas sean sostenibles con tu flujo real.",
-          "Ten presente las reglas del congelamiento: inicia con la separación y culmina si el cliente incumple reiteradamente el cronograma de pago o desiste voluntariamente de la compra. La devolución del monto de separación, si corresponde, se rige por las cláusulas del contrato notarial.",
+          "Ten presente las reglas del congelamiento: inicia con la separación y culmina si el cliente incumple reiteradamente el cronograma de pago o desiste voluntariamente de la compra. Si el banco rechaza tu financiamiento por causas no imputables a ti antes de la firma de la minuta, se devuelve el 100% del monto de separación sin penalidad dentro de los diez (10) días hábiles; el desistimiento voluntario se rige por las condiciones expresadas en la Constancia de Separación.",
         ],
       },
       {

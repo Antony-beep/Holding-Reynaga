@@ -9,12 +9,12 @@ export const FAQS = [
   {
     question: "¿Cómo funciona la separación de S/ 1,000?",
     answer:
-      `La separación aplica a todos los tipos de departamento. Al pagar S/ 1,000: el precio vigente queda congelado, la unidad se retira de la oferta a otros clientes, y se firma una Constancia de Separación del Departamento que indica el precio, el monto de separación, el número de departamento, el área y la fecha.\n\nSe elabora un cronograma de pago del 10% del valor, acorde a tus ingresos mensuales. El congelamiento termina si incumples reiteradamente el cronograma o desistes voluntariamente. La devolución del monto se rige por las cláusulas del contrato notarial. No hay cargos adicionales.\n\nNo se modificarán unilateralmente las condiciones de una reserva ya formalizada mediante la Constancia de Separación.`,
+      `La separación aplica a todos los tipos de departamento. Al pagar S/ 1,000: el precio vigente queda congelado, la unidad se retira de la oferta a otros clientes, y se firma una Constancia de Separación del Departamento que indica el precio, el monto de separación, el número de departamento, el área y la fecha. El abono se imputa íntegramente como parte de la cuota inicial (10% del valor) al suscribir el Contrato de Compraventa.\n\nSe elabora un cronograma de pago del 10% del valor, acorde a tus ingresos mensuales. El congelamiento termina si incumples reiteradamente el cronograma o desistes voluntariamente. Si el banco rechaza tu financiamiento por causas no imputables a ti antes de la firma de la minuta, se devuelve el 100% de la separación sin penalidad dentro de los diez (10) días hábiles siguientes. No hay cargos adicionales.\n\nNo se modificarán unilateralmente las condiciones de una reserva ya formalizada mediante la Constancia de Separación.`,
   },
   {
     question: "¿Cuánto cuestan los departamentos y qué bonos de preventa hay?",
     answer:
-      `Los precios publicados van desde S/ 163,332.50 hasta S/ 361,741.00, según la tipología y sus características. Los bonos de preventa publicados van de S/ 24,900 a S/ 47,850; consulta disponibilidad, vigencia y aplicación con ventas.\n\nEnviar el formulario solo solicita atención: no formaliza una reserva ni realiza cobros.\n\n${RESERVATION_PRICE_CLAUSE}`,
+      `Los precios publicados van desde S/ 163,332.50 hasta S/ 361,741.00: son el precio total al contado de la unidad con IGV incluido; no incluyen gastos notariales ni registrales. Los bonos de preventa van de S/ 24,900 a S/ 47,850 según la tipología; válidos del 01/10/2026 al 31/12/2026 o hasta agotar el stock promocional de cinco (5) unidades; no son canjeables por efectivo ni acumulables con otras promociones.\n\nEnviar el formulario solo solicita atención: no formaliza una reserva ni realiza cobros.\n\n${RESERVATION_PRICE_CLAUSE}`,
   },
   {
     question: "¿Qué tipos de departamentos y cuántos dormitorios ofrecen?",

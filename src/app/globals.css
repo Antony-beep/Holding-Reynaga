@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Excluir carpetas sin código del escaneo de clases (Tailwind v4). */
+@source not "../../docs";
+@source not "../../scripts";
+
 :root {
   --color-primary: #D4AF37;
   --color-primary-container: #B8860B;

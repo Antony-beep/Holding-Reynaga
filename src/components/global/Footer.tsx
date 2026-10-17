@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { Mail, Phone, MapPin } from "lucide-react";
 import CookieSettingsLink from "./CookieSettingsLink";
-import { LEGAL_REVIEW_MARKER } from "@/lib/privacy";
 const InstagramIcon = ({ size = 24, className = "" }) => (
   <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -91,7 +90,7 @@ export default function Footer() {
                 Atención: lunes a sábado, 8:30 a. m.–1:30 p. m. y 3:00–6:30 p. m.
               </p>
               <p className="ml-14 max-w-[260px] text-xs leading-relaxed text-surface/50">
-                Domicilio legal: Jr. Lino Nro. 132, Oficina 401, Huancayo Cercado, Huancayo (Junín). {LEGAL_REVIEW_MARKER}.
+                Domicilio legal: Jr. Lino Nro. 132, Oficina 401, Huancayo Cercado, Huancayo (Junín).
               </p>
             </div>
           </div>
