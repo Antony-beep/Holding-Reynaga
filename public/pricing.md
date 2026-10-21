@@ -16,7 +16,7 @@
 | Separación | S/ 1,000 para todos los tipos; se imputa íntegramente a la cuota inicial (10%) al suscribir el Contrato de Compraventa |
 | Condiciones de separación | Constancia de Separación presencial: congela el precio de lista y retira la unidad del mercado por el plazo indicado |
 | Devolución | Según las condiciones expresamente previstas en la Constancia de Separación, entregada al cliente antes de su pago |
-| Bonos de preventa | S/ 24,900 a S/ 47,850; válidos del 01/10/2026 al 31/12/2026 o hasta agotar el stock promocional de cinco (5) unidades; no canjeables por efectivo ni acumulables |
+| Bonos de preventa | S/ 24,900 a S/ 47,850; cada campaña se rige por sus propios términos (vigencia y stock mínimo); no canjeables por efectivo ni acumulables |
 | Fecha de entrega | Entre octubre y diciembre de 2027 |
 | Total de unidades | 59 departamentos |
 | Tipos disponibles | 7 (A, B, C, D, F, G, H) |
@@ -84,7 +84,7 @@
 
 - Monto de separación: S/ 1,000.00, imputable íntegramente a la cuota inicial (10% del valor del departamento). La Constancia de Separación indica precio de venta, monto de separación, número de departamento, área y fecha.
 - Devolución: se rige por las condiciones expresamente previstas en la Constancia de Separación entregada al cliente antes de su pago. Suscritos el Contrato de Arras y, posteriormente, el contrato de compraventa, las causales de resolución se rigen por lo pactado en dichos contratos.
-- Bonos de preventa: S/ 24,900 a S/ 47,850 según tipología. Promoción válida del 01/10/2026 al 31/12/2026 o hasta agotar el stock promocional mínimo de cinco (05) unidades. Se descuentan sobre el precio de lista previa firma de la Constancia de Separación; no son canjeables por dinero en efectivo ni acumulables con otras promociones.
+- Bonos de preventa: S/ 24,900 a S/ 47,850 según tipología. Toda campaña promocional se rige por sus propios términos específicos, que indican su vigencia y el stock mínimo disponible (Código de Protección y Defensa del Consumidor). Los bonos se descuentan sobre el precio de lista previa firma de la Constancia de Separación; no son canjeables por dinero en efectivo ni acumulables con otras promociones. Las condiciones aplicables a cada unidad se informan en la cotización escrita.
 - Financiamiento: Coordinar con el equipo de ventas
 - Contacto: +51 981 407 634 (WhatsApp disponible)
 

@@ -103,13 +103,14 @@ export default function TermsPage() {
                 presencialmente con el equipo de ventas.
               </p>
               <p className="mt-4">
-                <strong>Condiciones de los Bonos Promocionales de Preventa / Etapa de Construcción:</strong>{" "}
+                <strong>Bonos promocionales de preventa:</strong>{" "}
                 descuentos aplicables desde S/ 24,900.00 hasta S/ 47,850.00 según la tipología de
-                departamento seleccionada. Promoción válida desde el 01/10/2026 hasta el 31/12/2026 o
-                hasta agotar el stock promocional mínimo de cinco (05) unidades inmobiliarias disponibles
-                para esta campaña. Los bonos se descuentan sobre el precio de lista previa firma de la
-                Constancia de Separación, no son canjeables por dinero en efectivo ni acumulables con
-                otras promociones.
+                departamento seleccionada. Toda campaña promocional se rige por sus propios
+                términos específicos, que indican su vigencia y el stock mínimo disponible, en
+                cumplimiento del Código de Protección y Defensa del Consumidor. Las condiciones
+                aplicables a su unidad se informan en la cotización escrita y previa firma de la
+                Constancia de Separación. Los bonos se descuentan sobre el precio de lista, no son
+                canjeables por dinero en efectivo ni acumulables con otras promociones.
               </p>
               <p className="mt-4">
                 Las características y los acabados de la unidad se detallan en la documentación comercial y contractual, sin limitar los derechos reconocidos al consumidor.

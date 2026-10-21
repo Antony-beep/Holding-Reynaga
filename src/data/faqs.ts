@@ -14,7 +14,7 @@ export const FAQS = [
   {
     question: "¿Cuánto cuestan los departamentos y qué bonos de preventa hay?",
     answer:
-      `Los precios publicados van desde S/ 163,332.50 hasta S/ 361,741.00: son el precio total al contado de la unidad con IGV incluido; no incluyen gastos notariales ni registrales. Los bonos de preventa van de S/ 24,900 a S/ 47,850 según la tipología; válidos del 01/10/2026 al 31/12/2026 o hasta agotar el stock promocional de cinco (5) unidades; no son canjeables por efectivo ni acumulables con otras promociones.\n\nEnviar el formulario solo solicita atención: no formaliza una reserva ni realiza cobros.\n\n${RESERVATION_PRICE_CLAUSE}`,
+      `Los precios publicados van desde S/ 163,332.50 hasta S/ 361,741.00: son el precio total al contado de la unidad con IGV incluido; no incluyen gastos notariales ni registrales. Los bonos de preventa van de S/ 24,900 a S/ 47,850 según la tipología; cada campaña se rige por sus propios términos, que indican su vigencia y el stock mínimo, y las condiciones aplicables a tu unidad se informan en la cotización escrita. No son canjeables por efectivo ni acumulables con otras promociones.\n\nEnviar el formulario solo solicita atención: no formaliza una reserva ni realiza cobros.\n\n${RESERVATION_PRICE_CLAUSE}`,
   },
   {
     question: "¿Qué tipos de departamentos y cuántos dormitorios ofrecen?",

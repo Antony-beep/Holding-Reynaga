@@ -6,7 +6,7 @@ license: UNLICENSED—copyright Holding Inversiones Reynaga S.A.C.
 
 # Torres Titanium — guía para agentes
 
-Proyecto residencial en construcción de **Holding Inversiones Reynaga S.A.C.** (RUC 20614870959), en Av. San Agustín 154, San Carlos, Huancayo, Junín, Perú. Entrega prevista: entre octubre y diciembre de 2027. Departamentos de 1, 2 y 3 dormitorios (tipos A, B, C, D, F, G, H), de 41 a 92 m², con precios publicados desde S/ 163,332.50 hasta S/ 361,741.00 (precio total al contado, IGV incluido). Bonos de preventa: S/ 24,900 a S/ 47,850, válidos del 01/10/2026 al 31/12/2026 o hasta agotar el stock de 5 unidades; no canjeables por efectivo ni acumulables. Separación: S/ 1,000 que se imputa a la cuota inicial.
+Proyecto residencial en construcción de **Holding Inversiones Reynaga S.A.C.** (RUC 20614870959), en Av. San Agustín 154, San Carlos, Huancayo, Junín, Perú. Entrega prevista: entre octubre y diciembre de 2027. Departamentos de 1, 2 y 3 dormitorios (tipos A, B, C, D, F, G, H), de 41 a 92 m², con precios publicados desde S/ 163,332.50 hasta S/ 361,741.00 (precio total al contado, IGV incluido). Bonos de preventa: S/ 24,900 a S/ 47,850; cada campaña se rige por sus propios términos (vigencia y stock mínimo); no canjeables por efectivo ni acumulables. Separación: S/ 1,000 que se imputa a la cuota inicial.
 
 ## Fuentes de datos siempre actualizadas
 

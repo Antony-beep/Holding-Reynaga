@@ -9,15 +9,20 @@ Checklist de brechas detectadas en la auditoría del sistema. Actualizado: 2026-
 - **Marcadores `[[REVISAR CON ABOGADO]]: eliminados de todo el sitio público.** La revisión legal ahora se hace por los documentos internos (dossier + este checklist), no por la web.
 - **Regla de devolución bancaria del 100% (texto A del dictamen): RETIRADA** — la encargada de ventas confirmó que no existe en la operación y que no trabajan con bancos directamente. La web remite a las condiciones expresamente previstas en la Constancia de Separación (que sí las contiene).
 
-## 🔴 PREGUNTAS PRIORITARIAS al área de ventas / gerencia (bloquean textos finales)
+## 🔴 PREGUNTAS PRIORITARIAS al área de ventas / gerencia
 
-| # | Pregunta | Impacto en la web |
+> Nota (18/10/2026, tarde): siguiendo el patrón de mercado (Ancosur), la web YA NO publica
+> fechas ni stock de bonos — cada campaña se rige por sus propios términos. Las preguntas
+> 2–5 son necesarias para la **Constancia física y el Contrato de Arras** (documentos de
+> papel que revisa el abogado), NO para la web. La web está terminada sin ellas.
+
+| # | Pregunta | Impacto |
 |---|---|---|
-| 1 | **BONOS (la más urgente)**: el sitio publica "válidos 01/10–31/12/2026, stock 5 unidades" (datos del ejemplo del abogado), pero ventas dice que son 25 deptos con bono Techo Propio + 25 con bono Mi Crédito MiVivienda y "no hay fecha exacta". ¿Son los programas estatales? ¿Montos por programa? ¿Stock real? ¿Se puede pagar directo al mismo precio? | Texto de bonos en Términos, pricing.md, llms.txt, SKILL.md, FAQ, JsonLd |
-| 2 | **Congelamiento en días**: ¿cuántos días tiene el cliente desde que paga S/ 1,000? (ventas respondió sobre la carta por incumplimiento, no dio el plazo) | RESERVATION_CONDITIONS + Constancia física |
-| 3 | **Desistimiento voluntario exacto**: la encargada dijo "se da 500 soles, y si se dio un monto mayor es proporcional la devolución" — ¿se devuelve el 50% del monto pagado? ¿En cuántos días? | RESERVATION_CONDITIONS + Constancia física |
-| 4 | **Incumplimiento reiterado**: ¿cuántas cuotas vencidas terminan el congelamiento? (dijo "se va comunicando", sin número) | Constancia física |
-| 5 | **Cronograma del 10%**: "se inicia el siguiente mes, tienen hasta 1 mes para pagar el 10%" — ¿el 10% completo en un mes o cuotas mensuales? (contradice "acorde a ingresos") | RESERVATION_CONDITIONS + FAQ |
+| 1 | **Bonos (interna)**: definir por escrito los términos de cada campaña (programa Techo Propio / MiVivienda, vigencia, stock, montos por tipología) antes de anunciarla. La web ya remite a la cotización escrita. | Campaña/comercial; sin impacto web |
+| 2 | **Congelamiento en días**: ¿cuántos días tiene el cliente desde que paga S/ 1,000? | Constancia física |
+| 3 | **Desistimiento exacto**: "se da 500 soles" — ¿se devuelve el 50% del monto pagado? ¿En cuántos días? | Constancia física |
+| 4 | **Incumplimiento reiterado**: ¿cuántas cuotas vencidas terminan el congelamiento? | Constancia física |
+| 5 | **Cronograma del 10%**: ¿el 10% completo en 1 mes o cuotas mensuales desde el mes siguiente? | Constancia física |
 
 ## 🟡 Pendientes de datos del proyecto (Art. 77 y contratos)
 
@@ -43,6 +48,10 @@ Checklist de brechas detectadas en la auditoría del sistema. Actualizado: 2026-
 | 18 | GA4: retención de datos → 14 meses (admin de la propiedad) | Titular |
 | 19 | Segunda ronda del abogado: confirmar los textos finales sin marcadores (renders, propiedad intelectual, jurisdicción, arras, bonos) + Constancia y Contrato de Arras | Abogado (vía dossier v2 + este checklist) |
 
+## Resuelto hoy (18/10/2026, tarde — patrón Ancosur)
+
+- **Bonos: la web ya no publica fechas ni stock** (eliminados 01/10/2026, 31/12/2026 y "stock 5 unidades" de términos, FAQ, pricing.md, llms.txt y SKILL.md). Cada campaña se rige por sus propios términos, que indican vigencia y stock mínimo, conforme al Código de Protección y Defensa del Consumidor. Se elimina también la tarea de mantenimiento del 31/12/2026.
+
 ## Resuelto hoy (18/10/2026, respuestas de ventas aplicadas)
 
 - Entrega: **entre octubre y diciembre de 2027** (FAQ, llms.txt, pricing.md, SKILL.md, JsonLd, layout, API, WebMCP)
@@ -62,4 +71,4 @@ Checklist de brechas detectadas en la auditoría del sistema. Actualizado: 2026-
 
 - **Enero de cada año**: verificar feriados oficiales en El Peruano y precargar el año siguiente (HOLIDAY_SEEDS o panel).
 - **Revisión anual** de la política de privacidad con el abogado (`PRIVACY_POLICY_VERSION` en `src/lib/privacy.ts`).
-- **31/12/2026**: decidir la campaña de bonos vigente (o su retiro) — ver pregunta prioritaria #1.
+- **Antes de cada campaña de bonos**: definir sus términos por escrito (vigencia, stock, montos) — la web remite a ellos.
