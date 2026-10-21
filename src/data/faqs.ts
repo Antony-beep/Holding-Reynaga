@@ -9,7 +9,7 @@ export const FAQS = [
   {
     question: "¿Cómo funciona la separación de S/ 1,000?",
     answer:
-      `La separación aplica a todos los tipos de departamento. Al pagar S/ 1,000: el precio vigente queda congelado, la unidad se retira de la oferta a otros clientes, y se firma una Constancia de Separación del Departamento que indica el precio, el monto de separación, el número de departamento, el área y la fecha. El abono se imputa íntegramente como parte de la cuota inicial (10% del valor) al suscribir el Contrato de Compraventa.\n\nSe elabora un cronograma de pago del 10% del valor, acorde a tus ingresos mensuales. El congelamiento termina si incumples reiteradamente el cronograma o desistes voluntariamente. Si el banco rechaza tu financiamiento por causas no imputables a ti antes de la firma de la minuta, se devuelve el 100% de la separación sin penalidad dentro de los diez (10) días hábiles siguientes. No hay cargos adicionales.\n\nNo se modificarán unilateralmente las condiciones de una reserva ya formalizada mediante la Constancia de Separación.`,
+      `La separación aplica a todos los tipos de departamento. Al pagar S/ 1,000: el precio vigente queda congelado, la unidad se retira de la oferta a otros clientes, y se firma una Constancia de Separación del Departamento que indica el precio, el monto de separación, el número de departamento, el área y la fecha. El abono se imputa íntegramente como parte de la cuota inicial (10% del valor) al suscribir el Contrato de Arras.\n\nSe elabora un cronograma de pago del 10% del valor, acorde a tus ingresos mensuales. El congelamiento termina si incumples reiteradamente el cronograma o desistes voluntariamente. La devolución del monto de separación se rige por las condiciones expresamente previstas en la Constancia de Separación que se te entrega antes de tu pago. No hay cargos adicionales.\n\nNo se modificarán unilateralmente las condiciones de una reserva ya formalizada mediante la Constancia de Separación.`,
   },
   {
     question: "¿Cuánto cuestan los departamentos y qué bonos de preventa hay?",
@@ -24,12 +24,12 @@ export const FAQS = [
   {
     question: "¿Cuándo está prevista la entrega de Torres Titanium?",
     answer:
-      "La entrega del proyecto está prevista para 2027. La fecha y las condiciones aplicables a cada unidad deben confirmarse con el equipo de ventas.",
+      "La entrega del proyecto está prevista entre octubre y diciembre de 2027. La fecha y las condiciones aplicables a cada unidad deben confirmarse con el equipo de ventas.",
   },
   {
     question: "¿El edificio tiene cocheras para los residentes?",
     answer:
-      "Sí. El edificio cuenta con estacionamientos en el mismo inmueble para residentes. Consulta con ventas la disponibilidad, asignación y condiciones de cada cochera.",
+      "Sí. El edificio cuenta con estacionamientos en el mismo inmueble para residentes. Las plazas se venden aparte del precio del departamento y se pagan al contado; consulta con ventas la disponibilidad y el precio de cada cochera.",
   },
   {
     question: "¿Hay opciones de financiamiento para comprar un departamento?",

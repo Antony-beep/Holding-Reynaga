@@ -15,9 +15,9 @@
 | Bono de preventa máximo | S/ 47,850 |
 | Separación | S/ 1,000 para todos los tipos; se imputa íntegramente a la cuota inicial (10%) al suscribir el Contrato de Compraventa |
 | Condiciones de separación | Constancia de Separación presencial: congela el precio de lista y retira la unidad del mercado por el plazo indicado |
-| Devolución | Banco rechaza financiamiento por causas no imputables antes de la minuta: 100% de la separación en 10 días hábiles, sin penalidad |
+| Devolución | Según las condiciones expresamente previstas en la Constancia de Separación, entregada al cliente antes de su pago |
 | Bonos de preventa | S/ 24,900 a S/ 47,850; válidos del 01/10/2026 al 31/12/2026 o hasta agotar el stock promocional de cinco (5) unidades; no canjeables por efectivo ni acumulables |
-| Fecha de entrega | Año 2027 |
+| Fecha de entrega | Entre octubre y diciembre de 2027 |
 | Total de unidades | 59 departamentos |
 | Tipos disponibles | 7 (A, B, C, D, F, G, H) |
 
@@ -83,7 +83,7 @@
 ## Condiciones de compra
 
 - Monto de separación: S/ 1,000.00, imputable íntegramente a la cuota inicial (10% del valor del departamento). La Constancia de Separación indica precio de venta, monto de separación, número de departamento, área y fecha.
-- Devolución: si el banco rechaza el financiamiento por causas no imputables al cliente antes de la firma de la minuta, se devuelve el 100% de la separación sin penalidad en diez (10) días hábiles. El desistimiento voluntario o el incumplimiento reiterado del cronograma se rigen por las condiciones expresadas en la Constancia de Separación entregada antes del pago.
+- Devolución: se rige por las condiciones expresamente previstas en la Constancia de Separación entregada al cliente antes de su pago. Suscritos el Contrato de Arras y, posteriormente, el contrato de compraventa, las causales de resolución se rigen por lo pactado en dichos contratos.
 - Bonos de preventa: S/ 24,900 a S/ 47,850 según tipología. Promoción válida del 01/10/2026 al 31/12/2026 o hasta agotar el stock promocional mínimo de cinco (05) unidades. Se descuentan sobre el precio de lista previa firma de la Constancia de Separación; no son canjeables por dinero en efectivo ni acumulables con otras promociones.
 - Financiamiento: Coordinar con el equipo de ventas
 - Contacto: +51 981 407 634 (WhatsApp disponible)

@@ -28,7 +28,7 @@ export async function GET() {
       proyecto: "Torres Titanium",
       desarrollador: "Holding Inversiones Reynaga S.A.C.",
       ubicacion: "Av. San Agustín 154, San Carlos, Huancayo, Junín, Perú",
-      entrega: "2027",
+      entrega: "Octubre a diciembre de 2027",
       preciosActualizados: PRICING_UPDATED,
       nota:
         "Precios totales al contado publicados en soles (S/), IGV incluido; no incluyen gastos notariales ni registrales. Sujetos a disponibilidad de la unidad. La separación es de S/ 1,000 (imputable a la cuota inicial) y se formaliza únicamente con ventas.",

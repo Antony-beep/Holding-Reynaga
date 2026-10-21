@@ -1,57 +1,65 @@
 # Pendientes legales — Ley 29733 / Ley 29571
 
-Checklist de brechas detectadas en la auditoría del sistema. Actualizado: 2026-10-18 (tras el dictamen del abogado).
+Checklist de brechas detectadas en la auditoría del sistema. Actualizado: 2026-10-18 (post-dictamen + respuestas del área de ventas).
 
-## Estado del dictamen legal (17/10/2026)
+## Estado general
 
-El abogado emitió dictamen sobre los 12 puntos del dossier. Implementado en el sitio el 18/10/2026:
-política de privacidad **versión 2026-10-18.1** (bases jurídicas, plazos de conservación, garantías de
-transferencia, ARCO + portabilidad, inventario de cookies, menores), términos con IGV + devolución
-bancaria + condiciones de bonos, y limpieza de los marcadores resueltos.
+- **Dictamen del abogado (17/10/2026): implementado** — política v2026-10-18.1, bases jurídicas, plazos de conservación, garantías de transferencia, ARCO + portabilidad, inventario de cookies, menores.
+- **Respuestas del área de ventas (18/10/2026): aplicadas** — entrega octubre–diciembre 2027, estacionamiento aparte al contado, libro físico confirmado, Contrato de Arras como instrumento con el 10%.
+- **Marcadores `[[REVISAR CON ABOGADO]]: eliminados de todo el sitio público.** La revisión legal ahora se hace por los documentos internos (dossier + este checklist), no por la web.
+- **Regla de devolución bancaria del 100% (texto A del dictamen): RETIRADA** — la encargada de ventas confirmó que no existe en la operación y que no trabajan con bancos directamente. La web remite a las condiciones expresamente previstas en la Constancia de Separación (que sí las contiene).
 
-## En trámite / pendientes
+## 🔴 PREGUNTAS PRIORITARIAS al área de ventas / gerencia (bloquean textos finales)
 
-| # | Tema | Estado | Responsable | Siguiente paso |
-|---|---|---|---|---|
-| 1 | **RNPDP: banco QUEJAS Y RECLAMOS** — el dictamen exige inscribir el Libro de Reclamaciones como banco separado (declarando Google LLC + Resend Inc., EE.UU.) | 🟡 En trámite | Titular (portal SIPDP) | Inscribir el banco → al llegar la constancia, insertar el código en `/politica-de-privacidad#banco-de-datos` y bump de versión |
-| 2 | **Donweb: ubicación del datacenter** — si el centro de datos está en EE.UU., evaluar nueva modificación registral declarando a Dattatec.com SRL | 🟡 Pendiente | Titular → Donweb | Consultar al proveedor → decidir con el abogado |
-| 3 | **Contrato VPS de Donweb** — archivar copia en `docs/dpa/` como evidencia del encargo de alojamiento | 🟡 Pendiente | Titular | Guardar el contrato/orden de servicio en `docs/dpa/` |
-| 4 | **GA4: retención 14 meses** — el plazo publicado en la política debe configurarse en la propiedad de GA4 (Admin → Data retention → 14 meses) | 🟡 Pendiente | Titular (admin GA4) | Configurar y verificar |
-| 5 | **Art. 77 Ley 29571** — bloque de identificación del proyecto (Partida SUNARP, licencia municipal, fecha de entrega) OMITIDO por decisión del titular hasta tener los datos | 🟡 Pendiente datos | Titular → agente | Con los datos en mano, agregar el bloque a `/terminos-y-condiciones` |
-| 6 | **Constancia de Separación física** — la plantilla impresa debe incluir las condiciones de resolución/devolución del dictamen (imputación a cuota inicial, devolución bancaria 100%/10 días hábiles) | 🟡 Pendiente | Titular / ventas | Actualizar la plantilla impresa con el texto A del dictamen |
-| 7 | **Libro físico de respaldo** — confirmar disponibilidad del libro físico y del aviso Anexo II impresos en la sala de ventas | 🟡 Pendiente confirmación | Titular | Confirmar (el marcador en /terminos-y-condiciones §5 se retira al confirmar) |
-| 8 | **Marcadores restantes** — renders/ambientación, acabados, propiedad intelectual y jurisdicción conservan `[[REVISAR CON ABOGADO]]` porque el dictamen no los abordó | 🟡 Segunda revisión | Abogado | Resolver en la siguiente ronda de revisión |
-| 9 | **Operación de las promos 2027** — los bonos publicados vencen el 31/12/2026; decidir si se renuevan, cambian o retiran | 🟡 Pendiente | Titular / ventas | Decidir antes del 31/12/2026 |
-
-## Resueltos por el dictamen (17/10/2026) e implementados (18/10/2026)
-
-| # | Tema | Resolución |
+| # | Pregunta | Impacto en la web |
 |---|---|---|
-| 10 | **Plazos de retención** — 10 finalidades | Tabla completa insertada en `/politica-de-privacidad#conservacion`: 2 años consultas, 1/10 años reservas, 3 años promos, 4 años evidencias y reclamos, 14 meses GA4, 90/180 días Meta, 6 meses técnicos, 2 años auditoría, 8 horas sesiones, 12 meses cookies |
-| 11 | **Plazos ARCO + responsable interno** | Información 8 días, Acceso/Portabilidad 20, Rectificación/Cancelación/Oposición/Revocación 10. Responsable: Gerencia General (Sr. Jhon Arquimides Reynaga Soto). Requisitos de verificación publicados. Reclamo ante ANPDP |
-| 12 | **Portabilidad** | Declarada OPERATIVA: exportación CSV del panel atiende el derecho (D.S. N° 016-2024-JUS) |
-| 13 | **Bases jurídicas** | Tabla corregida insertada (Art. 13.5; Art. 14 inc. 5 y 13; Art. 16; Art. 58.1.e Ley 29571) — eliminado "interés legítimo" europeo |
-| 14 | **Garantías de transferencia** | Texto completo en `#transferencias`: 4 declarados + Donweb (Dattatec.com SRL) + OSM (recurso técnico, sin trámite) + WhatsApp (cubierto por Meta/MOD-2026-2174) + DPA/ISO 27001/SOC 2. Evidencia en `docs/dpa/` |
-| 15 | **Inventario de cookies** | Tabla en `#cookies`: cookie-consent 12 meses (localStorage), token Turnstile efímero, _ga/_ga_* 2 años, _fbp/_fbc 90 días. Implementada expiración real de 12 meses en `consent.ts` |
-| 16 | **Menores de edad** | Cláusula del dictamen insertada en `/politica-de-privacidad#datos` |
-| 17 | **IGV en precios** | Confirmado por el titular: precios totales al contado con IGV incluido; texto B insertado en términos, pricing.md, FAQ, API, WebMCP y agent-content |
-| 18 | **Devolución de la separación** | Regla nueva aceptada por el negocio: banco rechaza financiamiento (no imputable) → 100% en 10 días hábiles; imputación a cuota inicial; desistimiento según Constancia. Insertado en términos, FAQ, guías, pricing.md, agent-content, SKILL.md |
-| 19 | **Bonos de preventa** | Condiciones publicadas: S/ 24,900–47,850, válidos 01/10/2026–31/12/2026, stock mínimo 5 unidades, no canjeables ni acumulables (ejemplo del dictamen confirmado por el titular) |
-| 20 | **Domicilios validados** (punto E del dictamen) | Marcadores de domicilio retirados del footer y de todas las páginas legales; canales formalmente designados |
+| 1 | **BONOS (la más urgente)**: el sitio publica "válidos 01/10–31/12/2026, stock 5 unidades" (datos del ejemplo del abogado), pero ventas dice que son 25 deptos con bono Techo Propio + 25 con bono Mi Crédito MiVivienda y "no hay fecha exacta". ¿Son los programas estatales? ¿Montos por programa? ¿Stock real? ¿Se puede pagar directo al mismo precio? | Texto de bonos en Términos, pricing.md, llms.txt, SKILL.md, FAQ, JsonLd |
+| 2 | **Congelamiento en días**: ¿cuántos días tiene el cliente desde que paga S/ 1,000? (ventas respondió sobre la carta por incumplimiento, no dio el plazo) | RESERVATION_CONDITIONS + Constancia física |
+| 3 | **Desistimiento voluntario exacto**: la encargada dijo "se da 500 soles, y si se dio un monto mayor es proporcional la devolución" — ¿se devuelve el 50% del monto pagado? ¿En cuántos días? | RESERVATION_CONDITIONS + Constancia física |
+| 4 | **Incumplimiento reiterado**: ¿cuántas cuotas vencidas terminan el congelamiento? (dijo "se va comunicando", sin número) | Constancia física |
+| 5 | **Cronograma del 10%**: "se inicia el siguiente mes, tienen hasta 1 mes para pagar el 10%" — ¿el 10% completo en un mes o cuotas mensuales? (contradice "acorde a ingresos") | RESERVATION_CONDITIONS + FAQ |
+
+## 🟡 Pendientes de datos del proyecto (Art. 77 y contratos)
+
+| # | Tema | Responsable |
+|---|---|---|
+| 6 | Partida Electrónica SUNARP del terreno matriz | Gerencia / obras |
+| 7 | N° de expediente/resolución de la licencia municipal de edificación | Gerencia / obras |
+| 8 | Partida registral de la empresa en SUNARP Huancayo | Gerencia |
+| 9 | Plantilla física de la Constancia de Separación (existe) — pedir copia para el abogado y actualizarla con imputación + reglas de devolución | Ventas → abogado |
+| 10 | Plantilla del Contrato de Arras (ventas: "ahora es contrato arras con el 10%") — pedir copia para el abogado; confirma el nombre exacto del instrumento | Ventas → abogado |
+| 11 | Precio de la plaza de estacionamiento y cuántas hay (se venden aparte, al contado) | Ventas |
+| 12 | ¿Quién paga gastos notariales/registrales? ¿Monto estimado? | Gerencia |
+| 13 | ¿Cotizan en dólares alguna vez? (si no, retirar la línea del tipo de cambio S/ 3.80) | Ventas |
+| 14 | ¿El precio incluye acabados o hay upgrades con costo? | Ventas |
+| 15 | Periodos de gracia contractuales por clima (¿cuántos días?) | Gerencia / abogado |
+
+## 🟢 En trámite
+
+| # | Tema | Estado |
+|---|---|---|
+| 16 | RNPDP: inscribir banco QUEJAS Y RECLAMOS (Google LLC + Resend, EE.UU.) | Titular, portal SIPDP → insertar código al llegar |
+| 17 | Donweb: ubicación física del datacenter + contrato VPS en docs/dpa/ | Titular → Donweb |
+| 18 | GA4: retención de datos → 14 meses (admin de la propiedad) | Titular |
+| 19 | Segunda ronda del abogado: confirmar los textos finales sin marcadores (renders, propiedad intelectual, jurisdicción, arras, bonos) + Constancia y Contrato de Arras | Abogado (vía dossier v2 + este checklist) |
+
+## Resuelto hoy (18/10/2026, respuestas de ventas aplicadas)
+
+- Entrega: **entre octubre y diciembre de 2027** (FAQ, llms.txt, pricing.md, SKILL.md, JsonLd, layout, API, WebMCP)
+- Estacionamiento: **se vende aparte y al contado** (términos, FAQ, agent-content)
+- Libro físico de respaldo + aviso Anexo II: **confirmados en el punto de atención** (afirmativo en Términos §5)
+- Contrato de Arras como instrumento al pagar el 10% (términos, FAQ, guías, pricing.md, agent-content, SKILL.md)
+- Devolución bancaria 100% retirada; remisión a la Constancia en todos los textos
+- Horario y dossier físico: confirmados sin cambios
 
 ## Resueltos con anterioridad (referencia)
 
-- Registro RNPDP: banco **PROSPECTO DE CLIENTES - TORRES TITANIUM**, **INS-2026-6247** (16/10/2026), **MOD-2026-2174** (17/10/2026) con transferencias declaradas. Constancias en `docs/`.
-- Domicilio legal completo confirmado contra el RUC; aviso Anexo II impreso; feriados 2026-2027 precargados; cancelación vs Google Sheets con re-verificación; consentimiento de promos coherente con evidencia; Libro de Reclamaciones con 15 días hábiles, PDF Anexo I y messageId de Resend.
+- Dictamen completo del 17/10/2026: bases jurídicas, plazos ARCO 8/20/10, conservación (12 filas), garantías de transferencia (4 declarados + Donweb + WhatsApp/Meta + OSM), inventario de cookies, menores, DPA archivados en docs/dpa/, expiración de cookies 12 meses.
+- RNPDP: banco PROSPECTO DE CLIENTES - TORRES TITANIUM (INS-2026-6247, MOD-2026-2174). Constancias en docs/.
+- IGV incluido en precios (confirmado por el titular). Domicilios validados. Libro de Reclamaciones virtual con 15 días hábiles, PDF Anexo I, messageId.
 
 ## Mantenimiento recurrente
 
-- **Enero de cada año**: verificar el calendario oficial de feriados en El Peruano y precargar el año siguiente en `HOLIDAY_SEEDS` (db.ts) o desde el panel (Reclamos → Feriados). La Semana Santa cambia cada año.
+- **Enero de cada año**: verificar feriados oficiales en El Peruano y precargar el año siguiente (HOLIDAY_SEEDS o panel).
 - **Revisión anual** de la política de privacidad con el abogado (`PRIVACY_POLICY_VERSION` en `src/lib/privacy.ts`).
-- **31/12/2026**: cierre o renovación de la promoción de bonos (vencimiento publicado).
-
-## Nota
-
-Quedan 4 marcadores `[[REVISAR CON ABOGADO]]` en `/terminos-y-condiciones` (renders/ambientación,
-acabados, propiedad intelectual, jurisdicción) y 1 en §5 del mismo archivo (libro físico) — temas no
-abordados por el dictamen. Se retiran cuando el abogado los resuelva o el titular los confirme.
+- **31/12/2026**: decidir la campaña de bonos vigente (o su retiro) — ver pregunta prioritaria #1.

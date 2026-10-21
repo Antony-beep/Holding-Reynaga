@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Departamentos en venta en Huancayo | Torres Titanium",
     description:
-      "Departamentos de 1 a 3 dormitorios en construcción en San Carlos, Huancayo. Bonos de S/ 24,900 a S/ 47,850. Separa con S/ 1,000. Entrega 2027.",
+      "Departamentos de 1 a 3 dormitorios en construcción en San Carlos, Huancayo. Bonos de S/ 24,900 a S/ 47,850. Separa con S/ 1,000. Entrega: octubre a diciembre de 2027.",
     images: ["/og.jpg"],
   },
   robots: {

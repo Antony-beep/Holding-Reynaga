@@ -73,7 +73,7 @@ export default function WebMCPTools() {
       inputSchema: { type: "object", properties: {}, additionalProperties: false },
       execute: async () => ({
         proyecto: "Torres Titanium",
-        entrega: "2027",
+        entrega: "Octubre a diciembre de 2027",
         nota: "Precios totales al contado con IGV incluido (sin gastos notariales ni registrales), sujetos a disponibilidad.",
         departamentos: publicApartments(),
       }),

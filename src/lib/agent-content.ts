@@ -9,7 +9,7 @@ import { SITE_URL } from "@/lib/site";
 export const LLMS_MARKDOWN = `# Torres Titanium — Holding Inversiones Reynaga S.A.C.
 
 > Proyecto residencial en construcción en San Carlos, Huancayo, Junín, Perú.
-> Departamentos de 1, 2 y 3 dormitorios con entrega prevista para 2027.
+> Departamentos de 1, 2 y 3 dormitorios con entrega prevista entre octubre y diciembre de 2027.
 > Bonos de preventa: descuentos de S/ 24,900 a S/ 47,850, válidos del 01/10/2026 al 31/12/2026 o hasta agotar el stock promocional de 5 unidades; no canjeables por efectivo ni acumulables. Separación con S/ 1,000 que se imputa a la cuota inicial.
 > Textos legales revisados con asesoría legal, versión 2026-10-18.1.
 
@@ -40,7 +40,7 @@ Ver /pricing.md para precios publicados estructurados y condiciones de reserva.
 
 ## Reservas y conservación del precio
 
-Se anuncia una separación con S/ 1,000 para todos los tipos de departamento; el abono se imputa íntegramente a la cuota inicial (10% del valor del departamento) al suscribir el Contrato de Compraventa. La separación presencial congela el precio de lista vigente y retira la unidad del mercado por el plazo indicado en la Constancia de Separación. Si el banco rechaza el financiamiento por causas no imputables al cliente antes de la firma de la minuta, se devuelve el 100% de la separación sin penalidad dentro de los diez (10) días hábiles siguientes. Enviar el formulario únicamente solicita atención, una cotización o información para una reserva: no formaliza una reserva, no firma un contrato ni realiza un cobro.
+Se anuncia una separación con S/ 1,000 para todos los tipos de departamento; el abono se imputa íntegramente a la cuota inicial (10% del valor del departamento) al suscribir el Contrato de Arras. La separación presencial congela el precio de lista vigente y retira la unidad del mercado por el plazo indicado en la Constancia de Separación. La devolución del monto de separación se rige por las condiciones expresamente previstas en la Constancia de Separación que se entrega al cliente antes de su pago. Enviar el formulario únicamente solicita atención, una cotización o información para una reserva: no formaliza una reserva, no firma un contrato ni realiza un cobro.
 
 Para quienes no han formalizado una reserva, los precios publicados están sujetos a disponibilidad de la unidad. Quien complete la separación presencial mantiene el precio indicado en su Constancia de Separación, durante la vigencia y bajo las condiciones expresamente acordadas en ese documento. No se modificarán unilateralmente las condiciones de una reserva ya formalizada.
 
@@ -82,9 +82,9 @@ El dossier PDF se descarga directamente, sin completar un formulario. La descarg
 
 ## FAQ rápido
 
-- **¿Cuándo se entrega?** Año 2027
-- **¿Cómo funciona la separación?** S/ 1,000 para todos los tipos; congela el precio y retira la unidad del mercado. Se firma una Constancia de Separación con precio, monto, número, área y fecha. Si el banco rechaza el financiamiento por causas no imputables al cliente antes de la minuta, se devuelve el 100% en 10 días hábiles. Enviar el formulario web no reserva ni cobra.
-- **¿Los precios incluyen IGV?** Sí: los precios publicados son el precio total al contado con IGV incluido; no incluyen gastos notariales ni registrales.
+- **¿Cuándo se entrega?** Entre octubre y diciembre de 2027
+- **¿Cómo funciona la separación?** S/ 1,000 para todos los tipos; congela el precio y retira la unidad del mercado. Se firma una Constancia de Separación con precio, monto, número, área y fecha; el abono se imputa al Contrato de Arras. La devolución se rige por la Constancia entregada antes del pago. Enviar el formulario web no reserva ni cobra.
+- **¿Los precios incluyen IGV?** Sí: los precios publicados son el precio total al contado con IGV incluido; no incluyen gastos notariales ni registrales. El estacionamiento se vende aparte, al contado.
 - **¿Dónde está ubicado?** Av. San Agustín 154, San Carlos, Huancayo
 - **¿Cuántos dormitorios tienen?** 1, 2 o 3 dormitorios según el tipo
 - **¿Tienen estacionamiento?** Sí, 2 sótanos de estacionamiento

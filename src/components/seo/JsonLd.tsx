@@ -108,7 +108,7 @@ export function ProjectJsonLd() {
     "@id": `${SITE_URL}/#torres-titanium`,
     name: "Torres Titanium",
     description:
-      "Torres Titanium es un proyecto residencial de 59 departamentos en construcción ubicado en Av. San Agustín 154, San Carlos, Huancayo, Junín, Perú. Ofrece departamentos de 1, 2 y 3 dormitorios desde S/ 163,332.50 hasta S/ 361,741.00, con bonos de preventa de S/ 24,900 a S/ 47,850. Incluye 2 sótanos de estacionamiento, 2 ascensores y rooftop. Entrega prevista para 2027.",
+      "Torres Titanium es un proyecto residencial de 59 departamentos en construcción ubicado en Av. San Agustín 154, San Carlos, Huancayo, Junín, Perú. Ofrece departamentos de 1, 2 y 3 dormitorios desde S/ 163,332.50 hasta S/ 361,741.00, con bonos de preventa de S/ 24,900 a S/ 47,850. Incluye 2 sótanos de estacionamiento, 2 ascensores y rooftop. Entrega prevista entre octubre y diciembre de 2027.",
     url: SITE_URL,
     image: `${SITE_URL}/og.jpg`,
     telephone: "+51981407634",
@@ -159,7 +159,7 @@ export function ProjectJsonLd() {
     ],
     // Bono de preventa — dato único extraíble (schema con texto corrido)
     disambiguatingDescription:
-      `Bonos de preventa de S/ 24,900 a S/ 47,850. Separación anunciada con S/ 1,000; el formulario solo solicita atención, no formaliza una reserva ni realiza cobros. ${RESERVATION_PRICE_CLAUSE.replace(/\n\n/g, " ")} Entrega prevista 2027.`,
+      `Bonos de preventa de S/ 24,900 a S/ 47,850. Separación anunciada con S/ 1,000; el formulario solo solicita atención, no formaliza una reserva ni realiza cobros. ${RESERVATION_PRICE_CLAUSE.replace(/\n\n/g, " ")} Entrega prevista entre octubre y diciembre de 2027.`,
     parentOrganization: { "@id": `${SITE_URL}/#organization` },
   };
 
