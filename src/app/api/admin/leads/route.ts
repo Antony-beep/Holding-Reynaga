@@ -64,7 +64,12 @@ export async function GET(request: NextRequest) {
       "required_consent_accepted", "marketing_consent_text",
       "marketing_consent_accepted", "consent_purpose",
     ];
-    const esc = (v: string) => `"${(v ?? "").replace(/"/g, '""').replace(/\r?\n/g, " ")}"`;
+    const esc = (v: string, asText: boolean) => {
+      const value = (v ?? "").replace(/\r?\n/g, " ");
+      // CSV no guarda tipos: Excel necesita texto explícito para fechas, documentos y teléfonos.
+      const cell = asText && value ? `="${value.replace(/"/g, '""')}"` : value;
+      return `"${cell.replace(/"/g, '""')}"`;
+    };
     const lines = [header.join(",")];
     for (const r of rows) {
       lines.push([
@@ -74,12 +79,13 @@ export async function GET(request: NextRequest) {
         r.consent_recorded_at ?? "", r.policy_version ?? "", r.required_consent_text ?? "",
         r.required_consent_accepted ?? "", r.marketing_consent_text ?? "",
         r.marketing_consent_accepted ?? "", r.consent_purpose ?? "",
-      ].map((v) => esc(String(v))).join(","));
+      ].map((v, i) => esc(String(v), [1, 4, 5, 12, 13, 14].includes(i))).join(","));
     }
-    const csv = "\uFEFF" + lines.join("\r\n"); // BOM para Excel en Windows
-    return new NextResponse(csv, {
+    const csv = "\uFEFFsep=,\r\n" + lines.join("\r\n");
+    // UTF-16LE con BOM conserva las tildes al abrir el CSV directamente en Excel.
+    return new NextResponse(new Uint8Array(Buffer.from(csv, "utf16le")), {
       headers: {
-        "Content-Type": "text/csv; charset=utf-8",
+        "Content-Type": "text/csv; charset=utf-16le",
         "Content-Disposition": 'attachment; filename="leads.csv"',
       },
     });
