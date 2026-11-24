@@ -21,7 +21,7 @@ Holding Inversiones Reynaga S.A.C. (RUC 20614870959) es una inmobiliaria y const
 
 - Departamentos en construcción de 1, 2 y 3 dormitorios
 - 7 tipos de departamento (A, B, C, D, F, G, H) con áreas de 41 a 92 m²
-- Precios desde S/ 163,332.50 hasta S/ 361,741.00 (precio total al contado, IGV incluido; no incluyen gastos notariales ni registrales)
+- Departamentos desde S/ 257,000 (cotización por tipología con el equipo de ventas; precios en soles con IGV incluido, sin gastos notariales ni registrales)
 - Bonos de descuento de preventa: S/ 24,900 a S/ 47,850; cada campaña se rige por sus propios términos (vigencia y stock mínimo); no canjeables por efectivo ni acumulables
 
 - 2 sótanos de estacionamiento, 2 ascensores modernos
@@ -34,9 +34,9 @@ Holding Inversiones Reynaga S.A.C. (RUC 20614870959) es una inmobiliaria y const
 - Este mismo contenido: ${SITE_URL}/llms.txt (Content-Type: text/markdown)
 - Cualquier página de departamento admite Accept: text/markdown
 
-## Precios (actualizado setiembre 2026)
+## Precios y condiciones (actualizado noviembre 2026)
 
-Ver /pricing.md para precios publicados estructurados y condiciones de reserva.
+Ver /pricing.md para referencia de entrada (desde S/ 257,000), separación con S/ 1,000 y condiciones de reserva.
 
 ## Reservas y conservación del precio
 
@@ -67,7 +67,7 @@ El dossier PDF se descarga directamente, sin completar un formulario. La descarg
 - [Catálogo de departamentos](https://inmobiliariaholdingreynaga.com/#departamentos)
 - [Tour virtual 360°](https://inmobiliariaholdingreynaga.com/#recorrido)
 - [Ubicación y mapa](https://inmobiliariaholdingreynaga.com/#ubicacion)
-- [Dossier PDF público — descarga directa, sin formulario](https://inmobiliariaholdingreynaga.com/docs/BROUCHURE_Setiembre.pdf)
+- [Dossier PDF público — descarga directa, sin formulario](https://inmobiliariaholdingreynaga.com/docs/BROCHURE_Noviembre_2026.pdf)
 - [Términos y Condiciones](https://inmobiliariaholdingreynaga.com/terminos-y-condiciones)
 - [Política de Privacidad — versión 2026-10-18.1](https://inmobiliariaholdingreynaga.com/politica-de-privacidad)
 - [Política de Cookies](https://inmobiliariaholdingreynaga.com/politica-de-privacidad#cookies)
@@ -102,7 +102,7 @@ export function apartmentMarkdown(apartment: Apartment): string {
 - **Dormitorios:** ${apartment.bedrooms}
 - **Baños:** ${apartment.baths}
 - **Área:** ${apartment.sqm} m²
-- **Precio publicado:** ${apartment.price}
+- **Separación:** S/ 1,000
 - **Estilo:** ${apartment.area}
 ${features ? `\n## Características\n${features}\n` : ""}
 ## Enlaces
@@ -110,7 +110,7 @@ ${features ? `\n## Características\n${features}\n` : ""}
 - Página del departamento: ${SITE_URL}/departamentos/${slug}
 - Tour virtual 360°: ${SITE_URL}/vision360/${tourId}
 
-> Precio total al contado publicado con IGV incluido, sujeto a disponibilidad de la unidad. Enviar el
+> Departamentos en el proyecto desde S/ 257,000 (cotización vigente de cada tipología con el equipo de ventas). Enviar el
 > formulario web no formaliza una reserva ni realiza un cobro: solo solicita
 > atención, cotización o información. Contacto: +51 981 407 634.
 `;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { trackLeadSubmitted } from "@/lib/analytics";
@@ -23,11 +23,32 @@ export default function DossierForm() {
   const [submitted, setSubmitted] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const [honeypot, setHoneypot] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [shouldLoadTurnstile, setShouldLoadTurnstile] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
   // Al fallar un envío el token se gasta; incrementamos la key para remontar el widget.
   const [tsKey, setTsKey] = useState(0);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setShouldLoadTurnstile(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoadTurnstile(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "400px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
   const [formData, setFormData] = useState({
@@ -122,6 +143,7 @@ export default function DossierForm() {
 
   return (
     <section
+      ref={sectionRef}
       id="reserva"
       className="py-16 md:py-24 bg-surface relative z-10 px-4 md:px-6"
     >
@@ -352,7 +374,7 @@ export default function DossierForm() {
               </div>
 
               {/* Captcha Cloudflare Turnstile */}
-              {siteKey && (
+              {siteKey && shouldLoadTurnstile && (
                 <div className="flex justify-center">
                   <Turnstile
                     key={tsKey}

@@ -3,7 +3,6 @@ export type Apartment = {
   bedrooms: string;
   baths: string;
   sqm: string;
-  price: string;
   area: string;
   features: string[];
   images: string[];
@@ -18,7 +17,6 @@ export const APARTMENTS: Apartment[] = [
     bedrooms: "3",
     baths: "2",
     sqm: "91.58",
-    price: "S/ 361,741.00",
     area: "Premium",
     features: [
       "Sala - Comedor",
@@ -36,7 +34,6 @@ export const APARTMENTS: Apartment[] = [
     bedrooms: "2",
     baths: "2",
     sqm: "77.77",
-    price: "S/ 307,191.50",
     area: "Familiar",
     features: [
       "Sala - Comedor",
@@ -54,7 +51,6 @@ export const APARTMENTS: Apartment[] = [
     bedrooms: "3",
     baths: "1",
     sqm: "72.57",
-    price: "S/ 286,651.50",
     area: "Moderno",
     features: [
       "Sala - Comedor",
@@ -72,7 +68,6 @@ export const APARTMENTS: Apartment[] = [
     bedrooms: "2",
     baths: "2",
     sqm: "65.26",
-    price: "S/ 257,777.00",
     area: "Confort",
     features: [
       "Sala - Comedor",
@@ -90,7 +85,6 @@ export const APARTMENTS: Apartment[] = [
     bedrooms: "-",
     baths: "-",
     sqm: "-",
-    price: "",
     area: "-",
     features: [],
     images: [],
@@ -103,7 +97,6 @@ export const APARTMENTS: Apartment[] = [
     bedrooms: "1",
     baths: "1",
     sqm: "41.35",
-    price: "S/ 163,332.50",
     area: "Elegante",
     features: [
       "Sala - Comedor",
@@ -121,7 +114,6 @@ export const APARTMENTS: Apartment[] = [
     bedrooms: "Exclusivo",
     baths: "-",
     sqm: "-",
-    price: "",
     area: "Luxury",
     features: [],
     images: [],

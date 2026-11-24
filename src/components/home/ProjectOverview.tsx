@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, useRef } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { Download, FileText, ShieldCheck, LayoutDashboard, Lock, X, ChevronLeft, ChevronRight } from "lucide-react";
@@ -17,10 +17,23 @@ export default function ProjectOverview() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [isInView, setIsInView] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const [, startTransition] = useTransition();
 
   useEffect(() => {
     setMounted(true);
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setIsInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { rootMargin: "200px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
   // Prevenir scroll del cuerpo de la página cuando el lightbox está abierto
@@ -34,17 +47,18 @@ export default function ProjectOverview() {
   }, [isLightboxOpen]);
 
   useEffect(() => {
-    if (isLightboxOpen) return; // Pausar slider automático
+    if (isLightboxOpen || !isInView) return; // Pausar slider cuando no está visible o en lightbox
     const timer = setInterval(() => {
       startTransition(() => {
         setCurrentIndex((prev) => (prev + 1) % dossierImages.length);
       });
     }, 3500); // Crossfade every 3.5s
     return () => clearInterval(timer);
-  }, [dossierImages.length, isLightboxOpen]);
+  }, [dossierImages.length, isLightboxOpen, isInView]);
 
   return (
     <section
+      ref={sectionRef}
       id="titanium"
       className="relative z-10 flex flex-col w-full overflow-hidden border-y border-surface-container-highest"
     >
@@ -102,7 +116,7 @@ export default function ProjectOverview() {
             {/* Download Button */}
             <div className="w-full relative">
               <a
-                href="/docs/BROUCHURE_Setiembre.pdf"
+                href="/docs/BROCHURE_Noviembre_2026.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-gradient-to-r from-[#BF953F] via-[#D4AF37] to-[#B38728] hover:from-[#B38728] hover:to-[#996515] text-white font-display font-bold tracking-widest text-xs md:text-sm uppercase px-8 py-5 flex items-center justify-center gap-3 rounded-2xl shadow-[0_10px_30px_rgba(212,175,55,0.3)] hover:shadow-[0_15px_40px_rgba(212,175,55,0.4)] hover:-translate-y-1 transition-all duration-300 w-full relative overflow-hidden group/btn border border-white/40 mb-4"
@@ -149,7 +163,6 @@ export default function ProjectOverview() {
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
                     className="object-contain p-1 md:p-2"
-                    priority={index === 0}
                   />
                   {/* Etiqueta del Nombre */}
                   <div className="absolute top-4 left-4 md:top-6 md:left-6 bg-deep-navy/90 backdrop-blur-md px-4 py-1.5 md:px-5 md:py-2 rounded-lg border border-white/10 shadow-lg flex items-center gap-3">

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     absolute: "Departamentos de 2 dormitorios en Huancayo | Torres Titanium",
   },
   description:
-    "Departamentos de 2 dormitorios en venta en Huancayo: Tipos B y D en Torres Titanium, San Carlos — desde S/ 257,777.00. Separa con S/ 1,000 y entrega 2027.",
+    "Departamentos de 2 dormitorios en venta en Huancayo: Tipos B y D en Torres Titanium, San Carlos — desde S/ 257,000. Separa con S/ 1,000 y entrega 2027.",
   alternates: { canonical: "/departamentos-2-dormitorios-huancayo" },
   openGraph: {
     type: "website",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     siteName: "Holding Reynaga | Torres Titanium",
     title: "Departamentos de 2 dormitorios en Huancayo | Torres Titanium",
     description:
-      "Tipos B y D: departamentos de 2 dormitorios en San Carlos, Huancayo, desde S/ 257,777.00.",
+      "Tipos B y D: departamentos de 2 dormitorios en San Carlos, Huancayo, desde S/ 257,000.",
     images: [
       { url: "/og.jpg", width: 1200, height: 630, alt: "Departamento de 2 dormitorios en Huancayo — Torres Titanium" },
     ],
@@ -35,7 +35,7 @@ const FAQS_2DORM = [
   {
     question: "¿Qué departamentos de 2 dormitorios hay en Huancayo?",
     answer:
-      "En Torres Titanium (San Carlos, Huancayo) hay dos modelos de 2 dormitorios: el Tipo D de 65.26 m² con 2 baños (S/ 257,777.00) y el Tipo B de 77.77 m² con 2 baños, sala-comedor, cocina, lavandería y balcón parrillero (S/ 307,191.50).",
+      "En Torres Titanium (San Carlos, Huancayo) hay dos modelos de 2 dormitorios: el Tipo D de 65.26 m² con 2 baños y el Tipo B de 77.77 m² con 2 baños, sala-comedor, cocina, lavandería y balcón parrillero. Opciones desde S/ 257,000 y separación con S/ 1,000.",
   },
   {
     question: "¿Cuál es la diferencia entre el Tipo B y el Tipo D?",
@@ -80,10 +80,10 @@ export default function DosDormitoriosPage() {
         </h1>
         <p className="text-deep-navy/70 text-lg leading-relaxed max-w-3xl mb-6">
           <strong>Torres Titanium</strong> ofrece dos modelos de 2 dormitorios en San Carlos,
-          Huancayo: el <strong>Tipo D</strong> de 65.26 m² (S/ 257,777.00) y el{" "}
-          <strong>Tipo B</strong> de 77.77 m² (S/ 307,191.50), ambos con 2 baños completos,
-          sala-comedor, cocina y lavandería. Son las opciones más equilibradas del proyecto
-          para parejas y familias que empiezan.
+          Huancayo: el <strong>Tipo D</strong> de 65.26 m² y el{" "}
+          <strong>Tipo B</strong> de 77.77 m², ambos con 2 baños completos,
+          sala-comedor, cocina y lavandería, con opciones desde S/ 257,000. Son las opciones
+          más equilibradas del proyecto para parejas y familias que empiezan.
         </p>
         <p className="text-deep-navy/70 leading-relaxed max-w-3xl">
           Compara también los{" "}

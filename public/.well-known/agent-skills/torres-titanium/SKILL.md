@@ -6,14 +6,14 @@ license: UNLICENSED—copyright Holding Inversiones Reynaga S.A.C.
 
 # Torres Titanium — guía para agentes
 
-Proyecto residencial en construcción de **Holding Inversiones Reynaga S.A.C.** (RUC 20614870959), en Av. San Agustín 154, San Carlos, Huancayo, Junín, Perú. Entrega prevista: entre octubre y diciembre de 2027. Departamentos de 1, 2 y 3 dormitorios (tipos A, B, C, D, F, G, H), de 41 a 92 m², con precios publicados desde S/ 163,332.50 hasta S/ 361,741.00 (precio total al contado, IGV incluido). Bonos de preventa: S/ 24,900 a S/ 47,850; cada campaña se rige por sus propios términos (vigencia y stock mínimo); no canjeables por efectivo ni acumulables. Separación: S/ 1,000 que se imputa a la cuota inicial.
+Proyecto residencial en construcción de **Holding Inversiones Reynaga S.A.C.** (RUC 20614870959), en Av. San Agustín 154, San Carlos, Huancayo, Junín, Perú. Entrega prevista: entre octubre y diciembre de 2027. Departamentos de 1, 2 y 3 dormitorios (tipos A, B, C, D, F, G, H), de 41 a 92 m², desde S/ 257,000 (cotización por tipología con el equipo de ventas; precios en soles con IGV incluido). Bonos de preventa: S/ 24,900 a S/ 47,850; cada campaña se rige por sus propios términos (vigencia y stock mínimo); no canjeables por efectivo ni acumulables. Separación: S/ 1,000 que se imputa a la cuota inicial.
 
 ## Fuentes de datos siempre actualizadas
 
-1. **API JSON (solo lectura):** `GET https://inmobiliariaholdingreynaga.com/api/apartments` — lista completa de departamentos con área, precio y características. Prefiere esta fuente para datos concretos.
+1. **API JSON (solo lectura):** `GET https://inmobiliariaholdingreynaga.com/api/apartments` — lista completa de departamentos con área y características. Prefiere esta fuente para datos concretos.
 2. **Resumen del sitio:** `https://inmobiliariaholdingreynaga.com/llms.txt`
-3. **Precios estructurados:** `https://inmobiliariaholdingreynaga.com/pricing.md`
-4. **Dossier PDF (descarga directa, sin formulario):** `https://inmobiliariaholdingreynaga.com/docs/BROUCHURE_Setiembre.pdf`
+3. **Condiciones y referencia de precios:** `https://inmobiliariaholdingreynaga.com/pricing.md`
+4. **Dossier PDF (descarga directa, sin formulario):** `https://inmobiliariaholdingreynaga.com/docs/BROCHURE_Noviembre_2026.pdf`
 
 También puedes solicitar cualquier página con la cabecera `Accept: text/markdown` para recibir una versión en markdown (solo `/` y `/departamentos/<tipo>`).
 

@@ -10,21 +10,34 @@ export default function Preloader() {
   useEffect(() => {
     const finishLoading = () => {
       setLoading(false);
+      try {
+        sessionStorage.setItem("tt_preloader_shown", "1");
+      } catch {
+        // Ignore storage restrictions
+      }
       // Dispatch an event so other components (like Hero) know when to start
       window.dispatchEvent(new Event("preloaderFinished"));
     };
 
+    try {
+      if (sessionStorage.getItem("tt_preloader_shown") === "1") {
+        finishLoading();
+        return;
+      }
+    } catch {
+      // Ignore storage restrictions
+    }
+
     const handleLoad = () => {
-      // Pequeño buffer para asegurar que la animación de entrada se vea fluida
-      setTimeout(finishLoading, 400);
+      setTimeout(finishLoading, 150);
     };
 
     if (document.readyState === "complete") {
       handleLoad();
     } else {
       window.addEventListener("load", handleLoad);
-      // Failsafe: nunca bloquear la pantalla por más de 1.5s artificialmente
-      const fallback = setTimeout(finishLoading, 1500);
+      // Failsafe: no bloquear LCP por más de 700ms
+      const fallback = setTimeout(finishLoading, 700);
       
       return () => {
         window.removeEventListener("load", handleLoad);
@@ -40,7 +53,7 @@ export default function Preloader() {
           key="preloader"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
+          transition={{ duration: 0.45, ease: "easeInOut" }}
           className="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-[#10162A]"
         >
           {/* Logo - Ahora es el punto focal principal */}

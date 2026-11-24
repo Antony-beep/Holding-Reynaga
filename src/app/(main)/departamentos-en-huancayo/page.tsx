@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     absolute: "Departamentos en Huancayo en venta | Torres Titanium",
   },
   description:
-    "Departamentos en venta en Huancayo: conoce el mercado, zonas, precios reales y el proyecto Torres Titanium en San Carlos. Separación con S/ 1,000 y entrega 2027.",
+    "Departamentos en venta en Huancayo: conoce el mercado, zonas y el proyecto Torres Titanium en San Carlos desde S/ 257,000. Separación con S/ 1,000 y entrega 2027.",
   alternates: { canonical: "/departamentos-en-huancayo" },
   openGraph: {
     type: "website",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     siteName: "Holding Reynaga | Torres Titanium",
     title: "Departamentos en Huancayo en venta | Torres Titanium",
     description:
-      "Guía de departamentos en venta en Huancayo: zonas, tipologías, precios reales y proceso de separación.",
+      "Guía de departamentos en venta en Huancayo: zonas, tipologías desde S/ 257,000 y proceso de separación con S/ 1,000.",
     images: [
       { url: "/og.jpg", width: 1200, height: 630, alt: "Departamentos en venta en Huancayo — Torres Titanium" },
     ],
@@ -32,11 +32,6 @@ export const metadata: Metadata = {
 };
 
 const HUANCAYO_FAQS = [
-  {
-    question: "¿Cuánto cuesta un departamento en Huancayo?",
-    answer:
-      "En el proyecto Torres Titanium de San Carlos, los precios publicados van desde S/ 163,332.50 por un departamento de 1 dormitorio (41.35 m²) hasta S/ 361,741.00 por uno de 3 dormitorios (91.58 m²).\n\nEl precio por m² publicado ronda S/ 3,950 y existen bonos de preventa de S/ 24,900 a S/ 47,850.",
-  },
   {
     question: "¿Dónde conviene comprar un departamento en Huancayo?",
     answer:
@@ -67,7 +62,7 @@ export default function HuancayoPage() {
       <OrganizationJsonLd />
       <WebPageJsonLd
         name="Departamentos en Huancayo en venta"
-        description="Zonas, precios reales y proyecto Torres Titanium: departamentos en venta en Huancayo, Junín."
+        description="Zonas, tipologías desde S/ 257,000 y proyecto Torres Titanium: departamentos en venta en Huancayo, Junín."
         path="/departamentos-en-huancayo"
       />
       <PillarBreadcrumb
@@ -82,11 +77,11 @@ export default function HuancayoPage() {
           Departamentos en venta en Huancayo
         </h1>
         <p className="text-deep-navy/70 text-lg leading-relaxed max-w-3xl mb-6">
-          Buscar un departamento en Huancayo implica comparar zonas, precios y proyectos.
+          Buscar un departamento en Huancayo implica comparar zonas, tipologías y proyectos.
           Esta guía reúne lo esencial para decidir: cómo es el mercado local, qué zonas
           conviene revisar y qué ofrece <strong>Torres Titanium</strong>, el proyecto
           residencial de <strong>Holding Inversiones Reynaga S.A.C.</strong> en San Carlos,
-          con precios publicados desde S/ 163,332.50.
+          con departamentos desde S/ 257,000 y separación con S/ 1,000.
         </p>
         <p className="text-deep-navy/70 leading-relaxed max-w-3xl mb-4">
           Si tu interés es una zona concreta, empieza por los{" "}
@@ -120,28 +115,9 @@ export default function HuancayoPage() {
           </p>
           <p className="text-deep-navy/70 leading-relaxed">
             <strong>Cercado de Huancayo.</strong> El centro comercial y financiero de la
-            ciudad, con el Parque Grau como referencia. Conviene comparar precio por m²,
+            ciudad, con el Parque Grau como referencia. Conviene comparar ubicación,
             ruido y disponibilidad de estacionamiento frente a zonas residenciales como San
             Carlos.
-          </p>
-        </section>
-
-        <section className="mt-12 max-w-3xl">
-          <h2 className="font-display font-black text-2xl md:text-3xl text-deep-navy mb-4 tracking-tight">
-            Precios de departamentos en Huancayo
-          </h2>
-          <p className="text-deep-navy/70 leading-relaxed mb-4">
-            Los precios publicados de Torres Titanium van desde S/ 163,332.50 (Tipo G, 1
-            dormitorio de 41.35 m²) hasta S/ 361,741.00 (Tipo A, 3 dormitorios de 91.58 m²),
-            lo que equivale a un precio por m² publicado de alrededor de S/ 3,950. Durante
-            la preventa hay bonos de S/ 24,900 a S/ 47,850.
-          </p>
-          <p className="text-deep-navy/70 leading-relaxed">
-            Para un análisis más completo lee{" "}
-            <Link href="/guias/cuanto-cuesta-un-departamento-en-huancayo" className="text-primary font-bold hover:underline">
-              ¿cuánto cuesta un departamento en Huancayo?
-            </Link>{" "}
-            y consulta siempre el precio y la disponibilidad vigentes con el equipo de ventas.
           </p>
         </section>
 

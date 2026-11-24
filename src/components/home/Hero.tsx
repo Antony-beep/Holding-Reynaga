@@ -103,6 +103,8 @@ export default function Hero() {
           ref={videoRef}
           muted
           playsInline
+          preload="metadata"
+          poster="/videos/HeroOficial_000.webp"
           className="w-full h-full object-cover object-[75%_center] md:object-[75%_center] lg:object-center opacity-90"
         >
           <source src="/videos/Sequence 02.mp4" type="video/mp4" />
@@ -265,7 +267,7 @@ export default function Hero() {
         {/* Particles Layer */}
         {isMounted && (
           <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden mix-blend-screen">
-            {[...Array(40)].map((_, i) => (
+            {[...Array(14)].map((_, i) => (
               <div
                 key={`particle-${i}`}
                 className="particle"
@@ -481,7 +483,7 @@ export default function Hero() {
                 </div>
                 <div className="flex flex-col justify-center">
                   <p className="text-surface text-[0.55rem] sm:text-[0.65rem] opacity-70 uppercase tracking-wider font-semibold leading-tight">
-                    1, 2 y 3 dormitorios
+                    1, 2 y 3 dormitorios · Desde S/ 257,000
                   </p>
                   <p className="text-surface font-bold text-xs sm:text-sm lg:text-xs xl:text-sm leading-tight">
                     Conoce 7 modelos de departamentos

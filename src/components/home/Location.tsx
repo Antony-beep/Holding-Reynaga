@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { GraduationCap, TreePine, ShoppingBag, ShoppingCart, Activity } from "lucide-react";
@@ -12,6 +12,27 @@ const LocationMap = dynamic(() => import("./LocationMap"), {
 
 export default function Location() {
   const [activeLocationId, setActiveLocationId] = useState<string | null>(null);
+  const [shouldLoadMap, setShouldLoadMap] = useState(false);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = mapContainerRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setShouldLoadMap(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoadMap(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "400px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const pointsOfInterest = [
     { id: "continental", name: "Universidad Continental", time: "1 min", Icon: GraduationCap },
@@ -109,10 +130,14 @@ export default function Location() {
           </div>
 
           {/* Map Container (Right) */}
-          <div className="w-full lg:w-1/2 relative h-[400px] sm:h-[550px] lg:h-auto overflow-hidden shrink-0">
+          <div ref={mapContainerRef} className="w-full lg:w-1/2 relative h-[400px] sm:h-[550px] lg:h-auto overflow-hidden shrink-0">
              <div className="absolute inset-0 bg-deep-navy/10 z-10 pointer-events-none mix-blend-overlay lg:hidden" />
              <div className="absolute inset-0 z-0">
-               <LocationMap activeLocationId={activeLocationId} />
+               {shouldLoadMap ? (
+                 <LocationMap activeLocationId={activeLocationId} />
+               ) : (
+                 <div className="w-full h-full bg-deep-navy animate-pulse" />
+               )}
              </div>
              {/* Soft Gradients to blend map with dark bg (Only on mobile) */}
              <div className="absolute bottom-0 w-full h-1/3 bg-gradient-to-t from-deep-navy/80 to-transparent lg:hidden z-20 pointer-events-none" />

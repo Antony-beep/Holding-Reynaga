@@ -1,5 +1,3 @@
-import { RESERVATION_PRICE_CLAUSE } from "@/lib/privacy";
-
 export const FAQS = [
   {
     question: "¿Dónde está ubicado el proyecto Torres Titanium?",
@@ -10,11 +8,6 @@ export const FAQS = [
     question: "¿Cómo funciona la separación de S/ 1,000?",
     answer:
       `La separación aplica a todos los tipos de departamento. Al pagar S/ 1,000: el precio vigente queda congelado, la unidad se retira de la oferta a otros clientes, y se firma una Constancia de Separación del Departamento que indica el precio, el monto de separación, el número de departamento, el área y la fecha. El abono se imputa íntegramente como parte de la cuota inicial (10% del valor) al suscribir el Contrato de Arras.\n\nSe elabora un cronograma de pago del 10% del valor, acorde a tus ingresos mensuales. El congelamiento termina si incumples reiteradamente el cronograma o desistes voluntariamente. La devolución del monto de separación se rige por las condiciones expresamente previstas en la Constancia de Separación que se te entrega antes de tu pago. No hay cargos adicionales.\n\nNo se modificarán unilateralmente las condiciones de una reserva ya formalizada mediante la Constancia de Separación.`,
-  },
-  {
-    question: "¿Cuánto cuestan los departamentos y qué bonos de preventa hay?",
-    answer:
-      `Los precios publicados van desde S/ 163,332.50 hasta S/ 361,741.00: son el precio total al contado de la unidad con IGV incluido; no incluyen gastos notariales ni registrales. Los bonos de preventa van de S/ 24,900 a S/ 47,850 según la tipología; cada campaña se rige por sus propios términos, que indican su vigencia y el stock mínimo, y las condiciones aplicables a tu unidad se informan en la cotización escrita. No son canjeables por efectivo ni acumulables con otras promociones.\n\nEnviar el formulario solo solicita atención: no formaliza una reserva ni realiza cobros.\n\n${RESERVATION_PRICE_CLAUSE}`,
   },
   {
     question: "¿Qué tipos de departamentos y cuántos dormitorios ofrecen?",

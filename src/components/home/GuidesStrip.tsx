@@ -19,7 +19,7 @@ export default function GuidesStrip() {
           </h2>
           <p className="font-body text-deep-navy/70 text-base md:text-lg max-w-2xl mx-auto">
             Guías escritas por el equipo de Holding Reynaga con los datos reales del
-            proyecto: precios, preventa y el proceso de separación paso a paso.
+            proyecto: cotización, preventa y el proceso de separación paso a paso.
           </p>
         </div>
 

@@ -26,8 +26,8 @@ export async function generateMetadata({
   }
 
   const slug = buildApartmentSlug(apartment);
-  const title = `${apartment.type}: ${apartment.bedrooms} dormitorios en Huancayo`;
-  const description = `Departamento en venta en San Carlos, Huancayo: ${apartment.type}, ${apartment.bedrooms} dormitorios, ${apartment.baths} baños, ${apartment.sqm} m² y precio publicado de ${apartment.price}.`;
+  const title = `${apartment.type}: ${apartment.bedrooms} ${apartment.bedrooms === "1" ? "dormitorio" : "dormitorios"} en Huancayo`;
+  const description = `Departamento en venta en San Carlos, Huancayo: ${apartment.type}, ${apartment.bedrooms} ${apartment.bedrooms === "1" ? "dormitorio" : "dormitorios"}, ${apartment.baths === "1" ? "1 baño" : `${apartment.baths} baños`} y ${apartment.sqm} m². Separa con S/ 1,000.`;
 
   return {
     title,
@@ -158,40 +158,38 @@ export default async function DepartmentPage({
               </h1>
 
               <p className="font-body text-deep-navy/70 text-base md:text-lg mb-8 leading-relaxed">
-                El <strong>{apt.type}</strong> es un departamento de {apt.bedrooms} dormitorios y {apt.baths} baños, con {apt.sqm} m², en Torres Titanium, edificio en construcción en San Carlos, Huancayo. Consulta el precio publicado, la disponibilidad y las condiciones vigentes con nuestro equipo de ventas.
+                El <strong>{apt.type}</strong> es un departamento de {apt.bedrooms} {apt.bedrooms === "1" ? "dormitorio" : "dormitorios"} y {apt.baths === "1" ? "1 baño" : `${apt.baths} baños`}, con {apt.sqm} m², en Torres Titanium, edificio en construcción en San Carlos, Huancayo. Consulta la cotización vigente, la disponibilidad y las condiciones con nuestro equipo de ventas.
               </p>
 
-              {/* Precio y métricas clave */}
-              {apt.price && (
-                <div className="bg-deep-navy rounded-2xl p-6 mb-8 flex flex-wrap items-center gap-6">
-                  <div>
-                    <p className="font-display font-bold text-[10px] uppercase tracking-widest text-white/50 mb-1">
-                      Precio publicado
-                    </p>
-                    <p className="text-display font-black text-2xl md:text-3xl text-gold-metallic">
-                      {apt.price}
-                    </p>
-                  </div>
-                  <div className="h-10 w-px bg-white/10" />
-                  <div>
-                    <p className="font-display font-bold text-[10px] uppercase tracking-widest text-white/50 mb-1">
-                      Área
-                    </p>
-                    <p className="font-display font-bold text-xl text-white">
-                      {apt.sqm} m²
-                    </p>
-                  </div>
-                  <div className="h-10 w-px bg-white/10" />
-                  <div>
-                    <p className="font-display font-bold text-[10px] uppercase tracking-widest text-white/50 mb-1">
-                      Distribución
-                    </p>
-                    <p className="font-display font-bold text-xl text-white">
-                      {apt.bedrooms} dormitorios · {apt.baths === "1" ? "1 baño" : `${apt.baths} baños`}
-                    </p>
-                  </div>
+              {/* Métricas clave */}
+              <div className="bg-deep-navy rounded-2xl p-6 mb-8 flex flex-wrap items-center gap-6">
+                <div>
+                  <p className="font-display font-bold text-[10px] uppercase tracking-widest text-white/50 mb-1">
+                    Separación
+                  </p>
+                  <p className="text-display font-black text-2xl md:text-3xl text-gold-metallic">
+                    S/ 1,000
+                  </p>
                 </div>
-              )}
+                <div className="h-10 w-px bg-white/10" />
+                <div>
+                  <p className="font-display font-bold text-[10px] uppercase tracking-widest text-white/50 mb-1">
+                    Área
+                  </p>
+                  <p className="font-display font-bold text-xl text-white">
+                    {apt.sqm} m²
+                  </p>
+                </div>
+                <div className="h-10 w-px bg-white/10" />
+                <div>
+                  <p className="font-display font-bold text-[10px] uppercase tracking-widest text-white/50 mb-1">
+                    Distribución
+                  </p>
+                  <p className="font-display font-bold text-xl text-white">
+                    {apt.bedrooms} {apt.bedrooms === "1" ? "dormitorio" : "dormitorios"} · {apt.baths === "1" ? "1 baño" : `${apt.baths} baños`}
+                  </p>
+                </div>
+              </div>
 
               <div className="space-y-4">
                 {apt.features && apt.features.map((feature: string) => (

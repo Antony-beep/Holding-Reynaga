@@ -1,6 +1,6 @@
-# Precios — Torres Titanium (Holding Inversiones Reynaga S.A.C.)
+# Condiciones y precios de referencia — Torres Titanium (Holding Inversiones Reynaga S.A.C.)
 
-> Última actualización de los precios publicados: 30 de setiembre de 2026
+> Última actualización: noviembre de 2026
 > Textos legales revisados con asesoría legal: 2026-10-18 · Versión 2026-10-18.1
 > Moneda: Soles peruanos (PEN / S/) — precios totales al contado, IGV incluido; no incluyen gastos notariales ni registrales
 > Proyecto: Av. San Agustín 154, San Carlos, Huancayo, Junín, Perú
@@ -9,8 +9,8 @@
 
 | Concepto | Valor |
 |----------|-------|
-| Precio mínimo | S/ 163,332.50 |
-| Precio máximo | S/ 361,741.00 |
+| Departamentos desde | S/ 257,000 |
+| Cotización por tipología | Consultar con el equipo de ventas |
 | Bono de preventa mínimo | S/ 24,900 |
 | Bono de preventa máximo | S/ 47,850 |
 | Separación | S/ 1,000 para todos los tipos; se imputa íntegramente a la cuota inicial (10%) al suscribir el Contrato de Compraventa |
@@ -24,35 +24,30 @@
 ## Departamentos por tipo
 
 ### Tipo A — Premium
-- Precio: S/ 361,741.00
 - Dormitorios: 3
 - Baños: 2
 - Área: 91.58 m²
 - Distribución: Sala-comedor, cocina, 2 baños completos, lavandería, balcón parrillero
 
 ### Tipo B — Familiar
-- Precio: S/ 307,191.50
 - Dormitorios: 2
 - Baños: 2
 - Área: 77.77 m²
 - Distribución: Sala-comedor, cocina, 2 baños completos, lavandería, balcón parrillero
 
 ### Tipo C — Moderno
-- Precio: S/ 286,651.50
 - Dormitorios: 3
 - Baños: 1
 - Área: 72.57 m²
 - Distribución: Sala-comedor, cocina, 1 baño completo, lavandería, vista natural
 
 ### Tipo D — Confort
-- Precio: S/ 257,777.00
 - Dormitorios: 2
 - Baños: 2
 - Área: 65.26 m²
 - Distribución: Sala-comedor, cocina, 2 baños completos, lavandería, vista natural
 
 ### Tipo G — Elegante
-- Precio: S/ 163,332.50
 - Dormitorios: 1
 - Baños: 1
 - Área: 41.35 m²
@@ -103,7 +98,7 @@ El dossier está disponible mediante descarga directa, sin completar un formular
 - [Ver departamentos](https://inmobiliariaholdingreynaga.com/#departamentos)
 - [Tour virtual 360°](https://inmobiliariaholdingreynaga.com/#recorrido)
 - [Solicitar atención a un asesor](https://inmobiliariaholdingreynaga.com/#reserva)
-- [Dossier PDF público](https://inmobiliariaholdingreynaga.com/docs/BROUCHURE_Setiembre.pdf)
+- [Dossier PDF público](https://inmobiliariaholdingreynaga.com/docs/BROCHURE_Noviembre_2026.pdf)
 - [Términos y condiciones de reserva](https://inmobiliariaholdingreynaga.com/terminos-y-condiciones#condiciones-de-reserva)
 - [Política de Privacidad — versión 2026-10-18.1](https://inmobiliariaholdingreynaga.com/politica-de-privacidad)
 - [Política de Cookies](https://inmobiliariaholdingreynaga.com/politica-de-privacidad#cookies)

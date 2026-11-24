@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import { Mail, Phone, MapPin } from "lucide-react";
 import CookieSettingsLink from "./CookieSettingsLink";
@@ -122,38 +122,53 @@ export default function Footer() {
         </div>
         
         {/* Bottom Bar */}
-        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 text-xs sm:text-sm text-surface/50 font-body">
-          <p className="order-3 md:order-1 text-center md:text-left">&copy; {new Date().getFullYear()} Holding Reynaga. Todos los derechos reservados.</p>
-          <div className="flex items-center justify-center gap-4 sm:gap-6 order-1 md:order-2 flex-wrap">
-            <Link href="/terminos-y-condiciones" className="hover:text-white transition-colors">Términos y Condiciones</Link>
-            <span className="w-1 h-1 rounded-full bg-surface/30"></span>
-            <Link href="/politica-de-privacidad" className="hover:text-white transition-colors">Política de Privacidad</Link>
-            <span className="w-1 h-1 rounded-full bg-surface/30"></span>
-            <Link href="/libro-de-reclamaciones" className="hover:text-white transition-colors inline-flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
-                <path d="m10 15 5-3-5-3z" />
-              </svg>
-              Libro de Reclamaciones
-            </Link>
-            <span className="w-1 h-1 rounded-full bg-surface/30"></span>
-            <CookieSettingsLink />
+        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col lg:flex-row justify-between items-center gap-8 text-xs sm:text-sm text-surface/50 font-body">
+          <div className="flex flex-col items-center lg:items-start gap-3 order-2 lg:order-1">
+            <div className="flex items-center justify-center lg:justify-start gap-4 sm:gap-6 flex-wrap">
+              <Link href="/terminos-y-condiciones" className="hover:text-white transition-colors">Términos y Condiciones</Link>
+              <span className="w-1 h-1 rounded-full bg-surface/30"></span>
+              <Link href="/politica-de-privacidad" className="hover:text-white transition-colors">Política de Privacidad</Link>
+              <span className="w-1 h-1 rounded-full bg-surface/30"></span>
+              <Link href="/libro-de-reclamaciones" className="hover:text-white transition-colors inline-flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+                  <path d="m10 15 5-3-5-3z" />
+                </svg>
+                Libro de Reclamaciones
+              </Link>
+              <span className="w-1 h-1 rounded-full bg-surface/30"></span>
+              <CookieSettingsLink />
+            </div>
+            <p className="text-center lg:text-left">&copy; {new Date().getFullYear()} Holding Reynaga. Todos los derechos reservados.</p>
           </div>
-          {/* Aviso oficial del Libro de Reclamaciones (Anexo II) */}
-          <Link
-            href="/libro-de-reclamaciones"
-            aria-label="Libro de Reclamaciones — Ley N° 29571"
-            className="order-2 md:order-3 group shrink-0"
-          >
+
+          <div className="flex items-center gap-6 order-1 lg:order-2 shrink-0">
+            {/* Aviso oficial del Libro de Reclamaciones (Anexo II) */}
+            <Link
+              href="/libro-de-reclamaciones"
+              aria-label="Libro de Reclamaciones — Ley N° 29571"
+              className="group shrink-0"
+            >
+              <Image
+                src="/docs/libro_reclamaciones/AvisoFisico_Virtual.webp"
+                alt="Aviso: este establecimiento cuenta con Libro de Reclamaciones (Ley N° 29571)"
+                width={180}
+                height={120}
+                className="rounded-lg shadow-md border border-white/20 transition-all duration-300 group-hover:shadow-[0_10px_25px_rgba(212,175,55,0.25)] group-hover:-translate-y-1 group-hover:border-[#D4AF37]/50"
+              />
+            </Link>
+
+            <div className="h-14 w-px bg-white/10" aria-hidden="true" />
+
+            {/* Marca de agua Colibrí Digital */}
             <Image
-              src="/docs/libro_reclamaciones/AvisoFisico_Virtual.webp"
-              alt="Aviso: este establecimiento cuenta con Libro de Reclamaciones (Ley N° 29571)"
-              width={200}
-              height={134}
-              priority={false}
-              className="rounded-lg shadow-md border border-white/20 transition-all duration-300 group-hover:shadow-[0_10px_25px_rgba(212,175,55,0.25)] group-hover:-translate-y-1 group-hover:border-[#D4AF37]/50"
+              src="/images/Logo_Colibri_MarcaAgua.webp"
+              alt="Colibrí Digital"
+              width={76}
+              height={76}
+              className="opacity-70 hover:opacity-100 transition-opacity duration-300 select-none shrink-0"
             />
-          </Link>
+          </div>
         </div>
       </div>
     </footer>

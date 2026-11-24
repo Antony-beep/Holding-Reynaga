@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     absolute: "Departamentos de 1 dormitorio en Huancayo | Torres Titanium",
   },
   description:
-    "Departamentos de 1 dormitorio en venta en Huancayo: Tipo G en Torres Titanium, San Carlos — 41.35 m², 1 baño, S/ 163,332.50. Separa con S/ 1,000.",
+    "Departamentos de 1 dormitorio en venta en Huancayo: Tipo G en Torres Titanium, San Carlos — 41.35 m², 1 baño. Separa con S/ 1,000.",
   alternates: { canonical: "/departamentos-1-dormitorio-huancayo" },
   openGraph: {
     type: "website",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     siteName: "Holding Reynaga | Torres Titanium",
     title: "Departamentos de 1 dormitorio en Huancayo | Torres Titanium",
     description:
-      "Tipo G: 41.35 m², 1 baño, S/ 163,332.50. Departamentos de 1 dormitorio en San Carlos, Huancayo.",
+      "Tipo G: 41.35 m², 1 baño. Departamentos de 1 dormitorio en San Carlos, Huancayo. Separa con S/ 1,000.",
     images: [
       { url: "/og.jpg", width: 1200, height: 630, alt: "Departamento de 1 dormitorio en Huancayo — Torres Titanium" },
     ],
@@ -35,17 +35,12 @@ const FAQS_1DORM = [
   {
     question: "¿Qué departamento de 1 dormitorio hay en venta en Huancayo?",
     answer:
-      "El Tipo G de Torres Titanium (San Carlos, Huancayo): 1 dormitorio, 1 baño, 41.35 m², sala-comedor, cocina, lavandería y balcón interior. Precio publicado: S/ 163,332.50.",
+      "El Tipo G de Torres Titanium (San Carlos, Huancayo): 1 dormitorio, 1 baño, 41.35 m², sala-comedor, cocina, lavandería y balcón interior. Consulta disponibilidad y cotización con ventas.",
   },
   {
     question: "¿Para quién es un departamento de 1 dormitorio?",
     answer:
       "Para quienes buscan su primera propiedad, una inversión en esta etapa o una vivienda compacta de fácil mantenimiento: profesionales, estudiantes de posgrado o quienes viven solos y valoran la ubicación sobre la superficie.",
-  },
-  {
-    question: "¿Cuál es el precio por m² de un departamento de 1 dormitorio en Huancayo?",
-    answer:
-      "El Tipo G se publica en S/ 163,332.50 con 41.35 m², es decir, alrededor de S/ 3,950 por m², en línea con el resto de tipologías del proyecto. Durante la preventa hay bonos publicados de S/ 24,900 a S/ 47,850.",
   },
   {
     question: "¿El departamento de 1 dormitorio incluye estacionamiento?",
@@ -63,7 +58,7 @@ export default function UnDormitorioPage() {
       <OrganizationJsonLd />
       <WebPageJsonLd
         name="Departamentos de 1 dormitorio en Huancayo"
-        description="Tipo G de Torres Titanium: 41.35 m², 1 baño, S/ 163,332.50 en San Carlos, Huancayo."
+        description="Tipo G de Torres Titanium: 41.35 m², 1 baño en San Carlos, Huancayo. Separa con S/ 1,000."
         path="/departamentos-1-dormitorio-huancayo"
       />
       <PillarBreadcrumb
@@ -81,8 +76,8 @@ export default function UnDormitorioPage() {
         <p className="text-deep-navy/70 text-lg leading-relaxed max-w-3xl mb-6">
           En <strong>Torres Titanium</strong> (San Carlos, Huancayo) el modelo de 1 dormitorio
           es el <strong>Tipo G</strong>: 41.35 m² distribuidos en sala-comedor, cocina, 1
-          baño completo, lavandería y balcón interior. Su precio publicado es de{" "}
-          <strong>S/ 163,332.50</strong>, la opción de entrada al proyecto.
+          baño completo, lavandería y balcón interior. Consulta disponibilidad y cotización
+          vigente con nuestro equipo de ventas.
         </p>
         <p className="text-deep-navy/70 leading-relaxed max-w-3xl">
           Si necesitas más espacio, compara también los{" "}

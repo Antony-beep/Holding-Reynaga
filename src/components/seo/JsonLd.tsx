@@ -108,7 +108,7 @@ export function ProjectJsonLd() {
     "@id": `${SITE_URL}/#torres-titanium`,
     name: "Torres Titanium",
     description:
-      "Torres Titanium es un proyecto residencial de 59 departamentos en construcción ubicado en Av. San Agustín 154, San Carlos, Huancayo, Junín, Perú. Ofrece departamentos de 1, 2 y 3 dormitorios desde S/ 163,332.50 hasta S/ 361,741.00, con bonos de preventa de S/ 24,900 a S/ 47,850. Incluye 2 sótanos de estacionamiento, 2 ascensores y rooftop. Entrega prevista entre octubre y diciembre de 2027.",
+      "Torres Titanium es un proyecto residencial de 59 departamentos en construcción ubicado en Av. San Agustín 154, San Carlos, Huancayo, Junín, Perú. Ofrece departamentos de 1, 2 y 3 dormitorios desde S/ 257,000, separación con S/ 1,000 y bonos de preventa de S/ 24,900 a S/ 47,850. Incluye 2 sótanos de estacionamiento, 2 ascensores y rooftop. Entrega prevista entre octubre y diciembre de 2027.",
     url: SITE_URL,
     image: `${SITE_URL}/og.jpg`,
     telephone: "+51981407634",
@@ -139,24 +139,15 @@ export function ProjectJsonLd() {
       value: true,
     })),
     // Freshness signal para AI: fecha de actualización del contenido
-    dateModified: "2026-09-30",
-    // Rango de precios para AI agents (extractable, sin JS)
-    makesOffer: [
-      {
-        "@type": "Offer",
-        name: "Departamento Tipo G — 1 dormitorio",
-        price: 163332.50,
-        priceCurrency: "PEN",
-        url: `${SITE_URL}/departamentos/tipo-g`,
-      },
-      {
-        "@type": "Offer",
-        name: "Departamento Tipo A — 3 dormitorios",
-        price: 361741.00,
-        priceCurrency: "PEN",
-        url: `${SITE_URL}/departamentos/tipo-a`,
-      },
-    ],
+    dateModified: "2026-11-23",
+    // Precio referencial de entrada para AI agents (extractable, sin JS)
+    makesOffer: {
+      "@type": "AggregateOffer",
+      lowPrice: 257000,
+      priceCurrency: "PEN",
+      offerCount: 59,
+      url: `${SITE_URL}/#departamentos`,
+    },
     // Bono de preventa — dato único extraíble (schema con texto corrido)
     disambiguatingDescription:
       `Bonos de preventa de S/ 24,900 a S/ 47,850. Separación anunciada con S/ 1,000; el formulario solo solicita atención, no formaliza una reserva ni realiza cobros. ${RESERVATION_PRICE_CLAUSE.replace(/\n\n/g, " ")} Entrega prevista entre octubre y diciembre de 2027.`,
@@ -192,14 +183,13 @@ export function ApartmentJsonLd({
   apartment: Apartment;
   slug: string;
 }) {
-  const price = Number(apartment.price.replace(/[^\d.]/g, ""));
   const apartmentUrl = `${SITE_URL}/departamentos/${slug}`;
   const apartmentSchema = {
     "@context": "https://schema.org",
     "@type": "Apartment",
     "@id": `${apartmentUrl}#apartment`,
     name: `Departamento ${apartment.type} en San Carlos, Huancayo`,
-    description: `Departamento de ${apartment.bedrooms} dormitorios y ${apartment.baths} baños, con ${apartment.sqm} m², en Torres Titanium, proyecto en construcción en San Carlos, Huancayo.`,
+    description: `Departamento de ${apartment.bedrooms} ${apartment.bedrooms === "1" ? "dormitorio" : "dormitorios"} y ${apartment.baths === "1" ? "1 baño" : `${apartment.baths} baños`}, con ${apartment.sqm} m², en Torres Titanium, proyecto en construcción en San Carlos, Huancayo.`,
     url: apartmentUrl,
     image: apartment.images.map((image) =>
       new URL(`${apartment.basePath}/${encodeURIComponent(image)}`, SITE_URL).toString(),
@@ -219,15 +209,7 @@ export function ApartmentJsonLd({
       addressCountry: "PE",
     },
     containedInPlace: { "@id": `${SITE_URL}/#torres-titanium` },
-    offers: {
-      "@type": "Offer",
-      url: apartmentUrl,
-      price,
-      priceCurrency: "PEN",
-      availability: "https://schema.org/PreOrder",
-      seller: { "@id": `${SITE_URL}/#organization` },
-    },
-    dateModified: "2026-09-30",
+    dateModified: "2026-11-23",
   };
 
   const breadcrumbSchema = {

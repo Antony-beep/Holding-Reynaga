@@ -3,7 +3,7 @@ import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-static";
 
-const PRICING_UPDATED = "2026-09-30";
+const PRICING_UPDATED = "2026-11-23";
 
 export async function GET() {
   const departamentos = APARTMENTS.filter((a) => !a.isComingSoon).map((a) => {
@@ -15,7 +15,6 @@ export async function GET() {
       dormitorios: Number(a.bedrooms),
       banos: Number(a.baths),
       areaM2: Number(a.sqm),
-      precioPreventa: a.price,
       estilo: a.area,
       caracteristicas: a.features,
       url: `${SITE_URL}/departamentos/${slug}`,
@@ -29,9 +28,11 @@ export async function GET() {
       desarrollador: "Holding Inversiones Reynaga S.A.C.",
       ubicacion: "Av. San Agustín 154, San Carlos, Huancayo, Junín, Perú",
       entrega: "Octubre a diciembre de 2027",
-      preciosActualizados: PRICING_UPDATED,
+      precioDesde: "S/ 257,000",
+      separacion: "S/ 1,000",
+      actualizado: PRICING_UPDATED,
       nota:
-        "Precios totales al contado publicados en soles (S/), IGV incluido; no incluyen gastos notariales ni registrales. Sujetos a disponibilidad de la unidad. La separación es de S/ 1,000 (imputable a la cuota inicial) y se formaliza únicamente con ventas.",
+        "Departamentos desde S/ 257,000 (precios en soles S/, IGV incluido; no incluyen gastos notariales ni registrales). Cotización por tipología y disponibilidad vigentes con el equipo de ventas. La separación es de S/ 1,000 (imputable a la cuota inicial) y se formaliza únicamente con ventas.",
       departamentos,
     },
     {

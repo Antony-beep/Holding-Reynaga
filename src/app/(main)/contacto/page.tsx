@@ -129,7 +129,7 @@ export default function ContactoPage() {
                 </Link>
                 , revisa las{" "}
                 <Link href="/#departamentos" className="text-primary font-bold hover:underline">
-                  tipologías y precios
+                  tipologías disponibles
                 </Link>{" "}
                 o descarga el{" "}
                 <Link href="/#titanium" className="text-primary font-bold hover:underline">

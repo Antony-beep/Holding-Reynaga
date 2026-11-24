@@ -46,7 +46,6 @@ function publicApartments() {
       dormitorios: a.bedrooms,
       banos: a.baths,
       areaM2: a.sqm,
-      precioPreventa: a.price,
       estilo: a.area,
       caracteristicas: a.features,
       url: `${SITE_URL}/departamentos/${slug}`,
@@ -69,12 +68,14 @@ export default function WebMCPTools() {
     void register({
       name: "torres_titanium_listar_departamentos",
       description:
-        "Lista los tipos de departamento en construcción del proyecto Torres Titanium (Huancayo, Perú) con dormitorios, área, precio total con IGV y enlaces.",
+        "Lista los tipos de departamento en construcción del proyecto Torres Titanium (Huancayo, Perú) con dormitorios, área, características y enlaces.",
       inputSchema: { type: "object", properties: {}, additionalProperties: false },
       execute: async () => ({
         proyecto: "Torres Titanium",
         entrega: "Octubre a diciembre de 2027",
-        nota: "Precios totales al contado con IGV incluido (sin gastos notariales ni registrales), sujetos a disponibilidad.",
+        precioDesde: "S/ 257,000",
+        separacion: "S/ 1,000",
+        nota: "Departamentos desde S/ 257,000 (IGV incluido, sin gastos notariales ni registrales). Cotización vigente por tipología con ventas.",
         departamentos: publicApartments(),
       }),
     });
@@ -82,7 +83,7 @@ export default function WebMCPTools() {
     void register({
       name: "torres_titanium_detalle_departamento",
       description:
-        "Devuelve área, precio publicado y características de un tipo de departamento de Torres Titanium (ej.: 'Tipo A', 'A', 'a').",
+        "Devuelve área, distribución y características de un tipo de departamento de Torres Titanium (ej.: 'Tipo A', 'A', 'a').",
       inputSchema: {
         type: "object",
         properties: {

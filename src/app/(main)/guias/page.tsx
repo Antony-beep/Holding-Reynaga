@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     siteName: "Holding Reynaga | Torres Titanium",
     title: "Guías y recursos para comprar un departamento en Huancayo",
     description:
-      "Precios reales, preventa y separación: guías para comprar un departamento en Huancayo.",
+      "Cotización, preventa y separación: guías para comprar un departamento en Huancayo.",
     images: [
       { url: "/og.jpg", width: 1200, height: 630, alt: "Guías para comprar un departamento en Huancayo" },
     ],
@@ -55,7 +55,7 @@ export default function GuiasPage() {
           <Link href="/departamentos-en-san-carlos-huancayo" className="text-primary font-bold hover:underline">
             Torres Titanium en San Carlos
           </Link>
-          : precios publicados, bonos de preventa y el proceso de separación paso a paso.
+          : tipologías, bonos de preventa y el proceso de separación paso a paso.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

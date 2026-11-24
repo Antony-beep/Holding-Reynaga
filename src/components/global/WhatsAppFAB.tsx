@@ -17,7 +17,6 @@ export default function WhatsAppFAB() {
   const fieldId = useId();
   const [requiredAccepted, setRequiredAccepted] = useState(false);
   const [marketingAccepted, setMarketingAccepted] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -27,16 +26,10 @@ export default function WhatsAppFAB() {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
   const [isPreloading, setIsPreloading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [hasOpenedForm, setHasOpenedForm] = useState(false);
+  const [, startTransition] = useTransition();
 
   useEffect(() => {
-    // Handle scroll for visibility
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 200);
-    };
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-
     // Handle preloader visibility
     const handlePreloaderFinished = () => {
       setIsPreloading(false);
@@ -44,12 +37,11 @@ export default function WhatsAppFAB() {
     window.addEventListener("preloaderFinished", handlePreloaderFinished);
 
     // Failsafe: if video already played, preloader is definitely gone
-    if (typeof window !== 'undefined' && (window as any).__HERO_VIDEO_PLAYED__) {
+    if (typeof window !== 'undefined' && window.__HERO_VIDEO_PLAYED__) {
       setIsPreloading(false);
     }
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("preloaderFinished", handlePreloaderFinished);
     };
   }, []);
@@ -268,7 +260,7 @@ export default function WhatsAppFAB() {
                 requiredError={fv.errorBox("privacy")}
               />
 
-              {siteKey && (
+              {siteKey && hasOpenedForm && (
                 <div className="flex justify-center mt-2">
                   <Turnstile
                     key={tsKey}
@@ -302,7 +294,10 @@ export default function WhatsAppFAB() {
 
         {/* The Golden Button */}
         <button 
-          onClick={() => startTransition(() => setIsFormOpen(!isFormOpen))}
+          onClick={() => startTransition(() => {
+            setHasOpenedForm(true);
+            setIsFormOpen(!isFormOpen);
+          })}
           className="flex items-center gap-1.5 sm:gap-2.5 bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37] bg-[length:200%_auto] hover:bg-[position:right_center] text-deep-navy px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-lg font-display font-bold text-sm shadow-[0_10px_20px_rgba(212,175,55,0.3)] hover:shadow-[0_15px_30px_rgba(212,175,55,0.4)] hover:-translate-y-1 transition-all duration-500 relative overflow-hidden group/btn border border-white/40"
         >
           {/* Shine Effect */}

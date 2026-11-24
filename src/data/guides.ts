@@ -20,32 +20,32 @@ export const GUIDES: Guide[] = [
   {
     slug: "cuanto-cuesta-un-departamento-en-huancayo",
     h1: "¿Cuánto cuesta un departamento en Huancayo?",
-    metaTitle: "¿Cuánto cuesta un departamento en Huancayo? Precios reales 2026",
+    metaTitle: "¿Cuánto cuesta un departamento en Huancayo? Guía 2026",
     description:
-      "Precios reales de departamentos en Huancayo: qué cuesta cada tipología en Torres Titanium (San Carlos), el precio por m², los bonos de preventa y los pasos para pagar.",
+      "Guía de compra en Huancayo: departamentos desde S/ 257,000 en Torres Titanium (San Carlos), tipologías, bonos de preventa y separación con S/ 1,000.",
     intro:
-      "La respuesta corta, con datos del proyecto Torres Titanium en San Carlos: los precios publicados van desde S/ 163,332.50 por un departamento de 1 dormitorio hasta S/ 361,741.00 por uno de 3 dormitorios de 91.58 m². En esta guía desglosamos cada opción, el precio por metro cuadrado y los factores que explican las diferencias.",
+      "En el proyecto Torres Titanium en San Carlos, Huancayo, los departamentos están disponibles desde S/ 257,000 y puedes separar tu unidad con S/ 1,000. En esta guía repasamos las tipologías disponibles, los factores que influyen en el valor de una vivienda y los pasos para comprar.",
     datePublished: "2026-10-03",
-    dateModified: "2026-10-03",
+    dateModified: "2026-11-23",
     sections: [
       {
-        heading: "Precios de departamentos en Torres Titanium (San Carlos, Huancayo)",
+        heading: "Tipologías en Torres Titanium (San Carlos, Huancayo)",
         paragraphs: [
-          "Estos son los precios de preventa publicados del proyecto, con las superficies y distribución de cada tipología:",
+          "El proyecto ofrece opciones desde S/ 257,000. Estas son las superficies y distribuciones de cada tipología (consulta la cotización vigente con nuestro equipo de ventas):",
         ],
         list: [
-          "Tipo G — 1 dormitorio, 1 baño, 41.35 m²: S/ 163,332.50",
-          "Tipo D — 2 dormitorios, 2 baños, 65.26 m²: S/ 257,777.00",
-          "Tipo C — 3 dormitorios, 1 baño, 72.57 m²: S/ 286,651.50",
-          "Tipo B — 2 dormitorios, 2 baños, 77.77 m²: S/ 307,191.50",
-          "Tipo A — 3 dormitorios, 2 baños, 91.58 m²: S/ 361,741.00",
+          "Tipo G — 1 dormitorio, 1 baño, 41.35 m²",
+          "Tipo D — 2 dormitorios, 2 baños, 65.26 m²",
+          "Tipo C — 3 dormitorios, 1 baño, 72.57 m²",
+          "Tipo B — 2 dormitorios, 2 baños, 77.77 m²",
+          "Tipo A — 3 dormitorios, 2 baños, 91.58 m²",
         ],
       },
       {
-        heading: "Precio por metro cuadrado en Huancayo",
+        heading: "Cómo comparar el valor por metro cuadrado en Huancayo",
         paragraphs: [
-          "Con los precios publicados de Torres Titanium, el precio por m² ronda S/ 3,950 en todas las tipologías. Es decir, la diferencia de precio entre modelos corresponde casi por completo a la superficie y a la distribución, no a calidades distintas: todos comparten acabados de primera e iluminación natural.",
-          "Al comparar con otros proyectos de Huancayo, conviene fijarse en ese indicador (precio total ÷ m²) y en qué incluye: estacionamiento, baños completos, lavandería propia o balcón. Dos departamentos del mismo precio pueden tener valores muy distintos según lo que incluyen.",
+          "Al evaluar proyectos en Huancayo, la diferencia de inversión entre tipologías suele responder a la superficie, distribución, piso y orientación, mientras todos los departamentos de Torres Titanium comparten acabados de primera e iluminación natural.",
+          "Conviene fijarse en el valor por m² (precio total ÷ m²) y en qué incluye el edificio: estacionamiento, baños completos, lavandería propia o balcón. Dos departamentos pueden tener un valor muy distinto según su ubicación y equipamiento.",
         ],
       },
       {

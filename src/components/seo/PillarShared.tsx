@@ -48,7 +48,7 @@ export function PillarBreadcrumb({
   );
 }
 
-/** Tarjetas de tipologías con precio real, enlazando a cada página de tipo. */
+/** Tarjetas de tipologías disponibles, enlazando a cada página de tipo. */
 export function ApartmentMiniCards({
   apartments,
   title = "Tipologías disponibles",
@@ -77,13 +77,10 @@ export function ApartmentMiniCards({
             <p className="text-sm text-deep-navy/70 leading-relaxed mb-4">
               {apt.sqm} m² · {apt.baths === "1" ? "1 baño" : `${apt.baths} baños`}
             </p>
-            <div className="flex items-end justify-between">
-              <div>
-                <p className="text-[10px] uppercase tracking-widest text-deep-navy/50 font-bold">
-                  Precio publicado
-                </p>
-                <p className="font-display font-black text-lg text-deep-navy">{apt.price}</p>
-              </div>
+            <div className="flex items-center justify-between pt-3 border-t border-black/5">
+              <span className="text-xs font-bold text-deep-navy/60">
+                Separa con S/ 1,000
+              </span>
               <span className="text-primary font-bold text-xs uppercase tracking-wider group-hover:underline">
                 Ver más →
               </span>

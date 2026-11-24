@@ -98,10 +98,13 @@ export default function Catalog() {
         {/* Header & Tabs */}
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end mb-10 lg:mb-12 gap-8">
           <div className="max-w-2xl">
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex flex-wrap items-center gap-3 mb-6">
               <div className="w-1.5 h-6 bg-gradient-to-b from-[#BF953F] to-[#B38728] rounded-full"></div>
               <span className="font-display font-bold text-[#B38728] tracking-[0.15em] text-xs md:text-sm uppercase bg-[#BF953F]/10 px-4 py-1.5 rounded-full border border-[#BF953F]/20">
                 Línea Residencial
+              </span>
+              <span className="font-display font-bold text-deep-navy tracking-[0.12em] text-xs md:text-sm uppercase bg-deep-navy/5 px-4 py-1.5 rounded-full border border-deep-navy/10">
+                Desde S/ 257,000
               </span>
             </div>
             <h2 className="text-display font-black text-4xl md:text-5xl lg:text-6xl text-deep-navy tracking-tighter mb-4 leading-[1.1]">
@@ -166,17 +169,16 @@ export default function Catalog() {
                   onClick={() => setIsLightboxOpen(true)}
                 >
                   
-                  {/* Blurred Backdrop for Portrait Images — rendered via CSS background
-                      (more reliable than a second <Image> + opacity keyframe) */}
+                  {/* Blurred Backdrop for Portrait Images — uses same Next/Image sizes so browser reuses single cached request */}
                   {activeApartment.images && activeApartment.images.length > 0 && (
-                    <div
-                      aria-hidden
-                      className="absolute inset-0 scale-125 blur-2xl opacity-40 pointer-events-none z-0"
-                      style={{
-                        backgroundImage: `url("${activeApartment.basePath}/${activeApartment.images[activeImageIndex]}")`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                      }}
+                    <Image
+                      key={`backdrop-${activeImageIndex}`}
+                      src={`${activeApartment.basePath}/${activeApartment.images[activeImageIndex]}`}
+                      alt=""
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 65vw"
+                      aria-hidden="true"
+                      className="object-cover scale-125 blur-2xl opacity-40 pointer-events-none z-0"
                     />
                   )}
 
@@ -186,7 +188,6 @@ export default function Catalog() {
                       key={`main-${activeImageIndex}`}
                       src={`${activeApartment.basePath}/${activeApartment.images[activeImageIndex]}`}
                       sizes="(max-width: 1024px) 100vw, 65vw"
-                      priority={activeImageIndex === 0}
                       alt={`Departamento en venta ${activeApartment.type} en San Carlos Huancayo - Imagen ${activeImageIndex + 1}`}
                       className="object-contain pointer-events-none group-hover:scale-100 duration-700 z-10"
                     />
@@ -209,16 +210,11 @@ export default function Catalog() {
                   
                   <div className="absolute top-4 left-4 md:top-6 md:left-6 flex flex-wrap gap-2 z-20">
                     <span className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full font-display font-bold text-[10px] md:text-xs text-deep-navy shadow-md uppercase tracking-wider border border-white/20">
-                      {activeApartment.bedrooms} Dormitorios
+                      {activeApartment.bedrooms} {activeApartment.bedrooms === "1" ? "Dormitorio" : "Dormitorios"}
                     </span>
                     <span className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full font-display font-bold text-[10px] md:text-xs text-deep-navy shadow-md uppercase tracking-wider border border-white/20">
                       {activeApartment.sqm} m²
                     </span>
-                    {activeApartment.price && (
-                      <span className="bg-deep-navy/95 backdrop-blur-md px-3 py-1.5 rounded-full font-display font-bold text-[10px] md:text-xs text-[#D4AF37] shadow-md uppercase tracking-wider border border-[#D4AF37]/30">
-                        {activeApartment.price}
-                      </span>
-                    )}
                   </div>
 
                   {/* Carousel Controls */}
