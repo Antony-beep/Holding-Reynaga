@@ -10,34 +10,21 @@ export default function Preloader() {
   useEffect(() => {
     const finishLoading = () => {
       setLoading(false);
-      try {
-        sessionStorage.setItem("tt_preloader_shown", "1");
-      } catch {
-        // Ignore storage restrictions
-      }
-      // Dispatch an event so other components (like Hero) know when to start
+      // Dispatch an event so other components (like Hero and WhatsAppFAB) know when to start
       window.dispatchEvent(new Event("preloaderFinished"));
     };
 
-    try {
-      if (sessionStorage.getItem("tt_preloader_shown") === "1") {
-        finishLoading();
-        return;
-      }
-    } catch {
-      // Ignore storage restrictions
-    }
-
     const handleLoad = () => {
-      setTimeout(finishLoading, 150);
+      // Pequeño buffer para que Hero y WhatsAppFAB ya tengan sus listeners montados
+      setTimeout(finishLoading, 250);
     };
 
     if (document.readyState === "complete") {
       handleLoad();
     } else {
       window.addEventListener("load", handleLoad);
-      // Failsafe: no bloquear LCP por más de 700ms
-      const fallback = setTimeout(finishLoading, 700);
+      // Failsafe: no bloquear la pantalla por más de 900ms
+      const fallback = setTimeout(finishLoading, 900);
       
       return () => {
         window.removeEventListener("load", handleLoad);
@@ -66,9 +53,10 @@ export default function Preloader() {
             <Image
               src="/images/logo.webp"
               alt="Torres Titanium — Holding Reynaga"
-              width={400}
-              height={180}
-              className="w-auto h-32 md:h-48 object-contain"
+              width={447}
+              height={559}
+              style={{ width: "auto" }}
+              className="h-32 md:h-48 object-contain"
               priority
             />
           </motion.div>

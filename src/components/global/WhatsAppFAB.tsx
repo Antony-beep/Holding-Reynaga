@@ -36,13 +36,15 @@ export default function WhatsAppFAB() {
     };
     window.addEventListener("preloaderFinished", handlePreloaderFinished);
 
-    // Failsafe: if video already played, preloader is definitely gone
+    // Failsafe: if video already played or after 1.5s max, ensure FAB is visible
     if (typeof window !== 'undefined' && window.__HERO_VIDEO_PLAYED__) {
       setIsPreloading(false);
     }
+    const failsafe = setTimeout(() => setIsPreloading(false), 1500);
 
     return () => {
       window.removeEventListener("preloaderFinished", handlePreloaderFinished);
+      clearTimeout(failsafe);
     };
   }, []);
 
@@ -269,7 +271,6 @@ export default function WhatsAppFAB() {
                     onExpire={() => setTurnstileToken("")}
                     onError={() => {
                       setTurnstileToken("");
-                      setTimeout(() => setTsKey((k) => k + 1), 3000);
                     }}
                     options={{ theme: "light", language: "es", size: "flexible", retry: "auto", retryInterval: 3000 }}
                   />

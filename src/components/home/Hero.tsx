@@ -103,8 +103,7 @@ export default function Hero() {
           ref={videoRef}
           muted
           playsInline
-          preload="metadata"
-          poster="/videos/HeroOficial_000.webp"
+          preload="auto"
           className="w-full h-full object-cover object-[75%_center] md:object-[75%_center] lg:object-center opacity-90"
         >
           <source src="/videos/Sequence 02.mp4" type="video/mp4" />

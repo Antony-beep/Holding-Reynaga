@@ -578,8 +578,6 @@ export default function ReclamoForm() {
             onExpire={() => setTurnstileToken("")}
             onError={() => {
               setTurnstileToken("");
-              // Reintentar remontando el widget tras 3 segundos
-              setTimeout(() => setTsKey((k) => k + 1), 3000);
             }}
             options={{ theme: "light", language: "es", size: "flexible", retry: "auto", retryInterval: 3000 }}
           />

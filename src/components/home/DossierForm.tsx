@@ -383,7 +383,6 @@ export default function DossierForm() {
                     onExpire={() => setTurnstileToken("")}
                     onError={() => {
                       setTurnstileToken("");
-                      setTimeout(() => setTsKey((k) => k + 1), 3000);
                     }}
                     options={{ theme: "light", language: "es", retry: "auto", retryInterval: 3000 }}
                   />
